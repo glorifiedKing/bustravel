@@ -10,6 +10,25 @@
     ],
     "require": {},
     "require-dev": {
-        "orchestra/testbench": "^4.3"
+        "orchestra/testbench": "^4.3",
+        "mockery/mockery": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "glorifiedking\\BusTravel\\": "src/"
+        }
+
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "glorifiedking\\BusTravel\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "glorifiedking\\BusTravel\\BusTravelBaseServiceProvider"
+            ]
+        }
     }
 }
