@@ -1,0 +1,15 @@
+{
+    "name": "glorifiedking/bustravel",
+    "description": "A Bus Travel booking system",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raymond",
+            "email": "rayim25@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "orchestra/testbench": "^4.3"
+    }
+}
