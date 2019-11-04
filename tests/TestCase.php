@@ -5,9 +5,9 @@ use glorifiedking\BusTravel\BusTravelBaseServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase 
 {
-    protected function setup()
+    protected function setUp(): void
     {
-        parent::setup();
+        parent::setUp();
         $this->withFactories(__DIR__.'/../database/factories');
     }
 
