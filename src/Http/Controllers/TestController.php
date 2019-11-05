@@ -7,6 +7,6 @@ class TestController extends Controller
 {
     public function index()
     {
-        return 'package controller working';
+        return view('bustravel::backend.stations.index');
     }
 }
