@@ -10,6 +10,7 @@
 <div class="card uper">
   <div class="card-header">
     Add Shows
+    <img src="{{asset('vendor/glorifiedking/images/test_logo.png')}}" >
   </div>
   <div class="card-body">
     
