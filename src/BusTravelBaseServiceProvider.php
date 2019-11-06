@@ -170,6 +170,10 @@ class BusTravelBaseServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/bustravel.php' => config_path('bustravel.php')
         ],'bustravel-config');
+        
+        $this->publishes([
+            __DIR__.'/../assets' => public_path('vendor/glorifiedking'),
+        ], 'bustravel-assets');
     }
 
     protected function registerRoutes()

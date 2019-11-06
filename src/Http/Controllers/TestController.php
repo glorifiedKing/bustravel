@@ -9,4 +9,9 @@ class TestController extends Controller
     {
         return view('bustravel::backend.stations.index');
     }
+
+    public function front()
+    {
+        return view('bustravel::frontend.test');
+    }
 }

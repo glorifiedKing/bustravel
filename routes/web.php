@@ -1,6 +1,7 @@
 <?php
 
-Route::get('test-default','TestController@index')->name('bustravel.testdefault');
+Route::get('test-backend','TestController@index')->name('bustravel.testdefault');
+Route::get('test-frontend','TestController@front')->name('bustravel.testfront');
 Route::get('stations','StationsController@index')->name('bustravel.stations');
 Route::get('general_settings','SettingsController@general')->name('bustravel.general_settings');
 Route::get('company_settings','SettingsController@company')->name('bustravel.company_settings');
