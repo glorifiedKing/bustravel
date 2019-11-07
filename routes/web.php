@@ -5,7 +5,14 @@ Route::get('test-frontend','TestController@front')->name('bustravel.testfront');
 Route::get('stations','StationsController@index')->name('bustravel.stations');
 Route::get('general_settings','SettingsController@general')->name('bustravel.general_settings');
 Route::get('company_settings','SettingsController@company')->name('bustravel.company_settings');
+//operators routes
 Route::get('operators','OperatorsController@index')->name('bustravel.operators');
+Route::get('operators/create','OperatorsController@create')->name('bustravel.operators.create');
+Route::post('operators','OperatorsController@store')->name('bustravel.operators.store');
+Route::get('operators/{id}/edit','OperatorsController@edit')->name('bustravel.operators.edit');
+Route::any('operators/{id}/update','OperatorsController@update')->name('bustravel.operators.update');
+Route::any('operators/{id}/delete','OperatorsController@delete')->name('bustravel.operators.delete');
+
 Route::get('buses','BusesController@index')->name('bustravel.buses');
 Route::get('routes','BusRoutesController@index')->name('bustravel.routes');
 Route::get('drivers','DriversController@index')->name('bustravel.drivers');
