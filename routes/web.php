@@ -12,6 +12,13 @@ Route::post('operators','OperatorsController@store')->name('bustravel.operators.
 Route::get('operators/{id}/edit','OperatorsController@edit')->name('bustravel.operators.edit');
 Route::any('operators/{id}/update','OperatorsController@update')->name('bustravel.operators.update');
 Route::any('operators/{id}/delete','OperatorsController@delete')->name('bustravel.operators.delete');
+//Buses
+Route::get('buses','BusesController@index')->name('bustravel.buses');
+Route::get('buses/create','BusesController@create')->name('bustravel.buses.create');
+Route::post('buses','BusesController@store')->name('bustravel.buses.store');
+Route::get('buses/{id}/edit','BusesController@edit')->name('bustravel.buses.edit');
+Route::any('buses/{id}/update','BusesController@update')->name('bustravel.buses.update');
+Route::any('buses/{id}/delete','BusesController@delete')->name('bustravel.buses.delete');
 
 Route::get('buses','BusesController@index')->name('bustravel.buses');
 Route::get('routes','BusRoutesController@index')->name('bustravel.routes');
