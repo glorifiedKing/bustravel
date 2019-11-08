@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "jeroennoten/laravel-adminlte": "^3.0"
+        "jeroennoten/laravel-adminlte": "^3.0",
+        "spatie/laravel-permission": "3.0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.3",

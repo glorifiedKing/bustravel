@@ -3,6 +3,11 @@
 Route::get('test-backend','TestController@index')->name('bustravel.testdefault');
 Route::get('test-frontend','TestController@front')->name('bustravel.testfront');
 Route::get('stations','StationsController@index')->name('bustravel.stations');
+Route::get('stations/create','StationsController@show')->name('bustravel.stations.create');
+Route::post('stations/create','StationsController@store')->name('bustravel.stations.store');
+Route::get('stations/view/{id}','StationsController@show')->name('bustravel.stations.edit');
+Route::post('stations/view/{id}','StationsController@store')->name('bustravel.stations.update');
+Route::get('stations/delete/{id}','StationsController@destroy')->name('bustravel.stations.delete');
 Route::get('general_settings','SettingsController@general')->name('bustravel.general_settings');
 Route::get('company_settings','SettingsController@company')->name('bustravel.company_settings');
 //operators routes
@@ -19,8 +24,6 @@ Route::post('buses','BusesController@store')->name('bustravel.buses.store');
 Route::get('buses/{id}/edit','BusesController@edit')->name('bustravel.buses.edit');
 Route::any('buses/{id}/update','BusesController@update')->name('bustravel.buses.update');
 Route::any('buses/{id}/delete','BusesController@delete')->name('bustravel.buses.delete');
-
-Route::get('buses','BusesController@index')->name('bustravel.buses');
 Route::get('routes','BusRoutesController@index')->name('bustravel.routes');
 Route::get('drivers','DriversController@index')->name('bustravel.drivers');
 Route::get('bookings','BookingsController@index')->name('bustravel.bookings');

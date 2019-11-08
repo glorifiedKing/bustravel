@@ -45,7 +45,13 @@ class StationsController extends Controller
         $station->save();
 
         //send flash session data
-        return redirect()->route('bustravel.stations');
+        $alerts = [
+            'bustravel-flash' => true,
+            'bustravel-flash-type' => 'success',
+            'bustravel-flash-title' => 'Station Saving',
+            'bustravel-flash-message' => 'Station has successfully been saved'
+        ];
+        return redirect()->route('bustravel.stations')->with($alerts);
 
     }
 
@@ -57,7 +63,13 @@ class StationsController extends Controller
         $station->delete();
 
         //send flash session data
-        return redirect()->route('bustravel.stations');
+        $alerts = [
+            'bustravel-flash' => true,
+            'bustravel-flash-type' => 'error',
+            'bustravel-flash-title' => 'Station Deleting',
+            'bustravel-flash-message' => "Station: $station->name has successfully been deleted"
+        ];
+        return redirect()->route('bustravel.stations')->with($alerts);
     }
 
     

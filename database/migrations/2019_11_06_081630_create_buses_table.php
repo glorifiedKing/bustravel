@@ -15,7 +15,7 @@ class CreateBusesTable extends Migration
     {
         Schema::create('buses', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('operator_id');
+            $table->unsignedBigInteger('operator_id');
             $table->string('number_plate');
             $table->integer('seating_capacity');
             $table->text('description')->nullable();

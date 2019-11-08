@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 use File;
 class BusesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('web');
+        $this->middleware('auth');
+    }
    //fetching buses route('bustravel.buses')
     public function index()
     {
@@ -36,8 +41,13 @@ class BusesController extends Controller
       $bus->description = request()->input('description');
       $bus->status = request()->input('status');
       $bus->save();
-      //flash('Operator '.$operator->name .' Successfully Added')->success()->important();
-      return redirect()->route('bustravel.buses');
+      $alerts = [
+        'bustravel-flash' => true,
+        'bustravel-flash-type' => 'success',
+        'bustravel-flash-title' => 'Bus Saving',
+        'bustravel-flash-message' => 'Bus has successfully been saved'
+    ];
+      return redirect()->route('bustravel.buses')->with($alerts);
     }
     //Bus Edit form route('bustravel.buses.edit')
     public function edit($id)
@@ -63,8 +73,13 @@ class BusesController extends Controller
       $bus->description = request()->input('description');
       $bus->status = request()->input('status');
       $bus->save();
-      //flash('Operator '.$operator->name .' Successfully Added')->success()->important();
-      return redirect()->route('bustravel.buses.update',$id);
+      $alerts = [
+        'bustravel-flash' => true,
+        'bustravel-flash-type' => 'success',
+        'bustravel-flash-title' => 'Bus Updating',
+        'bustravel-flash-message' => 'Bus has successfully been updated'
+    ];
+      return redirect()->route('bustravel.buses.update',$id)->with($alerts);
     }
     //Delete Bus
     public function delete($id)
@@ -72,7 +87,12 @@ class BusesController extends Controller
         $bus=Bus::find($id);
         $name =$bus->number_plate;
         $bus->delete();
-        //flash($name.' Successfully Deleted')->warning()->important();
-        return Redirect::route('bustravel.buses');
+        $alerts = [
+            'bustravel-flash' => true,
+            'bustravel-flash-type' => 'error',
+            'bustravel-flash-title' => 'Bus Deleting ',
+            'bustravel-flash-message' => 'Bus has successfully been Deleted'
+        ];
+        return Redirect::route('bustravel.buses')->with($alerts);
     }
 }

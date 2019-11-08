@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 use File;
 class OperatorsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('web');
+        $this->middleware('auth');
+    }
    //fetching operators route('bustravel.operators')
     public function index()
     {
@@ -52,8 +57,13 @@ class OperatorsController extends Controller
       $operator->phone_number = request()->input('phone_number');
       $operator->status = request()->input('status');
       $operator->save();
-      //flash('Operator '.$operator->name .' Successfully Added')->success()->important();
-      return redirect()->route('bustravel.operators');
+      $alerts = [
+        'bustravel-flash' => true,
+        'bustravel-flash-type' => 'success',
+        'bustravel-flash-title' => 'Operator Saving',
+        'bustravel-flash-message' => 'Operator has successfully been saved'
+    ];
+      return redirect()->route('bustravel.operators')->with($alerts);
     }
     //operator Edit form route('bustravel.operators.edit')
     public function edit($id)
@@ -95,8 +105,13 @@ class OperatorsController extends Controller
       $operator->phone_number = request()->input('phone_number');
       $operator->status = request()->input('status');
       $operator->save();
-      //flash('Operator '.$operator->name .' Successfully Added')->success()->important();
-      return redirect()->route('bustravel.operators.update',$id);
+      $alerts = [
+        'bustravel-flash' => true,
+        'bustravel-flash-type' => 'success',
+        'bustravel-flash-title' => 'Operator Updating',
+        'bustravel-flash-message' => 'Operator has successfully been updated'
+    ];
+      return redirect()->route('bustravel.operators.update',$id)->with($alerts);
     }
     //Delete Operator
     public function delete($id)
@@ -104,7 +119,12 @@ class OperatorsController extends Controller
         $operator=Operator::find($id);
         $name =$operator->name;
         $operator->delete();
-        //flash($name.' Successfully Deleted')->warning()->important();
-        return Redirect::route('bustravel.operators');
+        $alerts = [
+            'bustravel-flash' => true,
+            'bustravel-flash-type' => 'error',
+            'bustravel-flash-title' => 'Operator Deleted',
+            'bustravel-flash-message' => "Operator $name has successfully been deleted"
+        ];
+        return Redirect::route('bustravel.operators')->with($alerts);
     }
 }

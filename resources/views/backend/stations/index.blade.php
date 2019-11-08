@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('bustravel::backend.layouts.app')
 
 @section('title', 'Bus Stations')
 
@@ -130,11 +130,11 @@
 @stop
 
 @section('js')
-
+@parent
     <script>
         $(function () {
-    $("#example1").DataTable();
+            $("#example1").DataTable();        
     
-  });
+        });
     </script>
 @stop
