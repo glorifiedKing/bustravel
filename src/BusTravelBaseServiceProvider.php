@@ -156,13 +156,14 @@ class BusTravelBaseServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->register('JeroenNoten\LaravelAdminLte\AdminLteServiceProvider');
     }
 
     private function registerResources()
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views','bustravel');
+        
     }
 
     protected function registerPublishing()
