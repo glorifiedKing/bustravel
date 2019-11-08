@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('bustravel::backend.layouts.app')
 
 @section('title', 'Bus Operators')
 
@@ -60,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        </tbody>
+                        
                         @foreach ($bus_operators as $bus_operator)
                             <tr>
                               <td>@if($bus_operator->status==1)
@@ -85,6 +85,7 @@
                             </tr>
 
                         @endforeach
+                    </tbody>
                     </table>
                </div>
             </div>
@@ -141,9 +142,15 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
+    @parent
+    <script>
+        $(function () {
+            $("#example1").DataTable();        
+    
+        });
+    </script>
 @stop

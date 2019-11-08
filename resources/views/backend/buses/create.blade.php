@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@extends('bustravel::backend.layouts.app')
 
 @section('title', 'Buses')
 
@@ -90,9 +90,9 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
+   @parent
 @stop
