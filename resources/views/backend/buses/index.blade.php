@@ -58,13 +58,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                        
+
                         @foreach ($buses as $bus)
                             <tr>
                               <td>@if($bus->status==1)
-                                    <a href="#" class="btn btn-xs btn-success">Active</a>
+                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger">Deactive</a>
+                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
 
                                   @endif
                                </td>
@@ -135,15 +135,36 @@
 @stop
 
 @section('css')
-    
+
 @stop
 
 @section('js')
     @parent
     <script>
         $(function () {
-            $("#example1").DataTable();        
-    
-        });
-    </script>
+var table = $('#example1').DataTable({
+      responsive: false,
+      dom: 'Blfrtip',
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'pdfHtml5',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+      'colvis',
+        //'selectAll',
+          //	'selectNone'
+      ],
+            });
+  $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+})
+</script>
+
 @stop

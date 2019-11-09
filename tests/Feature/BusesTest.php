@@ -3,6 +3,7 @@ namespace glorifiedking\BusTravel\Tests;
 use glorifiedking\BusTravel\Tests\TestCase;
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 class BusesTest extends TestCase
@@ -11,12 +12,13 @@ class BusesTest extends TestCase
    //testing getting operators list
     public function testGetBuses()
     {
+      $user = factory(User::class)->create();
       //  create operator
       $operator = factory(Operator::class)->create();
       //  create Bus
       $bus =factory(Bus::class)->create(['operator_id' => $operator->id]);
       //When user visit the buses page
-      $response = $this->get('/transit/buses'); // your route to get Buses
+      $response = $this->actingAs($user)->get('/transit/buses'); // your route to get Buses
       //$this->assertTrue(true);
       $response->assertStatus(200);
       // should be able to read the Bus's Number Plate
@@ -25,6 +27,7 @@ class BusesTest extends TestCase
     //testing create Bus
     public function testCreateBus()
     {
+      $user = factory(User::class)->create();
     //  create operator
       $operator = factory(Operator::class)->create();
       $data =[
@@ -36,26 +39,28 @@ class BusesTest extends TestCase
         "status" => 1,
       ];
       //When user submits Bus request to create endpoint
-      $this->post('/transit/buses',$data); // your route to create Bus
+      $this->actingAs($user)->post('/transit/buses',$data); // your route to create Bus
       //It gets stored in the database
       $this->assertEquals(1,Bus::all()->count());
    }
    //testing Bus Update
    public function testUpdateBus()
    {
+      $user = factory(User::class)->create();
       $operator = factory(Operator::class)->create();
       $bus =factory(Bus::class)->create(['operator_id' => $operator->id]);
       $bus->number_plate = "UBE200";
-      $this->patch('/transit/buses/'.$bus->id.'/update', $bus->toArray()); // your route to update Bus
+      $this->actingAs($user)->patch('/transit/buses/'.$bus->id.'/update', $bus->toArray()); // your route to update Bus
       //The operator should be updated in the database.
       $this->assertDatabaseHas('buses',['id'=> $bus->id , 'number_plate' => 'UBE200']);
    }
     // testing Bus Delete
      public function testDeleteBus()
    {
+      $user = factory(User::class)->create();
       $operator = factory(Operator::class)->create();
       $bus =factory(Bus::class)->create(['operator_id' => $operator->id]);
-      $this->delete('/transit/buses/'.$bus->id.'/delete'); // your route to delete Bus
+      $this->actingAs($user)->delete('/transit/buses/'.$bus->id.'/delete'); // your route to delete Bus
       //The Bus should be deleted from the database.
       $this->assertDatabaseMissing('buses',['id'=> $bus->id]);
    }

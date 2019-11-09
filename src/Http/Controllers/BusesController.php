@@ -64,7 +64,11 @@ class BusesController extends Controller
     public function update($id, Request $request)
     {
       //validation
-      $validation = request()->validate(Bus::$rules);
+      $validation = request()->validate([
+        'operator_id' => 'required',
+        'number_plate' => 'required|unique:buses,number_plate,'.$id,
+        'seating_capacity' => 'required|integer',
+      ]);
       //saving to the database
       $bus = Bus::find($id);
       $bus->operator_id = request()->input('operator_id');
@@ -79,7 +83,7 @@ class BusesController extends Controller
         'bustravel-flash-title' => 'Bus Updating',
         'bustravel-flash-message' => 'Bus has successfully been updated'
     ];
-      return redirect()->route('bustravel.buses.update',$id)->with($alerts);
+      return redirect()->route('bustravel.buses.edit',$id)->with($alerts);
     }
     //Delete Bus
     public function delete($id)

@@ -9,7 +9,7 @@ class Bus extends Model
   // validation
   public static $rules = array(
     'operator_id' => 'required',
-    'number_plate' => 'required',
+    'number_plate' => 'required|unique:buses',
     'seating_capacity' => 'required|integer',
   );
   public function operator()

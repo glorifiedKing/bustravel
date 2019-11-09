@@ -37,20 +37,35 @@
                   <div class="row">
                     <div class="form-group col-md-6">
                          <label>Select  Operator</label>
-                         <select class="form-control" name="operator_id" required placeholder="Select Operator">
-                           <option value=""></option>
+                         <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator">
+                           <option value="">Select Operator</option>
                            @foreach($bus_operators as $operator)
                                <option value="{{$operator->id}}">{{$operator->name}} - {{$operator->code}}</option>
                            @endforeach
                          </select>
+                         @if ($errors->has('operator_id'))
+                             <span class="invalid-feedback">
+                                 <strong>{{ $errors->first('operator_id') }}</strong>
+                             </span>
+                         @endif
                     </div>
                     <div class="form-group col-md-3 ">
                         <label for="exampleInputEmail1">Number Plate</label>
-                        <input type="text"  name="number_plate" value="{{old('number_plate')}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Number Plate" required>
+                        <input type="text"  name="number_plate" value="{{old('number_plate')}}" class="form-control {{ $errors->has('number_plate') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Number Plate" >
+                        @if ($errors->has('number_plate'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('number_plate') }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="form-group col-md-3 ">
                         <label for="exampleInputEmail1">Seating Capacity</label>
-                        <input type="number" name="seating_capacity" value="{{old('seating_capacity')}}"  class="form-control" id="exampleInputEmail1" placeholder="Enter Seating Capacity">
+                        <input type="number" name="seating_capacity" value="{{old('seating_capacity')}}"  class="form-control {{ $errors->has('seating_capacity') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Seating Capacity">
+                        @if ($errors->has('seating_capacity'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('seating_capacity') }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="form-group col-md-12 ">
                         <label for="exampleInputEmail1">Description</label>
@@ -90,9 +105,15 @@
 @stop
 
 @section('css')
-    
+
 @stop
 
 @section('js')
    @parent
+   <script>
+       $(function () {
+         $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+         $('.select2').select2();
+       })
+</script>
 @stop
