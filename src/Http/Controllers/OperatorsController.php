@@ -111,7 +111,7 @@ class OperatorsController extends Controller
         'bustravel-flash-title' => 'Operator Updating',
         'bustravel-flash-message' => 'Operator has successfully been updated'
     ];
-      return redirect()->route('bustravel.operators.update',$id)->with($alerts);
+      return redirect()->route('bustravel.operators.edit',$id)->with($alerts);
     }
     //Delete Operator
     public function delete($id)

@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.buses')}}" class="btn btn-info">Back</a></small> Bus Operators </h1>
+        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.buses')}}" class="btn btn-info">Back</a></small> Buses </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -37,20 +37,35 @@
                   <div class="row">
                         <div class="form-group col-md-6">
                              <label>Select  Operator</label>
-                             <select class="form-control" name="operator_id" required placeholder="Select Operator">
+                             <select class="select2 form-control {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id" required placeholder="Select Operator">
                                <option value=""></option>
                                @foreach($bus_operators as $operator)
                                    <option value="{{$operator->id}}" @php echo $bus->operator_id == $operator->id ? 'selected' :  "" @endphp>{{$operator->name}} - {{$operator->code}}</option>
                                @endforeach
                              </select>
+                             @if ($errors->has('operator_id'))
+                                 <span class="invalid-feedback">
+                                     <strong>{{ $errors->first('operator_id') }}</strong>
+                                 </span>
+                             @endif
                         </div>
                         <div class="form-group col-md-3 ">
                             <label for="exampleInputEmail1">Number Plate</label>
-                            <input type="text"  name="number_plate" value="{{$bus->number_plate}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Number Plate" required>
+                            <input type="text"  name="number_plate" value="{{$bus->number_plate}}" class="form-control {{ $errors->has('number_plate') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Number Plate" required>
+                            @if ($errors->has('number_plate'))
+                                <span class="invalid-feedback">
+                                    <strong>{{ $errors->first('number_plate') }}</strong>
+                                </span>
+                            @endif
                         </div>
                         <div class="form-group col-md-3 ">
                             <label for="exampleInputEmail1">Seating Capacity</label>
-                            <input type="number" name="seating_capacity" value="{{$bus->seating_capacity}}"  class="form-control" id="exampleInputEmail1" placeholder="Enter Seating Capacity">
+                            <input type="number" name="seating_capacity" value="{{$bus->seating_capacity}}"  class="form-control {{ $errors->has('seating_capacity') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Seating Capacity">
+                            @if ($errors->has('seating_capacity'))
+                                <span class="invalid-feedback">
+                                    <strong>{{ $errors->first('seating_capacity') }}</strong>
+                                </span>
+                            @endif
                         </div>
                         <div class="form-group col-md-12 ">
                             <label for="exampleInputEmail1">Description</label>
@@ -90,9 +105,15 @@
 @stop
 
 @section('css')
-    
+
 @stop
 
 @section('js')
     @parent
+    <script>
+        $(function () {
+          $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+          $('.select2').select2();
+        })
+    </script>
 @stop

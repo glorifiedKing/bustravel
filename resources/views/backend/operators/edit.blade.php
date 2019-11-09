@@ -37,7 +37,12 @@
                   <div class="row">
                     <div class="form-group col-md-12 ">
                         <label for="exampleInputEmail1">Operator Name</label>
-                        <input type="text"  name="name" value="{{$bus_operator->name}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Name" required>
+                        <input type="text"  name="name" value="{{$bus_operator->name}}" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Name" >
+                        @if ($errors->has('name'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('name') }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="form-group col-md-4 ">
                         <label for="exampleInputEmail1">Operator Code</label>
@@ -50,15 +55,30 @@
 
                     <div class="form-group col-md-6 ">
                         <label for="exampleInputEmail1">Contact Person</label>
-                        <input type="text" name="contact_person_name" value="{{$bus_operator->contact_person_name}}"  class="form-control" id="exampleInputEmail1" placeholder="Enter Contact Person" required>
+                        <input type="text" name="contact_person_name" value="{{$bus_operator->contact_person_name}}"  class="form-control {{ $errors->has('contact_person_name') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Contact Person" required>
+                        @if ($errors->has('contact_person_name'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('contact_person_name') }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="form-group col-md-6 ">
                         <label for="exampleInputEmail1">Phone Number</label>
-                        <input type="text"  name ="phone_number" value="{{$bus_operator->phone_number}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Phone Number" required>
+                        <input type="text"  name ="phone_number" value="{{$bus_operator->phone_number}}" class="form-control {{ $errors->has('phone_number') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Phone Number" required>
+                        @if ($errors->has('phone_number'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('phone_number') }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="form-group col-md-6 ">
                         <label for="exampleInputEmail1">Address</label>
-                        <textarea class="form-control" rows="3" placeholder="Enter Address" name="address" required value="{{$bus_operator->address}}">{{$bus_operator->address}}</textarea>
+                        <textarea class="form-control {{ $errors->has('address') ? ' has-error' : '' }} " rows="3" placeholder="Enter Address" name="address"  value="{{$bus_operator->address}}">{{$bus_operator->address}}</textarea>
+                        @if ($errors->has('address'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('address') }}</strong>
+                            </span>
+                        @endif
                     </div>
 
                     <div class="form-group col-md-6">
@@ -104,7 +124,7 @@
 @stop
 
 @section('css')
-    
+
 @stop
 
 @section('js')
