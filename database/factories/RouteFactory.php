@@ -13,7 +13,6 @@ $factory->define(Route::class, function (Faker $faker) {
         "end_station" => 2,
         "price" => "25000",
         "return_price" => "25000",
-        "departure_time" => $faker->time,
         "status"=>1,
     ];
 });

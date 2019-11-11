@@ -45,7 +45,6 @@ class RoutesTest extends TestCase
         'end_station' => $station2->id,
         "price" => "25000",
         "return_price" => "25000",
-        "departure_time" => "08:30:00",
         "status" => 1,
       ];
       //When user submits Bus request to create endpoint
@@ -65,10 +64,10 @@ class RoutesTest extends TestCase
         'start_station' => $station1->id,
         'end_station' => $station2->id,
       ]);
-      $route->departure_time = "09:30:00";
+      $route->price = "26000";
       $this->actingAs($user)->patch('/transit/routes/'.$route->id.'/update', $route->toArray()); // your route to update Route
       //The operator should be updated in the database.
-      $this->assertDatabaseHas('routes',['id'=> $route->id , 'departure_time' => '09:30:00']);
+      $this->assertDatabaseHas('routes',['id'=> $route->id , 'price' => '26000']);
    }
     // testing Route Delete
      public function testDeleteRoute()

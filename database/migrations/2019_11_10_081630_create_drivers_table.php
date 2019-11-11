@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoutesTable extends Migration
+class CreateDriversTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,16 @@ class CreateRoutesTable extends Migration
      */
     public function up()
     {
-        Schema::create('routes', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('operator_id');
-            $table->integer('start_station');
-            $table->integer('end_station');
-            $table->decimal('price',12,2)->default(0.00);
-            $table->decimal('return_price',12,2)->default(0.00);
+            $table->string('name');
+            $table->string('nin');
+            $table->date('date_of_birth');
+            $table->string('driving_permit_no')->nullable();
+            $table->string('picture')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->text('address')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
             $table->foreign('operator_id')->references('id')->on('operators')->onDelete('cascade');
@@ -32,6 +35,6 @@ class CreateRoutesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('routes');
+        Schema::dropIfExists('drivers');
     }
 }

@@ -13,9 +13,6 @@ class Route extends Model
     'end_station' => 'required',
     'start_station' => 'required',
     'price' => 'required',
-    'departure_time' => 'required',
-
-
   );
   public function operator()
    {

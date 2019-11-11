@@ -52,7 +52,6 @@ class RouteController extends Controller
       $route->end_station = request()->input('end_station');
       $route->price = str_replace(',', '', request()->input('price'));
       $route->return_price = str_replace(',', '', request()->input('return_price'));
-      $route->departure_time = request()->input('departure_time');
       $route->status = request()->input('status');
       $route->save();
       $alerts = [
@@ -97,7 +96,6 @@ class RouteController extends Controller
       $route->end_station = request()->input('end_station');
       $route->price = str_replace(',', '', request()->input('price'));
       $route->return_price = str_replace(',', '', request()->input('return_price'));
-      $route->departure_time = request()->input('departure_time');
       $route->status = request()->input('status');
       $route->save();
       $alerts = [
