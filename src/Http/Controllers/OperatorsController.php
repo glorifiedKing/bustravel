@@ -50,7 +50,7 @@ class OperatorsController extends Controller
       $operator = new Operator;
       $operator->name = request()->input('name');
       $operator->address = request()->input('address');
-      $operator->code = request()->input('code');
+      $operator->code = strtoupper(request()->input('code'));
       $operator->logo = $photoname??NULL;
       $operator->email = request()->input('email');
       $operator->contact_person_name = request()->input('contact_person_name');

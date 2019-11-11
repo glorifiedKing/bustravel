@@ -31,9 +31,14 @@ Route::post('routes','RouteController@store')->name('bustravel.routes.store');
 Route::get('routes/{id}/edit','RouteController@edit')->name('bustravel.routes.edit');
 Route::any('routes/{id}/update','RouteController@update')->name('bustravel.routes.update');
 Route::any('routes/{id}/delete','RouteController@delete')->name('bustravel.routes.delete');
-
-
+//Drivers
 Route::get('drivers','DriversController@index')->name('bustravel.drivers');
+Route::get('drivers/create','DriversController@create')->name('bustravel.drivers.create');
+Route::post('drivers','DriversController@store')->name('bustravel.drivers.store');
+Route::get('drivers/{id}/edit','DriversController@edit')->name('bustravel.drivers.edit');
+Route::any('drivers/{id}/update','DriversController@update')->name('bustravel.drivers.update');
+Route::any('drivers/{id}/delete','DriversController@delete')->name('bustravel.drivers.delete');
+
 Route::get('bookings','BookingsController@index')->name('bustravel.bookings');
 Route::get('report_sales','ReportsController@sales')->name('bustravel.reports.sales');
 Route::get('report_routes','ReportsController@routes')->name('bustravel.reports.profitroute');
