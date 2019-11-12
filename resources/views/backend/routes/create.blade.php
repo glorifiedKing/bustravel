@@ -95,15 +95,6 @@
                           </span>
                       @endif
                     </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Departure Time</label>
-                      <input type="text"  name="departure_time" value="{{old('departure_time')}}" class="form-control {{ $errors->has('departure_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Departure Time" >
-                      @if ($errors->has('departure_time'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('departure_time') }}</strong>
-                          </span>
-                      @endif
-                    </div>
                     <div class=" col-md-12 form-group">
                     </div>
                     <div class=" col-md-3 form-group">

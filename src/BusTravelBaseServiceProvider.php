@@ -81,6 +81,12 @@ class BusTravelBaseServiceProvider extends ServiceProvider
 
                 ],
                 [
+                    'text' => 'Routes Departures Times',
+                    'url'  => route('bustravel.routes.departures'),
+                    'icon'=>'fa fa-clock',
+
+                ],
+                [
                     'text' => 'Bookings',
                     'url'  => route('bustravel.bookings'),
                     'icon'=>'fa fa-money-check',
