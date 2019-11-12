@@ -38,6 +38,14 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         [
                             'text' => 'Company Settings',
                             'url'  => route('bustravel.company_settings'),
+                            'submenu' =>
+                            [
+                              [
+                                  'text' => 'Booking Custom Fields',
+                                  'url'  => route('bustravel.company_settings.fields'),
+                                  'icon' => 'clipboard',
+                              ],
+                            ]
 
                         ],
                         [

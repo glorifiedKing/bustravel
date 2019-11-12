@@ -10,6 +10,11 @@ Route::post('stations/view/{id}','StationsController@store')->name('bustravel.st
 Route::get('stations/delete/{id}','StationsController@destroy')->name('bustravel.stations.delete');
 Route::get('general_settings','SettingsController@general')->name('bustravel.general_settings');
 Route::get('company_settings','SettingsController@company')->name('bustravel.company_settings');
+Route::get('company_settings/fields','SettingsController@fields')->name('bustravel.company_settings.fields');
+Route::post('company_settings/fields','SettingsController@storefields')->name('bustravel.company_settings.fields.store');
+Route::any('company_settings/fields/{id}/update','SettingsController@updatefields')->name('bustravel.company_settings.fields.update');
+Route::any('company_settings/fields/{id}/delete','SettingsController@deletefields')->name('bustravel.company_settings.fields.delete');
+
 //operators routes
 Route::get('operators','OperatorsController@index')->name('bustravel.operators');
 Route::get('operators/create','OperatorsController@create')->name('bustravel.operators.create');
@@ -47,6 +52,12 @@ Route::any('routes/departures/{id}/update','RoutesDepartureTimesController@updat
 Route::any('routes/departures/{id}/delete','RoutesDepartureTimesController@delete')->name('bustravel.routes.departures.delete');
 
 Route::get('bookings','BookingsController@index')->name('bustravel.bookings');
+Route::get('bookings/create','BookingsController@create')->name('bustravel.bookings.create');
+Route::post('bookings','BookingsController@store')->name('bustravel.bookings.store');
+Route::get('bookings/{id}/edit','BookingsController@edit')->name('bustravel.bookings.edit');
+Route::any('bookings/{id}/update','BookingsController@update')->name('bustravel.bookings.update');
+Route::any('bookings/{id}/delete','BookingsController@delete')->name('bustravel.bookings.delete');
+
 Route::get('report_sales','ReportsController@sales')->name('bustravel.reports.sales');
 Route::get('report_routes','ReportsController@routes')->name('bustravel.reports.profitroute');
 Route::get('report_traffic','ReportsController@traffic')->name('bustravel.reports.traffic');
