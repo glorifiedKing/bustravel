@@ -1,0 +1,180 @@
+@media (max-width: 499px) {
+	#nav-menu li {
+	    font-size: 25px;
+	}
+}
+
+@media (max-width: 800px) {
+	.nav-wrap {
+	    width: 100%;
+	    padding-left: 50px;
+	    padding-right: 50px;
+	}
+
+	.nav-logo {
+	    position: absolute;
+	    left: 25px;
+	}
+
+	#nav-menu-bars {
+	    position: absolute;
+	    right: 25px;
+	}
+
+	h1 {
+		font-size: 34px;
+	}
+
+	.site-section {
+		padding-top: 25px;
+		padding-bottom: 25px;
+	}
+
+	.brief-about .img {
+	    display: none;
+	}
+}
+
+@media (min-width: 500px) {
+	.footer ul.contact-links {
+	    max-width: 500px;
+	    margin-left: auto;
+	    margin-right: auto;
+	    display: flex;
+	    justify-content: space-around;
+	}
+}
+
+@media (min-width: 601px) {
+	.footer ul.page-links li {
+	    float: left;
+	    width: 33.33333333333333%;
+	    text-align: center;
+	    border-right: 1px solid #fff;
+	}
+
+	.footer ul.page-links li:last-child {
+	    border-right: none;
+	}
+}
+
+@media (min-width: 768px) {
+	.service-area .txt {
+	    width: 67.60720411663808%;
+	}
+
+	.contact-area .wrap .txt {
+	    float: left;
+	    width: 45%;
+	}
+
+	.contact-area .wrap .map {
+	    float: right;
+	    width: 45%;
+	    height: 100vh;
+	    max-height: 500px;
+	    background: #eee;
+	}
+
+	.service-item li {
+	    border-top: 2px solid #f0f0f0;
+	    padding-top: 30px;
+	}
+
+	.service-item li:nth-child(1) {
+	    float: left;
+	    width: 42.88164665523156%;
+	}
+
+	.service-item li:nth-child(2) {
+	    float: right;
+	    width: 48.54202401372213%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.brief-about .txt {
+	    float: left;
+	    width: 42.36706689536878%;
+	}
+
+	.brief-about .txt h6 {
+	    margin-top: 100px;
+	}
+
+	.brief-about .img {
+	    float: right;
+	    width: 48.3%;
+	    height: 100vh;
+	    max-height: 500px;
+	    background: #eee;
+	}
+
+	.brief-services .img {
+	    float: left;
+	    width: 34.30531732418525%;
+	    height: 100vh;
+	    max-height: 484px;
+	    background: #162033;
+	}
+
+	.brief-services .txt {
+	    float: right;
+	    width: 57.11835334476844%;
+	}
+
+	.brief-services .txt li {
+	    font-size: 24px;
+	}
+
+	.advisory {
+	    max-height: 625px;
+	}
+
+	.advisory .wrap .txt-1 {
+	    float: left;
+	    width: 43.13893653516295%;
+	}
+
+	.advisory .wrap .txt-2 {
+	    float: right;
+	    width: 48.28473413379074%;
+	    background: #FFFFFF;
+	    padding: 50px;
+	    height: 100vh;
+	    max-height: 580px;
+	    margin-top: 0;
+	}
+
+	.txt-2 li {
+	    font-size: 24px;
+	}
+
+	.posts-listing li {
+	    float: left;
+	    width: 33.33333333333333%;
+	    color: #fff;
+	    border-left: 1px solid #107FBC;
+	    padding: 25px 0;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	}
+
+	.posts-listing li:last-child {
+	    border-right: 1px solid #107FBC;
+	}
+
+	.team-section .img {
+	    float: left;
+	    width: 47.16981132075472%;
+	    height: 100vh;
+	    max-height: 700px;
+	    background: #eee;
+	}
+
+	.team-section .txt {
+	    float: right;
+	    width: 45.79759862778731%;
+	}
+}
