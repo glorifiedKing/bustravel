@@ -38,6 +38,13 @@ Route::post('drivers','DriversController@store')->name('bustravel.drivers.store'
 Route::get('drivers/{id}/edit','DriversController@edit')->name('bustravel.drivers.edit');
 Route::any('drivers/{id}/update','DriversController@update')->name('bustravel.drivers.update');
 Route::any('drivers/{id}/delete','DriversController@delete')->name('bustravel.drivers.delete');
+//Route Departure Times
+Route::get('routes/departures','RoutesDepartureTimesController@index')->name('bustravel.routes.departures');
+Route::get('routes/departures/create','RoutesDepartureTimesController@create')->name('bustravel.routes.departures.create');
+Route::post('routes/departures','RoutesDepartureTimesController@store')->name('bustravel.routes.departures.store');
+Route::get('routes/departures/{id}/edit','RoutesDepartureTimesController@edit')->name('bustravel.routes.departures.edit');
+Route::any('routes/departures/{id}/update','RoutesDepartureTimesController@update')->name('bustravel.routes.departures.update');
+Route::any('routes/departures/{id}/delete','RoutesDepartureTimesController@delete')->name('bustravel.routes.departures.delete');
 
 Route::get('bookings','BookingsController@index')->name('bustravel.bookings');
 Route::get('report_sales','ReportsController@sales')->name('bustravel.reports.sales');

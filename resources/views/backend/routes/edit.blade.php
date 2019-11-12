@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes')}}" class="btn btn-info">Back</a></small> Buses </h1>
+        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes')}}" class="btn btn-info">Back</a></small> Routes </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -95,24 +95,15 @@
                           </span>
                       @endif
                     </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Departure Time</label>
-                      <input type="text"  name="departure_time" value="{{$route->departure_time}}" class="form-control {{ $errors->has('departure_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Departure Time" >
-                      @if ($errors->has('departure_time'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('departure_time') }}</strong>
-                          </span>
-                      @endif
-                    </div>
                     <div class=" col-md-12 form-group">
                     </div>
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Status</label>
                         <label class="radio-inline">
-                          <input type="radio" id="Active" name="status" value="1" checked> Active</label>
+                          <input type="radio" id="Active" name="status" value="1" @php echo $route->status == 1? 'checked' :  "" @endphp> Active</label>
                         </label>
                        <label class="radio-inline">
-                          <input type="radio" id="Deactive" name="status" value="0" > Deactive</label>
+                          <input type="radio" id="Deactive" name="status" value="0" @php echo $route->status == 0? 'checked' :  "" @endphp > Deactive</label>
                        </label>
                     </div>
                   </div>
