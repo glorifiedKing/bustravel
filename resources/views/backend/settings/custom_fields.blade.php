@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Feilds</h1>
+        <h1 class="m-0 text-dark">Fields</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -26,7 +26,7 @@
             <div class="card-header">
             <h5 class="card-title">  All Fields
               <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-default">
-              Add New Fieid
+              Add New Field
             </button></h5>
 
             <div class="card-tools">
@@ -38,7 +38,7 @@
                     <i class="fas fa-plus"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
-                    <a href="{{route('bustravel.drivers.create')}}" class="dropdown-item">New Driver</a>
+                    <a href="#" class="dropdown-item">New Field</a>
                     <a href="#" class="dropdown-item">delete selected</a>
                 </div>
                 </div>

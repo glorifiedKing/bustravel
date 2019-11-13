@@ -12,6 +12,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendor/glorifiedking/fav/favicon-16x16.png') }}">
   <link rel="shortcut icon" href="{{ asset('fav/favicon.png') }}">
   <link href="{{ asset('vendor/glorifiedking/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+  <link href="{{ asset('vendor/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/base.css')}}">
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/styles.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/queries.css') }}">
@@ -31,10 +32,12 @@
     </main>
     <svg id="all-svg" width="0" height="0"></svg>
   <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-  <script src="{{ asset('vendor/glorifiedking/js/bootstrap.min.js') }}"></script>  
+  <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>  
+  <script src="{{ asset('vendor/select2/select2.min.js') }}"></script> 
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/modnz.js') }}"></script>
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/aos.js') }}"></script>  
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/scripts.js') }}"></script>
+  @yield('js')
 </body>
 </html>
 
