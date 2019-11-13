@@ -26,5 +26,9 @@ class Route extends Model
     {
         return $this->belongsTo(Station::class,'end_station');
     }
+   public function departure_times()
+   {
+       return $this->hasMany(RoutesDepartureTime::class,'route_id');
+   } 
 
 }

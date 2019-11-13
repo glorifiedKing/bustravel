@@ -2,11 +2,114 @@
 namespace glorifiedking\BusTravel\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
+use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\RoutesDepartureTime;
+use Carbon\Carbon;
 
 class FrontendController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('web')->only('checkout');
+        $this->middleware('auth')->only('checkout');
+    }
     public function homepage()
     {
-        return view('bustravel::frontend.index');
+        $bus_stations = Station::all();
+        return view('bustravel::frontend.index',compact('bus_stations'));
+    }
+
+    public function search_routes(Request $request)
+    {
+        $validated_data = $request->validate([
+            "to_station" => 'required|numeric|different:departure_station',
+            "departure_station" => 'required|numeric',
+            "date_of_travel" => 'required|date',
+            "time_of_travel" => 'required',
+            "adults" => 'numeric|min:1',
+        ]);
+
+        //search 
+        $route_results = Route::where([
+            ['start_station','=',$request->departure_station],
+            ['end_station','=',$request->to_station],
+        ])->get();
+        if($route_results->isEmpty())
+        {
+            
+            //check if bus is full 
+
+            //filter by time 
+        }
+        $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
+
+        return view('bustravel::frontend.route_search_results',compact('route_results','date_of_travel'));
+    }
+
+    public function cart(Request $request)
+    {
+        //get cart items 
+        $cart = $request->session()->get('cart.items') ?? [];
+        $departure_ids = (!empty($cart)) ? array_column($cart,'id') : [0];
+        $route_departures = RoutesDepartureTime::whereIn('id',$departure_ids)->get();
+
+        return view('bustravel::frontend.cart',compact('route_departures'));
+    }
+
+    public function add_to_basket(Request $request,$route_departure_time_id,$date_of_travel)
+    {
+        $route_time = RoutesDepartureTime::findOrFail($route_departure_time_id);
+        if($request->session()->has('cart'))
+        {
+            if(!in_array($route_departure_time_id,array_column($request->session()->get('cart.items'),'id')))
+            {
+                $request->session()->push('cart.items',[
+                     'id'=> $route_departure_time_id,
+                     'quantity' => 1,
+                     'amount' => $route_time->route->price,
+                     'date_of_travel' => $date_of_travel
+                ]);
+            }
+        }
+
+        else if(!$request->session()->has('cart'))
+        {
+            $request->session()->put('cart.items', []);
+            $request->session()->push('cart.items',[
+                'id'=> $route_departure_time_id,
+                'quantity' => 1,
+                'amount' => $route_time->route->price,
+                'date_of_travel' => $date_of_travel
+           ]);
+        }
+
+        return redirect()->route('bustravel.cart');
+    }
+
+    public function clear_cart(Request $request)
+    {
+        if($request->session()->has('cart'))
+        {
+            $request->session()->forget('cart');
+        }
+
+        return redirect()->route('bustravel.homepage');
+    }
+
+    public function remove_cart_item(Request $request,$key)
+    {
+        if($request->session()->has('cart'))
+        {
+            $request->session()->pull('cart.items',$key);
+        }
+
+        return redirect()->route('bustravel.cart');
+    }
+
+    public function checkout(Request $request)
+    {
+        return view('bustravel::frontend.checkout');
     }
 }
