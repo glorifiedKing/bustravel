@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use glorifiedking\BusTravel\User;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
@@ -17,23 +17,9 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(Permission::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
-        'password' => 'password', // password
-        'remember_token' => Str::random(10),
-        'phone_number' => $faker->phoneNumber,
-        'status' => 1,
-        'operator_id' => 1,
-
-
-    //    'api_token' => Str::random(60),
-    //    'is_admin' => false,
+        'name' => 'Edit_User',
+        'guard_name' => 'web',
     ];
 });
-
-$factory->state(User::class, 'admin', [
-    'is_admin' => true,
-]);

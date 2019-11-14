@@ -155,7 +155,28 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             [
                                 'text' => 'Users',
                                 'url'  => route('bustravel.testdefault'),
+                                  'icon' =>'fa fa-users',
+                                'submenu' =>
+                                [
+                                  [
+                                      'text' => 'User Accounts',
+                                      'url'  => route('bustravel.users'),
+                                      'icon' =>'fa fa-lock',
 
+                                  ],
+                                  [
+                                      'text' => 'Roles',
+                                      'url'  => route('bustravel.users.roles'),
+                                      'icon' =>'fa fa-lock',
+
+                                  ],
+                                  [
+                                      'text' => 'Permissions',
+                                      'url'  => route('bustravel.users.permissions'),
+                                      'icon' =>'fa fa-lock',
+
+                                  ],
+                                ],
                             ],
 
                         ]
@@ -176,6 +197,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register('JeroenNoten\LaravelAdminLte\AdminLteServiceProvider');
+        $this->app->register('Spatie\Permission\PermissionServiceProvider');
     }
 
     private function registerResources()
@@ -190,10 +212,12 @@ class BusTravelBaseServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/bustravel.php' => config_path('bustravel.php')
         ],'bustravel-config');
-
         $this->publishes([
             __DIR__.'/../assets' => public_path('vendor/glorifiedking'),
         ], 'bustravel-assets');
+        $this->publishes([
+        __DIR__.'/../database/test_migrations/' => database_path('migrations')
+    ], 'bustravel-migrations');
     }
 
     protected function registerRoutes()

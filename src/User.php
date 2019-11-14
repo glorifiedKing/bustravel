@@ -3,10 +3,14 @@ namespace glorifiedking\BusTravel;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
+    use HasRoles;
     use Notifiable;
+
+
+     protected $guard_name = 'web';
 
     /**
      * The attributes that are mass assignable.
@@ -17,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone_number',
+        'status',
+        'operator_id',
     ];
 
     /**
