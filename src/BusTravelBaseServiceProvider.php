@@ -218,6 +218,9 @@ class BusTravelBaseServiceProvider extends ServiceProvider
         $this->publishes([
         __DIR__.'/../database/test_migrations/' => database_path('migrations')
     ], 'bustravel-migrations');
+    $this->publishes([
+    __DIR__.'/../database/factories/' => database_path('factories')
+], 'bustravel-factories');
     }
 
     protected function registerRoutes()
