@@ -107,10 +107,10 @@
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Status</label>
                         <label class="radio-inline">
-                          <input type="radio" id="Active" name="status" value="1" checked>  Paid </label>
+                          <input type="radio" id="Active" name="status" value="1" >  Paid </label>
                         </label>
                        <label class="radio-inline">
-                          <input type="radio" id="Deactive" name="status" value="0" >  Not Paid</label>
+                          <input type="radio" id="Deactive" name="status" value="0" checked>  Not Paid</label>
                        </label>
                     </div>
                   </div>

@@ -17,5 +17,5 @@
 
 @section('js')
 @include('bustravel::backend.partials.toast')
-
+<script src="{{ asset('vendor/glorifiedking/charts/echarts.min.js') }}"></script>
 @stop
