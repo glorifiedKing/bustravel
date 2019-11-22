@@ -83,6 +83,7 @@ Route::any('users/{id}/delete','UsersController@deleteusers')->name('bustravel.u
 
 
 Route::get('report_sales','ReportsController@sales')->name('bustravel.reports.sales');
+Route::post('report_sales','ReportsController@sales')->name('bustravel.reports.sales.period');
 Route::get('report_routes','ReportsController@routes')->name('bustravel.reports.profitroute');
 Route::get('report_traffic','ReportsController@traffic')->name('bustravel.reports.traffic');
 Route::get('report_booking','ReportsController@booking')->name('bustravel.reports.bookings');
