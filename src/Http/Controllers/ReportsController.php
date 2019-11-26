@@ -452,7 +452,7 @@ class ReportsController extends Controller
 
             }
 
-       return view('bustravel::backend.reports.Profitableroutes',compact('x_axis','y_axis1','y_axis2','y_axis3','period','first','second','third'));
+       return view('bustravel::backend.reports.profitableroutes',compact('x_axis','y_axis1','y_axis2','y_axis3','period','first','second','third'));
    }
 
    //Traffic Report
