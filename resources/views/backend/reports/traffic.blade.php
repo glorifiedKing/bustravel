@@ -1,12 +1,12 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Sales Report')
+@section('title', 'Traffic Report')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Sales Report</h1>
+        <h1 class="m-0 text-dark">Traffic Report</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -27,7 +27,7 @@
               <div class="col-md-6">
               </div>
               <div class="col-md-6">
-                <form action="{{route('bustravel.reports.sales.period')}}" method="post" >
+                <form action="{{route('bustravel.reports.traffic.period')}}" method="post" >
                   {{ csrf_field() }}
                 <div class="form-group col-md-6">
                 <select  name="period" class="form-control"  onchange="this.form.submit()">
@@ -64,7 +64,7 @@
             var myChart = echarts.init(document.getElementById('sales'));
             option = {
                 title: {
-                    text: 'Sales Report'
+                    text: 'Traffic Report'
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -103,9 +103,9 @@
                 },
                 series: [
                     {
-                        name:'Sales',
+                        name:'Traffic',
                         type:'line',
-                        stack: 'Sales',
+                        stack: 'Traffic',
                         data:[
                           @foreach($y_axis as $axis)
                         {{$axis}},

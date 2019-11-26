@@ -1,12 +1,12 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Sales Report')
+@section('title', 'Profitable Route Report')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Sales Report</h1>
+        <h1 class="m-0 text-dark">Profitable Route Report</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -27,7 +27,7 @@
               <div class="col-md-6">
               </div>
               <div class="col-md-6">
-                <form action="{{route('bustravel.reports.sales.period')}}" method="post" >
+                <form action="{{route('bustravel.reports.profitroute.period')}}" method="post" >
                   {{ csrf_field() }}
                 <div class="form-group col-md-6">
                 <select  name="period" class="form-control"  onchange="this.form.submit()">
@@ -64,11 +64,14 @@
             var myChart = echarts.init(document.getElementById('sales'));
             option = {
                 title: {
-                    text: 'Sales Report'
+                    text: 'Profitable Route Report'
                 },
                 tooltip: {
                     trigger: 'axis'
                 },
+                legend: {
+                      data:['{{$first}}','{{$second}}','{{$third}}']
+                    },
                 grid: {
                     left: '3%',
                     right: '4%',
@@ -103,14 +106,34 @@
                 },
                 series: [
                     {
-                        name:'Sales',
+                        name:'{{$first}}',
                         type:'line',
-                        stack: 'Sales',
+                        stack: '{{$first}}',
                         data:[
-                          @foreach($y_axis as $axis)
+                          @foreach($y_axis1 as $axis)
                         {{$axis}},
                         @endforeach
-                                          ]
+                            ]
+                    },
+                    {
+                        name:'{{$second}}',
+                        type:'line',
+                        stack: '{{$second}}',
+                        data:[
+                          @foreach($y_axis2 as $axis)
+                        {{$axis}},
+                        @endforeach
+                            ]
+                    },
+                    {
+                        name:'{{$third}}',
+                        type:'line',
+                        stack: '{{$third}}',
+                        data:[
+                          @foreach($y_axis3 as $axis)
+                        {{$axis}},
+                        @endforeach
+                            ]
                     },
 
                 ]
