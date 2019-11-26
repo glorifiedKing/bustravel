@@ -79,7 +79,8 @@ Route::post('users','UsersController@storeusers')->name('bustravel.users.store')
 Route::get('users/{id}/edit','UsersController@editusers')->name('bustravel.users.edit');
 Route::any('users/{id}/update','UsersController@updateusers')->name('bustravel.users.update');
 Route::any('users/{id}/delete','UsersController@deleteusers')->name('bustravel.users.delete');
-
+// errors 
+Route::get('error/access_denied','ExceptionsController@accessDenied')->name('bustravel.errors.403');
 
 
 Route::get('report_sales','ReportsController@sales')->name('bustravel.reports.sales');
