@@ -34,10 +34,12 @@
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
                     <i class="fas fa-plus"></i>
                 </button>
+                @can('Manage BT Stations')
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.stations.create')}}" class="dropdown-item">New Station</a>
                     <a href="#" class="dropdown-item">delete selected</a>                    
                 </div>
+                @endcan
                 </div>
                 
             </div>
@@ -63,8 +65,11 @@
                                 <td>{{$bus_station->code}}</td>
                                 <td>{{$bus_station->address.' '.$bus_station->province.' '.$bus_station->city}}</td>
                                 <td>lat: {{$bus_station->latitude}} log: {{$bus_station->longitude}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.stations.edit',$bus_station->id)}}"><i class="fas fa-edit"></i></a>
+                                <td>
+                                    @can('Manage BT Stations')
+                                    <a title="Edit" href="{{route('bustravel.stations.edit',$bus_station->id)}}"><i class="fas fa-edit"></i></a>
                                     <a title="Delete" onclick="return confirm('are you sure you want to delete this station')" href="{{route('bustravel.stations.delete',$bus_station->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                    @endcan
                                 </td>
                             </tr>
 
