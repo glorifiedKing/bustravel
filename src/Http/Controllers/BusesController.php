@@ -19,6 +19,10 @@ class BusesController extends Controller
    //fetching buses route('bustravel.buses')
     public function index()
     {
+        if(!auth()->user()->can('View BT Buses'))
+        {
+            return redirect()->route('bustravel.errors.403');
+        }
         $buses =Bus::all();
         return view('bustravel::backend.buses.index',compact('buses'));
     }

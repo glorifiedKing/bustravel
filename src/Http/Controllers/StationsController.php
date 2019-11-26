@@ -16,18 +16,30 @@ class StationsController extends Controller
 
     public function index()
     {
+        if(!auth()->user()->can('View BT Stations'))
+        {
+            return redirect()->route('bustravel.errors.403');
+        }
         $bus_stations = Station::all();
         return view('bustravel::backend.stations.index',compact('bus_stations'));
     }
 
     public function show($id=null)
     {
+        if(!auth()->user()->can('Manage BT Stations'))
+        {
+            return redirect()->route('bustravel.errors.403');
+        }
         $station = (!empty($id)) ? Station::findOrFail($id) : null;        
         return view('bustravel::backend.stations.create',compact('station'));
     }
 
     public function store(Request $request)
     {
+        if(!auth()->user()->can('Manage BT Stations'))
+        {
+            return redirect()->route('bustravel.errors.403');
+        }
         //validate 
         $station = (!empty($request->station_id)) ? Station::findOrFail($request->station_id) : new Station;
         $validated_data = $request->validate([
@@ -57,6 +69,10 @@ class StationsController extends Controller
 
     public function destroy($id)
     {
+        if(!auth()->user()->can('Manage BT Stations'))
+        {
+            return redirect()->route('bustravel.errors.403');
+        }
         $station = Station::findOrFail($id);
 
         //confirm if it is used in route before deleting 
