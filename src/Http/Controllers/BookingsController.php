@@ -26,7 +26,7 @@ class BookingsController extends Controller
    //fetching buses route('bustravel.buses')
     public function index()
     {
-        $bookings =Booking::all();
+        $bookings =Booking::orderBy('id','DESC')->get();
         return view('bustravel::backend.bookings.index',compact('bookings'));
     }
     //creating buses form route('bustravel.buses.create')

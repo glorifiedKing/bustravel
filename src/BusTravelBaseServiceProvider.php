@@ -26,18 +26,20 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                 //        [
                     'text' => 'Settings',
                     'url'  => '#',
-                    'icon' => 'cog',
+                    'icon' => 'fa fa-cog',
                     'submenu' =>
                     [
                         [
                             'text' => 'General Settings',
                             'url'  => route('bustravel.general_settings'),
+                            'icon' => 'fa fa-cog',
 
                         ],
 
                         [
                             'text' => 'Company Settings',
                             'url'  => route('bustravel.company_settings'),
+                            'icon' => 'fa fa-cog',
                             'submenu' =>
                             [
                               [
@@ -51,7 +53,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         [
                             'text' => 'Stations',
                             'url'  => route('bustravel.stations'),
-                            'icon' => 'clipboard',
+                            'icon' => 'fa fa-map-marker-alt',
                         ],
 
                     ]
@@ -60,7 +62,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
             $operations_menu = [
             'text' => 'Operations',
             'url'  => '#',
-            'icon' => 'cog',
+            'icon' => 'fa fa-cube',
             'submenu' =>
             [
                 [
@@ -107,33 +109,38 @@ class BusTravelBaseServiceProvider extends ServiceProvider
             $reports_menu = [
             'text' => 'Reports',
             'url'  => '#',
-            'icon' => 'cog',
+            'icon' => 'fa fa-list',
             'submenu' =>
                 [
                     [
                         'text' => 'Sales',
                         'url'  => route('bustravel.reports.sales'),
+                        'icon'=>'fa fa-money-bill',
 
                     ],
 
                     [
                         'text' => 'Profitable Routes',
                         'url'  => route('bustravel.reports.profitroute'),
+                        'icon'=>'fa fa-route',
 
                     ],
                     [
                         'text' => 'Passenger Traffic',
                         'url'  => route('bustravel.reports.traffic'),
+                        'icon'=>'fa fa-traffic-light',
 
                     ],
                     [
                         'text' => 'Locations',
-                        'url'  => route('bustravel.reports.locations'),
+                      //  'url'  => route('bustravel.reports.locations'),
+                        'icon'=>'fa fa-search-location',
 
                     ],
                     [
                         'text' => 'Bookings',
                         'url'  => route('bustravel.reports.bookings'),
+                        'icon'=>'fa fa-money-check',
 
                     ],
 
@@ -144,12 +151,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
 
                         'text' => 'User and Profile',
                         'url'  => '#',
-                        'icon' => 'fas fa-fw fa-share',
+                        'icon' => 'fas fa-fw fa-users',
                         'submenu' =>
                         [
                             [
                                 'text' => 'Profile',
                                 'url'  => route('bustravel.testdefault'),
+                                'icon' => 'fas fa-fw fa-address-card',
 
                             ],
                             [

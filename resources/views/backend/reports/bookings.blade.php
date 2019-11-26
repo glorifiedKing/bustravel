@@ -23,28 +23,34 @@
     <div class="row">
         <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-            <h5 class="card-title">All Bookings</h5>
-
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-                </button>
-                <div class="btn-group">
-                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" role="menu">
-                    <a href="{{route('bustravel.bookings.create')}}" class="dropdown-item">New Booking</a>
-                    <a href="#" class="dropdown-item">delete selected</a>
-                </div>
-                </div>
-
-            </div>
-            </div>
-            <!-- /.card-header -->
             <div class="card-body">
             <div class="row">
+              <div class="col-md-12">
+                <form action="{{route('bustravel.reports.bookings.search')}}" method="post" >
+                  {{ csrf_field() }}
+                  <div class="row">
+                  <div class="form-group col-md-3">
+                    <label>Ticket No</label>
+                    <input type="text"  name="ticket" value="{{$ticket??""}}" class="form-control " id="exampleInputEmail1" placeholder="Ticket No" >
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label>From</label>
+                    <input type="date"  name="from" value="{{$from??""}}" class="form-control " id="exampleInputEmail1" >
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label>To</label>
+                    <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
+                  </div>
+                  <div class="form-group col-md-2"><label>.</label><br>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                  </div>
+                </div>
+                </form>
+                </div>
+            </div>
+            <div class="row">
+
+
                <div class="col-md-12">
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
@@ -57,7 +63,6 @@
                                 <th>Paid Date</th>
                                 <th>Travel Date </th>
                                 <th>Created </th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,9 +83,6 @@
                                 <td>{{$booking->date_paid}}</td>
                                 <td>{{$booking->date_of_travel}}</td>
                                 <td>{{Carbon\Carbon::parse($booking->created_at)->format('Y-m-d')}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.bookings.edit',$booking->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Booking')" href="{{route('bustravel.bookings.delete',$booking->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
-                                </td>
                             </tr>
 
                         @endforeach
@@ -91,46 +93,7 @@
             <!-- /.row -->
             </div>
             <!-- ./card-body -->
-            <div class="card-footer">
-            <div class="row">
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
-                </div>
-                <!-- /.description-block -->
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
-                </div>
-                <!-- /.description-block -->
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
-                </div>
-                <!-- /.description-block -->
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-3 col-6">
-                <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
-                </div>
-                <!-- /.description-block -->
-                </div>
-            </div>
-            <!-- /.row -->
-            </div>
+          
             <!-- /.card-footer -->
         </div>
         <!-- /.card -->
