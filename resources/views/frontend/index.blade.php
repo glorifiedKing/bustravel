@@ -92,6 +92,15 @@
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Child</label>
                                                 <input type="number" name="children" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <input type="checkbox" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <label type="text" class="form-control" aria-label="Text input with checkbox">Luggage pieces</label>
+                                                <input type="number" name="luggage" class="form-control" aria-label="Text input with checkbox" value=0>
+                                            </div>
                                         
                                     </div>
                                 </div>
