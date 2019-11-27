@@ -1,5 +1,6 @@
 <?php
 
 return [
-    "path" => "transit"
+    "path" => "transit",
+    "user_model" => App\User::class,
 ];

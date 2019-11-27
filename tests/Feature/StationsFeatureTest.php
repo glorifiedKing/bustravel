@@ -4,6 +4,7 @@ namespace glorifiedking\BusTravel\Tests;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Artisan;
 
 class StationsFeatureTest extends TestCase
 {
@@ -23,12 +24,14 @@ class StationsFeatureTest extends TestCase
         //$this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->get('/transit/stations');
-        $response->assertStatus(200); // to change to 403/401 later
+        $response->assertStatus(302); 
     }
 
     public function testListStations()
     {
-        $user = factory(User::class)->create();  // to create user that can view stations later
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+        $user = factory(User::class)->create();  
+        $user->assignRole('BT Super Admin');
         $station = factory(Station::class)->create();
         $response = $this->actingAs($user)->get('/transit/stations');
         $response->assertStatus(200);
@@ -43,9 +46,18 @@ class StationsFeatureTest extends TestCase
         $response->assertStatus(302);
     }
 
-    public function testStationsCreateForm()
+    public function testDenyStationsCreateForm()
     {
         $user = factory(User::class)->create();
+        $response = $this->actingAs($user)->get('/transit/stations/create');
+        $response->assertStatus(302);
+    }
+
+    public function testStationsCreateForm()
+    {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+        $user = factory(User::class)->create();  
+        $user->assignRole('BT Super Admin');
         $response = $this->actingAs($user)->get('/transit/stations/create');
         $response->assertStatus(200);
         $response->assertSee("station_name");

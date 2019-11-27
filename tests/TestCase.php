@@ -48,9 +48,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         ]);
 
-        /*$app['config']->set('auth.guards.web',[
-          'driver' => 'session',
-          'provider' => 'users',
+        /*$app['config']->set('bustravel',[
+          'user_model' => '\glorifiedking\BusTravel\User::class',
+          'path' => 'transit',
 
         ]);*/
     }

@@ -169,7 +169,7 @@ class UsersController extends Controller
      //fetching Roles
       public function users()
       {
-          $users =User::all();
+          $users =config('bustravel.user_model',User::class)::all();
           return view('bustravel::backend.users.users.index',compact('users'));
       }
       public function createusers()
@@ -189,7 +189,8 @@ class UsersController extends Controller
           'password' => 'required|min:7|confirmed',
           'password_confirmation' => 'required|same:password'
         ]);
-        $user = new User;
+        $user_class = config('bustravel.user_model',User::class);
+        $user = new $user_class;
         $user->name =request()->input('name');
         $user->email =request()->input('email');
         $user->password =bcrypt(request()->input('password'));
@@ -211,7 +212,7 @@ class UsersController extends Controller
        {
          $roles = Role::all();//Get all permissions
          $operators =Operator::where('status',1)->get();
-         $user = User::find($id);
+         $user = config('bustravel.user_model',User::class)::find($id);
          if (is_null($user))
          {
           return Redirect::route('bustravel.users');
@@ -230,7 +231,7 @@ class UsersController extends Controller
             //'password' => 'required|min:7|confirmed',
             //'password_confirmation' => 'required|same:password'
           ]);
-          $user =  User::find($id);
+          $user =  config('bustravel.user_model',User::class)::find($id);
           $user->name =request()->input('name');
           $user->email =request()->input('email');
           $user->phone_number =request()->input('phone_number');
@@ -245,7 +246,7 @@ class UsersController extends Controller
             'newpassword' => 'required|min:7|confirmed',
             'password_confirmation' => 'required|same:newpassword'
           ]);
-          $user =  User::find($id);
+          $user =  config('bustravel.user_model',User::class)::find($id);
           $user->name =request()->input('name');
           $user->email =request()->input('email');
           $user->password =bcrypt(request()->input('password'));
@@ -268,7 +269,7 @@ class UsersController extends Controller
       //Delete Role
       public function deleteusers($id)
       {
-          $user=User::find($id);
+          $user=config('bustravel.user_model',User::class)::find($id);
           $name =$user->name;
           $user->delete();
           $alerts = [
