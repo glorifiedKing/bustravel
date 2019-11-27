@@ -4,15 +4,26 @@ use glorifiedking\BusTravel\Tests\TestCase;
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\User;
+use Artisan;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 class BusesTest extends TestCase
 {
    use RefreshDatabase;
+
+   public function testDenyUnauthorized()
+   {
+      $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $response = $this->actingAs($user,'web')->get('/transit/buses');
+      $response->assertStatus(302);
+   }
    //testing getting operators list
     public function testGetBuses()
     {
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
       $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
       //  create operator
       $operator = factory(Operator::class)->create();
       //  create Bus
