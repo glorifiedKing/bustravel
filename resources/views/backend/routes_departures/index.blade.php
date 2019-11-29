@@ -1,17 +1,17 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Routes Departure Times')
+@section('title', 'Routes  Times')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Routes Departure Times</h1>
+        <h1 class="m-0 text-dark">Routes Times</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">routes departure times</li>
+          <li class="breadcrumb-item active">routes  times</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -24,7 +24,7 @@
         <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">All Routes Departure Times</h5>
+            <h5 class="card-title">All Routes  Times</h5>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -54,7 +54,7 @@
                                 <th>Route</th>
                                 <th>Price</th>
                                 <th>Bus </th>
-                                <th>Departure time</th>
+                                <th>times</th>
                                 <th>Driver</th>
                                 <th>Action</th>
                             </tr>
@@ -74,7 +74,7 @@
                                 <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
                                 <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
-                                <td>{{$route_departure_time->departure_time}}</td>
+                                <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
                                 <td>{{$route_departure_time->driver->name??'NONE'}}</td>
                                 <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
                                     <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>

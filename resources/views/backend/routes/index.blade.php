@@ -52,6 +52,7 @@
                                 <th>Status</th>
                                 <th>Operator Name</th>
                                 <th>Start Station</th>
+                                <th>Via</th>
                                 <th>End Station</th>
                                 <th>Price</th>
                                 <th>Return Price</th>
@@ -71,6 +72,12 @@
                                </td>
                                 <td>{{$route->operator->name}}</td>
                                 <td>{{$route->start->name}} - {{$route->start->code}}</td>
+                                <td>
+                                 @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
+                                 @foreach($stopovers as $stopover)
+                                 {{$stopover->stopover_route->end->name}}, 
+                                 @endforeach
+                                </td>
                                 <td>{{$route->end->name}} - {{$route->end->code}}</td>
                                 <td>{{number_format($route->price,2)}}</td>
                                 <td>{{number_format($route->return_price,2)}}</td>

@@ -29,6 +29,11 @@ class Route extends Model
    public function departure_times()
    {
        return $this->hasMany(RoutesDepartureTime::class,'route_id');
-   } 
+   }
+
+   public function stopovers()
+  {
+  return $this->hasMany(StopoverRoute::class, 'route_id');
+  }
 
 }
