@@ -50,9 +50,10 @@ class SettingsController extends Controller
       //validation
       $validation = request()->validate(BookingCustomField::$rules);
       //saving to the database
-      $fields = BookingCustomField::find($id);
-      $fields->operator_id = request()->input('operator_id');
-      $fields->field_prefix = request()->input('field_prefix');
+      $field_id =request()->input('id');
+
+      $fields = BookingCustomField::find($field_id);
+      $fields->field_prefix = strtolower(str_replace(' ', '_', request()->input('field_name')));
       $fields->field_name = request()->input('field_name');
       $fields->field_order = request()->input('field_order')??0;
       $fields->is_required = request()->input('is_required');

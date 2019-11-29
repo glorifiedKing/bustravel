@@ -95,6 +95,32 @@
                           </span>
                       @endif
                     </div>
+                    <div class="form-group col-md-12"><label>Stopovers Routes</label></div>
+                    <div class="form-group col-md-12">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                      <select id="item-selector" class="form-control select2" name="select_item_id">
+         @foreach($routes as $stopover)
+           <option data-itemid="{{$stopover->id}}" data-itemname="{{$stopover->start->name}} - {{$stopover->end->name}}"  value="{{$stopover->id}}">{{$stopover->start->name}} - {{$stopover->end->name}}</option>
+         @endforeach
+       </select>
+     </div>
+                    <div class="form-group col-md-2">  <button type="button" class="btn btn-success form-control" id="add_item" >Add</button></div>
+                    <div class="form-group col-md-2">  <button type="button" class="delete-row btn btn-danger form-control">Delete</button></div>
+                  </div>
+                      <table id="new-table" class="table table-striped table-hover">
+                           <thead>
+                             <tr>
+                               <th width="30"></th>
+                               <th >Station</th>
+                               <th width="100" >Order</th>
+                             </tr>
+                           </thead>
+
+                           <tbody>
+                           </tbody>
+                        </table>
+                    </div>
                     <div class=" col-md-12 form-group">
                     </div>
                     <div class=" col-md-3 form-group">
@@ -140,6 +166,34 @@
        $(function () {
          $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
          $('.select2').select2();
+         $('#add_item').on('click',function(e){
+        e.preventDefault();
+        //get selected option
+        var routeid = $('#item-selector').find(":selected").data('itemid');
+        var routename = $('#item-selector').find(":selected").data('itemname');
+        var markup = "<tr item-id='"+routeid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_id[]'><input type='text' class='form-control' name='name1'size='4' value='"+routename+"' readonly /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
+
+          var exists =  0;
+         $("table tbody").find("tr").each(function () {
+             var current_stock_id = $(this).attr('item-id');
+             if(current_stock_id == routeid)
+             {
+               exists = exists + 1;
+             }
+           });
+         if(exists == 0)
+         {
+                 $("#new-table tbody").append(markup);
+         }
+       });
+      // Find and remove selected table rows
+       $(".delete-row").click(function(){
+           $("table tbody").find('input[name="checkeditem[]"]').each(function(){
+               if($(this).is(":checked")){
+                   $(this).parents("tr").remove();
+               }
+           });
+       });
        })
 </script>
 @stop

@@ -42,6 +42,7 @@ class RoutesDepartureTimesController extends Controller
       $route = new RoutesDepartureTime;
       $route->route_id = request()->input('route_id');
       $route->departure_time = request()->input('departure_time');
+      $route->arrival_time = request()->input('arrival_time');
       $route->bus_id = request()->input('bus_id')??0;
       $route->driver_id = request()->input('driver_id')??0;
       $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');
@@ -77,6 +78,7 @@ class RoutesDepartureTimesController extends Controller
       $route = RoutesDepartureTime::find($id);
       $route->route_id = request()->input('route_id');
       $route->departure_time = request()->input('departure_time');
+      $route->arrival_time = request()->input('arrival_time');
       $route->bus_id = request()->input('bus_id')??0;
       $route->driver_id = request()->input('driver_id')??0;
       $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');

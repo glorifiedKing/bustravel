@@ -4,6 +4,7 @@ use Illuminate\Routing\Controller;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\StopoverRoute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +29,8 @@ class RouteController extends Controller
     {
         $bus_operators = Operator::where('status',1)->orderBy('name','ASC')->get();
         $stations = Station::orderBy('name','ASC')->get();
-        return view('bustravel::backend.routes.create',compact('bus_operators','stations'));
+        $routes = Route::where('status',1)->get();
+        return view('bustravel::backend.routes.create',compact('bus_operators','stations','routes'));
     }
     // saving a new buses in the database  route('bustravel.buses.store')
     public function store(Request $request)
@@ -54,6 +56,21 @@ class RouteController extends Controller
       $route->return_price = str_replace(',', '', request()->input('return_price'));
       $route->status = request()->input('status');
       $route->save();
+      //stop over routes
+      $stopovers = request()->input('stopover_id')??0;
+      if($stopovers!=0)
+      {
+      $order =request()->input('stopover_order');
+        foreach($stopovers as $index => $stopover_id )
+         {
+           $stopover =new StopoverRoute;
+           $stopover->route_id = $route->id;
+           $stopover->stopover_id =$stopover_id;
+           $stopover->order = $order[$index];
+           $stopover->save();
+
+          }
+      }
       $alerts = [
         'bustravel-flash' => true,
         'bustravel-flash-type' => 'success',
@@ -67,12 +84,13 @@ class RouteController extends Controller
     {
        $bus_operators = Operator::where('status',1)->orderBy('name','ASC')->get();
        $stations = Station::orderBy('name','ASC')->get();
+       $routes = Route::where('status',1)->get();
        $route =Route::find($id);
        if (is_null($route))
        {
            return Redirect::route('bustravel.routes');
        }
-       return view('bustravel::backend.routes.edit',compact('bus_operators','route','stations'));
+       return view('bustravel::backend.routes.edit',compact('bus_operators','route','stations','routes'));
     }
     //Update Operator route('bustravel.operators.upadate')
     public function update($id, Request $request)
@@ -98,6 +116,25 @@ class RouteController extends Controller
       $route->return_price = str_replace(',', '', request()->input('return_price'));
       $route->status = request()->input('status');
       $route->save();
+
+      //clear stopover routes dba_firstke
+      $overs =$route->stopovers()->delete();
+      //stop over routes
+      $stopovers = request()->input('stopover_id')??0;
+      if($stopovers!=0)
+      {
+      $order =request()->input('stopover_order');
+        foreach($stopovers as $index => $stopover_id )
+         {
+           $stopover =new StopoverRoute;
+           $stopover->route_id = $route->id;
+           $stopover->stopover_id =$stopover_id;
+           $stopover->order = $order[$index];
+           $stopover->save();
+
+          }
+      }
+
       $alerts = [
         'bustravel-flash' => true,
         'bustravel-flash-type' => 'success',
