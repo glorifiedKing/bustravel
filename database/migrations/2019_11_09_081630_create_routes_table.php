@@ -18,13 +18,14 @@ class CreateRoutesTable extends Migration
             $table->unsignedBigInteger('operator_id');
             $table->integer('start_station');
             $table->integer('end_station');
-            $table->decimal('price',12,2)->default(0.00);
-            $table->decimal('return_price',12,2)->default(0.00);
+            $table->decimal('price', 12, 2)->default(0.00);
+            $table->decimal('return_price', 12, 2)->default(0.00);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
             $table->foreign('operator_id')->references('id')->on('operators')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

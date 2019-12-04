@@ -25,6 +25,7 @@ class CreateBusesTable extends Migration
             $table->foreign('operator_id')->references('id')->on('operators')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

@@ -1,16 +1,17 @@
 <?php
+
 namespace glorifiedking\BusTravel;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
     use HasRoles;
     use Notifiable;
 
-
-     protected $guard_name = 'web';
+    protected $guard_name = 'web';
 
     /**
      * The attributes that are mass assignable.

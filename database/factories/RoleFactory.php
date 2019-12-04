@@ -2,9 +2,8 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Str;
 use Faker\Generator as Faker;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +18,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Role::class, function (Faker $faker) {
     return [
-        'name' => 'Administrator',
+        'name'       => 'Administrator',
         'guard_name' => 'web',
     ];
 });

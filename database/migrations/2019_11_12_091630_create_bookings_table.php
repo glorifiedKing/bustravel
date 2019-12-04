@@ -16,7 +16,7 @@ class CreateBookingsTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('routes_departure_time_id');
-            $table->decimal('amount',12,2)->default(0.00);
+            $table->decimal('amount', 12, 2)->default(0.00);
             $table->date('date_paid')->nullable();
             $table->date('date_of_travel')->nullable();
             $table->string('time_of_travel')->nullable();
@@ -27,6 +27,7 @@ class CreateBookingsTable extends Migration
             $table->foreign('routes_departure_time_id')->references('id')->on('routes_departure_times')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

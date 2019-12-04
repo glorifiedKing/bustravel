@@ -22,6 +22,7 @@ class CreateBookingFieldsTable extends Migration
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

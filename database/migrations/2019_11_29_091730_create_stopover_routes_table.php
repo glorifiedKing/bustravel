@@ -22,6 +22,7 @@ class CreateStopoverRoutesTable extends Migration
             $table->foreign('route_id')->references('id')->on('routes')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

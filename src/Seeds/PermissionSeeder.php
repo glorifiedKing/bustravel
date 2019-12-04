@@ -1,10 +1,13 @@
 <?php
+
 namespace glorifiedking\BusTravel\Seeds;
-use Illuminate\Database\Seeder;
+
 use glorifiedking\BusTravel\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
 class PermissionSeeder extends Seeder
 {
     /**
@@ -41,7 +44,7 @@ class PermissionSeeder extends Seeder
         $permission25 = factory(Permission::class)->create(['name' => 'Create BT Bookings']);
         $permission26 = factory(Permission::class)->create(['name' => 'Update BT Bookings']);
         $permission27 = factory(Permission::class)->create(['name' => 'Delete BT Bookings']);
-        $permission28= factory(Permission::class)->create(['name' => 'View BT Reports']);
+        $permission28 = factory(Permission::class)->create(['name' => 'View BT Reports']);
         $permission29 = factory(Permission::class)->create(['name' => 'View BT Sales Reports']);
         $permission30 = factory(Permission::class)->create(['name' => 'View BT Payment Reports']);
         $permission31 = factory(Permission::class)->create(['name' => 'View BT Payments']);
@@ -53,52 +56,49 @@ class PermissionSeeder extends Seeder
         $permission37 = factory(Permission::class)->create(['name' => 'Update BT Users']);
         $permission38 = factory(Permission::class)->create(['name' => 'Delete BT Users']);
 
-        $role1= factory(Role::class)->create(['name' => 'BT Super Admin']);
+        $role1 = factory(Role::class)->create(['name' => 'BT Super Admin']);
         $role1->givePermissionTo([
-          $permission1, $permission2, $permission3,$permission4, $permission5, $permission6,
-          $permission7, $permission8, $permission9,$permission10, $permission11, $permission12,
-          $permission13, $permission14, $permission15,$permission16, $permission17, $permission18,
-          $permission19, $permission20, $permission21,$permission22, $permission23, $permission24,
-          $permission25, $permission26, $permission27,$permission28, $permission29, $permission30,
-          $permission31, $permission32, $permission33,$permission34, $permission35, $permission36,
+          $permission1, $permission2, $permission3, $permission4, $permission5, $permission6,
+          $permission7, $permission8, $permission9, $permission10, $permission11, $permission12,
+          $permission13, $permission14, $permission15, $permission16, $permission17, $permission18,
+          $permission19, $permission20, $permission21, $permission22, $permission23, $permission24,
+          $permission25, $permission26, $permission27, $permission28, $permission29, $permission30,
+          $permission31, $permission32, $permission33, $permission34, $permission35, $permission36,
           $permission37, $permission38,
         ]);
-        $role2= factory(Role::class)->create(['name' => 'BT Administrator']);
+        $role2 = factory(Role::class)->create(['name' => 'BT Administrator']);
         $role2->givePermissionTo([
-          $permission6, $permission5, $permission12,$permission13, $permission14, $permission15,
-          $permission16, $permission17, $permission18,$permission19, $permission20, $permission21,
-          $permission22, $permission23, $permission24,$permission25, $permission26, $permission27,
-          $permission28, $permission29, $permission30,$permission31, $permission32, $permission33,
-          $permission34, $permission35, $permission36,$permission37, $permission38
+          $permission6, $permission5, $permission12, $permission13, $permission14, $permission15,
+          $permission16, $permission17, $permission18, $permission19, $permission20, $permission21,
+          $permission22, $permission23, $permission24, $permission25, $permission26, $permission27,
+          $permission28, $permission29, $permission30, $permission31, $permission32, $permission33,
+          $permission34, $permission35, $permission36, $permission37, $permission38,
         ]);
-        $role3= factory(Role::class)->create(['name' => 'BT Cashier']);
+        $role3 = factory(Role::class)->create(['name' => 'BT Cashier']);
         $role3->givePermissionTo([
-          $permission24, $permission25,$permission28, $permission31,$permission32
+          $permission24, $permission25, $permission28, $permission31, $permission32,
         ]);
-        $role4= factory(Role::class)->create(['name' => 'BT Merchant']);
+        $role4 = factory(Role::class)->create(['name' => 'BT Merchant']);
         $role4->givePermissionTo([
-          $permission24, $permission25, $permission31,$permission32
+          $permission24, $permission25, $permission31, $permission32,
         ]);
 
-        $role5= factory(Role::class)->create(['name' => 'BT Driver']);
+        $role5 = factory(Role::class)->create(['name' => 'BT Driver']);
         $role5->givePermissionTo([
-          $permission24, $permission25, $permission31,$permission32
+          $permission24, $permission25, $permission31, $permission32,
         ]);
-        $role6= factory(Role::class)->create(['name' => 'BT User']);
-         $user =User::where('email','admin@admin.com')->first();
-        if(is_null($user))
-        {
-          $user1 = factory(User::class)->create([
-            'name' => 'BT Super Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'), // password
+        $role6 = factory(Role::class)->create(['name' => 'BT User']);
+        $user = User::where('email', 'admin@admin.com')->first();
+        if (is_null($user)) {
+            $user1 = factory(User::class)->create([
+            'name'        => 'BT Super Admin',
+            'email'       => 'admin@admin.com',
+            'password'    => Hash::make('password'), // password
             'operator_id' => 0,
           ]);
-          $user1->syncRoles($role1->name);
-        }else{
-          $user->syncRoles($role1->name);
+            $user1->syncRoles($role1->name);
+        } else {
+            $user->syncRoles($role1->name);
         }
-
     }
-
 }

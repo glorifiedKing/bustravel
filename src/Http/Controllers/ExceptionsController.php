@@ -1,4 +1,5 @@
 <?php
+
 namespace glorifiedking\BusTravel\Http\Controllers;
 
 use Illuminate\Routing\Controller;

@@ -1,6 +1,6 @@
 <?php
-namespace glorifiedking\BusTravel\Tests;
 
+namespace glorifiedking\BusTravel\Tests;
 
 class InitialTest extends TestCase
 {
