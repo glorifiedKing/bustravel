@@ -1,7 +1,8 @@
 <?php
- namespace glorifiedking\BusTravel\Seeds;
+
+namespace glorifiedking\BusTravel\Seeds;
+
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,8 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-       Eloquent::unguard();
+        Eloquent::unguard();
         // $this->call(UsersTableSeeder::class);
-       $this->call(Permission_Roles_UsersSeeder::class);
+        $this->call(Permission_Roles_UsersSeeder::class);
     }
 }

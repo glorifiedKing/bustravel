@@ -16,9 +16,9 @@ class CreateStationsTable extends Migration
         Schema::create('stations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('code',3);
-            $table->decimal('longitude',12,8)->nullable();
-            $table->decimal('latitude',12,8)->nullable();
+            $table->string('code', 3);
+            $table->decimal('longitude', 12, 8)->nullable();
+            $table->decimal('latitude', 12, 8)->nullable();
             $table->string('address')->nullable();
             $table->string('province')->nullable();
             $table->string('city')->nullable();

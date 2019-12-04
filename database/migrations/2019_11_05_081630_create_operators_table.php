@@ -17,7 +17,7 @@ class CreateOperatorsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('address');
-            $table->string('code',5)->nullable();
+            $table->string('code', 5)->nullable();
             $table->string('logo')->nullable();
             $table->string('email')->nullable();
             $table->string('contact_person_name');

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AlterUsersOperatorIdTable extends Migration
 {
@@ -13,16 +13,12 @@ class AlterUsersOperatorIdTable extends Migration
      */
     public function up()
     {
-
-      Schema::table('users', function($table) {
-
-
-   if(!Schema::hasColumn('users', 'operator_id'))
-      {
-          $table->integer('operator_id')->default(0);
-      }
-    });
-   }
+        Schema::table('users', function ($table) {
+            if (!Schema::hasColumn('users', 'operator_id')) {
+                $table->integer('operator_id')->default(0);
+            }
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -31,8 +27,8 @@ class AlterUsersOperatorIdTable extends Migration
      */
     public function down()
     {
-      Schema::table('users', function (Blueprint $table) {
-         $table->dropColumn('operator_id');
-       });
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('operator_id');
+        });
     }
 }
