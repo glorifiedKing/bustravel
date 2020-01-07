@@ -38,6 +38,6 @@ class Route extends Model
 
     public function stopovers()
     {
-        return $this->hasMany(StopoverRoute::class, 'route_id');
+        return $this->hasMany(StopoverStation::class, 'route_id');
     }
 }

@@ -6,6 +6,7 @@ use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\StopoverRoute;
+use glorifiedking\BusTravel\StopoverStation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -61,13 +62,17 @@ class RouteController extends Controller
         $route->status = request()->input('status');
         $route->save();
         //stop over routes
-        $stopovers = request()->input('stopover_id') ?? 0;
+        $stopovers = request()->input('stopover_startid') ?? 0;
         if ($stopovers != 0) {
+            $endid = request()->input('stopover_endid');
             $order = request()->input('stopover_order');
-            foreach ($stopovers as $index => $stopover_id) {
-                $stopover = new StopoverRoute();
+            $price = request()->input('stopover_price');
+            foreach ($stopovers as $index => $stopover_endid) {
+                $stopover = new StopoverStation();
                 $stopover->route_id = $route->id;
-                $stopover->stopover_id = $stopover_id;
+                $stopover->start_station = $stopover_endid;
+                $stopover->end_station = $endid[$index];
+                $stopover->price = $price[$index];
                 $stopover->order = $order[$index];
                 $stopover->save();
             }
@@ -124,16 +129,20 @@ class RouteController extends Controller
         //clear stopover routes dba_firstke
         $overs = $route->stopovers()->delete();
         //stop over routes
-        $stopovers = request()->input('stopover_id') ?? 0;
+        $stopovers = request()->input('stopover_startid') ?? 0;
         if ($stopovers != 0) {
-            $order = request()->input('stopover_order');
-            foreach ($stopovers as $index => $stopover_id) {
-                $stopover = new StopoverRoute();
-                $stopover->route_id = $route->id;
-                $stopover->stopover_id = $stopover_id;
-                $stopover->order = $order[$index];
-                $stopover->save();
-            }
+          $endid = request()->input('stopover_endid');
+          $order = request()->input('stopover_order');
+          $price = request()->input('stopover_price');
+          foreach ($stopovers as $index => $stopover_endid) {
+              $stopover = new StopoverStation();
+              $stopover->route_id = $route->id;
+              $stopover->start_station = $stopover_endid;
+              $stopover->end_station = $endid[$index];
+              $stopover->price = $price[$index];
+              $stopover->order = $order[$index];
+              $stopover->save();
+          }
         }
 
         $alerts = [
