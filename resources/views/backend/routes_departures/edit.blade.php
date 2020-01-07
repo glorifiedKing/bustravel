@@ -106,6 +106,24 @@
                         <input type="radio" id="Deactive" name="restricted_by_bus_seating_capacity" value="0"  @php echo $route_departure_time->restricted_by_bus_seating_capacity == 0? 'checked' :  "" @endphp> No</label>
                      </label>
                   </div>
+                  <div class="form-group col-md-12">
+                       <label> Days of the week</label>
+                       <select class="form-control select2 {{ $errors->has('days_of_week') ? ' is-invalid' : '' }}" name="days_of_week[]"  placeholder="Select Days of Week" multiple>
+                         <option {{(in_array('Monday',$route_departure_time->days_of_week) ? 'selected' : '')}} value="Monday">Monday</option>
+                         <option {{(in_array('Tuesday',$route_departure_time->days_of_week) ? 'selected' : '')}} value="Tuesday">Tuesday</option>
+                         <option {{(in_array('Wednesday',$route_departure_time->days_of_week) ? 'selected' : '')}} value="Wednesday">Wednesday</option>
+                         <option {{(in_array('Thursday',$route_departure_time->days_of_week) ? 'selected' : '')}} value="Thursday">Thursday</option>
+                         <option value="Friday" {{(in_array('Friday',$route_departure_time->days_of_week) ? 'selected' : '')}}>Friday</option>
+                         <option value="Saturday" {{(in_array('Saturday',$route_departure_time->days_of_week) ? 'selected' : '')}}>Saturday</option>
+                         <option value="Sunday" {{(in_array('Sunday',$route_departure_time->days_of_week) ? 'selected' : '')}}>Sunday</option>
+                        <option value="Public" {{(in_array('Public',$route_departure_time->days_of_week) ? 'selected' : '')}}>Public</option>
+                       </select>
+                       @if ($errors->has('days_of_week'))
+                           <span class="invalid-feedback">
+                               <strong>{{ $errors->first('days_of_week') }}</strong>
+                           </span>
+                       @endif
+                  </div>
                   <div class=" col-md-12 form-group">
                   </div>
                   <div class=" col-md-3 form-group">

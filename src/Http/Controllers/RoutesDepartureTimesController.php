@@ -89,6 +89,7 @@ class RoutesDepartureTimesController extends Controller
         $route->bus_id = request()->input('bus_id') ?? 0;
         $route->driver_id = request()->input('driver_id') ?? 0;
         $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');
+        $route->days_of_week = request()->input('days_of_week');
         $route->status = request()->input('status');
         $route->save();
         $alerts = [

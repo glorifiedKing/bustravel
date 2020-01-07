@@ -75,7 +75,7 @@
                                 <td>
                                  @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
                                  @foreach($stopovers as $stopover)
-                                 {{$stopover->stopover_route->end->name}}, 
+                                 {{$stopover->end_stopover_station->name}}, 
                                  @endforeach
                                 </td>
                                 <td>{{$route->end->name}} - {{$route->end->code}}</td>
