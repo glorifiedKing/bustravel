@@ -30,25 +30,35 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-12">
+                <div class="box-body">
+                  <form role="form" action="{{route('bustravel.routes.departures.route_times')}}" method="POST" >
+                  {{csrf_field() }}
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                           <label> Routes</label>
+                           <select class="form-control select2 {{ $errors->has('route_id') ? ' is-invalid' : '' }}" name="route_id"  placeholder="Select Operator" onchange="this.form.submit()">
+                             <option value="">Select Route</option>
+                             @foreach($routes as $route_course)
+                                 <option value="{{$route_course->id}}" @php echo $route_id == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->start->name}} ( {{$route_course->start->code}} ) - {{$route_course->end->name}} ( {{$route_course->end->code}} )</option>
+                             @endforeach
+                           </select>
+                           @if ($errors->has('route_id'))
+                               <span class="invalid-feedback">
+                                   <strong>{{ $errors->first('route_id') }}</strong>
+                               </span>
+                           @endif
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+               @if(!is_null($route))
               <form role="form" action="{{route('bustravel.routes.departures.store')}}" method="POST" >
               {{csrf_field() }}
 
               <div class="box-body">
                   <div class="row">
-                    <div class="form-group col-md-6">
-                         <label> Routes</label>
-                         <select class="form-control select2 {{ $errors->has('route_id') ? ' is-invalid' : '' }}" name="route_id"  placeholder="Select Operator">
-                           <option value="">Select Route</option>
-                           @foreach($routes as $route_course)
-                               <option value="{{$route_course->id}}" @php echo old('route_id') == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->start->name}} ( {{$route_course->start->code}} ) - {{$route_course->end->name}} ( {{$route_course->end->code}} )</option>
-                           @endforeach
-                         </select>
-                         @if ($errors->has('route_id'))
-                             <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('route_id') }}</strong>
-                             </span>
-                         @endif
-                    </div>
+                    <input type="hidden"  name="route_id" value="{{$route->id}}">
                     <div class="form-group col-md-6 ">
                       <label>Start Bus</label>
                       <select class="form-control select2 {{ $errors->has('bus_id') ? ' is-invalid' : '' }}" name="bus_id"  placeholder="Select Operator">
@@ -79,7 +89,7 @@
                     </div>
                     <div class="form-group col-md-3 ">
                       <label>Departure Time</label>
-                      <input type="text"  name="departure_time" value="{{old('departure_time')}}" class="form-control {{ $errors->has('departure_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Departure Time" >
+                      <input type="text"  name="departure_time" value="{{old('departure_time')}}" class="form-control {{ $errors->has('departure_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Departure Time" required>
                       @if ($errors->has('departure_time'))
                           <span class="invalid-feedback">
                               <strong>{{ $errors->first('departure_time') }}</strong>
@@ -88,14 +98,44 @@
                     </div>
                     <div class="form-group col-md-3 ">
                       <label>Arrival Time</label>
-                      <input type="text"  name="arrival_time" value="{{old('arrival_time')}}" class="form-control {{ $errors->has('arrival_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Arrival Time" >
+                      <input type="text"  name="arrival_time" value="{{old('arrival_time')}}" class="form-control {{ $errors->has('arrival_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Arrival Time" required >
                       @if ($errors->has('arrival_time'))
                           <span class="invalid-feedback">
                               <strong>{{ $errors->first('arrival_time') }}</strong>
                           </span>
                       @endif
                     </div>
+                    <div class=" col-md-12 form-group"><h4>StopOvers</h4></div>
                     <div class=" col-md-12 form-group">
+                      @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
+                      <table id="new-table" class="table table-striped table-hover">
+                           <thead>
+                             <tr>
+                               <th width="30"></th>
+                               <th > Stop Over</th>
+                               <th >Arrival Time</th>
+                               <th >Departure Time</th>
+                             </tr>
+                           </thead>
+
+                           <tbody>
+                             @foreach($stopovers as $stoverstation)
+                            <tr item-id='{{$stoverstation->stopover_id}}'>
+                              <td><input type='checkbox' name='checkeditem[]'></td>
+                              <td >
+                                   {{$stoverstation->start_stopover_station->name}} - {{$stoverstation->end_stopover_station->name}}
+                                  <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
+                              </td>
+                              <td >
+                                  <input type='text' value='' class='form-control' name='stopover_arrival_time[]' required>
+                              </td>
+                              <td><input type='text' value='' class='form-control' name='stopover_departure_time[]' required></td>
+                            </tr>
+                             @endforeach
+
+
+                           </tbody>
+                        </table>
                     </div>
                     <div class=" col-md-6 form-group">
                         <label for="signed" class=" col-md-12 control-label">Booking Restricted By Bus Seating Capacity</label>
@@ -105,6 +145,24 @@
                        <label class="radio-inline">
                           <input type="radio" id="Deactive" name="restricted_by_bus_seating_capacity" value="0" > No</label>
                        </label>
+                    </div>
+                    <div class="form-group col-md-12">
+                         <label> Days of the week</label>
+                         <select class="form-control select2 {{ $errors->has('days_of_week') ? ' is-invalid' : '' }}" name="days_of_week[]"  placeholder="Select Days of Week" multiple required>
+                           <option value="Monday">Monday</option>
+                           <option  value="Tuesday">Tuesday</option>
+                           <option  value="Wednesday">Wednesday</option>
+                           <option  value="Thursday">Thursday</option>
+                           <option value="Friday">Friday</option>
+                           <option value="Saturday">Saturday</option>
+                           <option value="Sunday">Sunday</option>
+                          <option value="Public">Public</option>
+                         </select>
+                         @if ($errors->has('days_of_week'))
+                             <span class="invalid-feedback">
+                                 <strong>{{ $errors->first('days_of_week') }}</strong>
+                             </span>
+                         @endif
                     </div>
                     <div class=" col-md-12 form-group">
                     </div>
@@ -126,6 +184,7 @@
               </div>
               </div>
             </form>
+            @endif
             </div>
 
             <!-- /.row -->

@@ -95,61 +95,78 @@
                           </span>
                       @endif
                     </div>
-                    <div class="form-group col-md-12"><label>Stopovers Routes</label></div>
-                    <div class="form-group col-md-12">
-                    <div class="row">
+                  <div class="form-group col-md-12">
+
+                    <div class="box-group" id="accordion">
+               <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+
+                   <h4 class="box-title">
+                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                       Stopovers Routes
+                     </a>
+                   </h4>
+                 <div id="collapseOne" class="panel-collapse collapse in">
+                     <div class="row">
+                       <div class="form-group col-md-3">
+                         <label>Start</label><br>
+                         <select id="item-selector" class="form-control select2" name="select_startitem_id" style="width:100%">
+                            @foreach($stations as $station_start)
+                                <option data-startitemid="{{$station_start->id}}" data-startitemname="{{$station_start->name}}"  value="{{$station_start->id}}">{{$station_start->name}} - {{$station_start->code}}</option>
+                            @endforeach
+                         </select>
+                       </div>
                       <div class="form-group col-md-3">
-                        <label>Start</label>
-                        <select id="item-selector" class="form-control select2" name="select_startitem_id">
-                           @foreach($stations as $station_start)
-                               <option data-startitemid="{{$station_start->id}}" data-startitemname="{{$station_start->name}}"  value="{{$station_start->id}}">{{$station_start->name}} - {{$station_start->code}}</option>
-                           @endforeach
+                        <label>End</label>
+                        <select id="item-selector2" class="form-control select2" name="select_enditem_id" style="width:100%">
+                            @foreach($stations as $station_end)
+                                <option data-enditemid="{{$station_end->id}}" data-enditemname="{{$station_end->name}}"  value="{{$station_end->id}}">{{$station_end->name}} - {{$station_end->code}}</option>
+                            @endforeach
                         </select>
                       </div>
-                     <div class="form-group col-md-3">
-                       <label>End</label>
-                       <select id="item-selector2" class="form-control select2" name="select_enditem_id">
-                           @foreach($stations as $station_end)
-                               <option data-enditemid="{{$station_end->id}}" data-enditemname="{{$station_end->name}}"  value="{{$station_end->id}}">{{$station_end->name}} - {{$station_end->code}}</option>
-                           @endforeach
-                       </select>
-                     </div>
-      @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
-                    <div class="form-group col-md-2"> <br> <button type="button" class="btn btn-success form-control" id="add_item" >Add</button></div>
-                    <div class="form-group col-md-2"> <br> <button type="button" class="delete-row btn btn-danger form-control">Delete</button></div>
-                  </div>
-                      <table id="new-table" class="table table-striped table-hover">
-                           <thead>
-                             <tr>
-                               <th width="30"></th>
-                               <th >Start</th>
-                               <th >End</th>
-                               <th >Price</th>
-                               <th width="100" >Order</th>
-                             </tr>
-                           </thead>
+       @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
+                     <div class="form-group col-md-2"> <br> <button type="button" class="btn btn-success form-control" id="add_item" >Add</button></div>
+                     <div class="form-group col-md-2"> <br> <button type="button" class="delete-row btn btn-danger form-control">Delete</button></div>
+                   </div>
 
-                           <tbody>
-                             @foreach($stopovers as $stoverstation)
-                            <tr item-id='{{$stoverstation->stopover_id}}'>
-                              <td><input type='checkbox' name='checkeditem[]'></td>
-                              <td >
-                                  <input type='hidden' value='{{$stoverstation->start_station}}' name='stopover_startid[]'>
-                                  <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->start_stopover_station->name}}' readonly />
-                              </td>
-                              <td >
-                                  <input type='hidden' value='{{$stoverstation->end_station}}' name='stopover_endid[]'>
-                                  <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->end_stopover_station->name}}' readonly />
-                              </td>
-                              <td><input type='text' class='form-control' name='stopover_price[]'size='4' value='{{$stoverstation->price}}' required /></td>
-                              <td><input type='text' class='form-control' name='stopover_order[]'size='4' value='{{$stoverstation->order}}' required /></td>
+                   <div class="form-group col-md-12">
+
+                     <table id="new-table" class="table table-striped table-hover">
+                          <thead>
+                            <tr>
+                              <th width="30"></th>
+                              <th >Start</th>
+                              <th >End</th>
+                              <th >Price</th>
+                              <th width="100" >Order</th>
                             </tr>
-                             @endforeach
+                          </thead>
+
+                          <tbody>
+                            @foreach($stopovers as $stoverstation)
+                           <tr item-id='{{$stoverstation->stopover_id}}'>
+                             <td><input type='checkbox' name='checkeditem[]'></td>
+                             <td >
+                                 <input type='hidden' value='{{$stoverstation->start_station}}' name='stopover_startid[]'>
+                                 <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->start_stopover_station->name}}' readonly />
+                             </td>
+                             <td >
+                                 <input type='hidden' value='{{$stoverstation->end_station}}' name='stopover_endid[]'>
+                                 <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->end_stopover_station->name}}' readonly />
+                             </td>
+                             <td><input type='text' class='form-control' name='stopover_price[]'size='4' value='{{$stoverstation->price}}' required /></td>
+                             <td><input type='text' class='form-control' name='stopover_order[]'size='4' value='{{$stoverstation->order}}' required /></td>
+                           </tr>
+                            @endforeach
 
 
-                           </tbody>
-                        </table>
-                    </div>
+                          </tbody>
+                       </table>
+                   </div>
+
+                 </div>
+               </div>
+
+                  </div>
                     <div class=" col-md-12 form-group">
                     </div>
                     <div class=" col-md-3 form-group">
@@ -169,7 +186,70 @@
                   <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </div>
+              <hr>
             </form>
+            </div>
+              @php $times =$route->departure_times()->get(); @endphp
+          <div class="row">
+            <div class="form-group col-md-12">
+
+              <div class="box-group" id="accordion">
+         <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+
+             <h4 class="box-title">
+               <a data-toggle="collapse" data-parent="#accordion" href="#collapsetwo">
+                  Routes Times
+               </a>
+             </h4>
+           <div id="collapsetwo" class="panel-collapse collapse in">
+             <div class="box-body">
+            <div class="row">
+              <div class="form-group col-md-12"><hr></div>
+             <div class="form-group col-md-12">
+               <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
+                      <thead>
+                          <tr>
+                              <th>Status</th>
+                              <th>Operator</th>
+                              <th>Route</th>
+                              <th>Price</th>
+                              <th>Bus </th>
+                              <th>times</th>
+                              <th>Driver</th>
+                              <th>Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                      @foreach ($times as $route_departure_time)
+                          <tr>
+                            <td>@if($route_departure_time->status==1)
+                                  <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                @else
+                                <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+
+                                @endif
+                             </td>
+                              <td>{{$route_departure_time->route->operator->name}}</td>
+                              <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
+                              <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
+                              <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
+                              <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
+                              <td>{{$route_departure_time->driver->name??'NONE'}}</td>
+                              <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
+                                  <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                              </td>
+                          </tr>
+
+                      @endforeach
+                  </tbody>
+                  </table>
+             </div>
+           </div>
+         </div>
+           </div>
+         </div>
+       </div>
             </div>
 
             <!-- /.row -->
