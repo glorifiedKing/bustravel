@@ -18,7 +18,7 @@ class RoutesDepartureTime extends Model
 
     public function route()
     {
-        return $this->belongsTo(Route::class);
+        return $this->belongsTo(Route::class,'route_id');
     }
 
     public function driver()
@@ -29,5 +29,9 @@ class RoutesDepartureTime extends Model
     public function bus()
     {
         return $this->belongsTo(Bus::class, 'bus_id');
+    }
+    public function stopovers_times()
+    {
+        return $this->hasMany(RoutesStopoversDepartureTime::class, 'routes_times_id');
     }
 }

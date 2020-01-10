@@ -7,6 +7,7 @@ use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\RoutesDepartureTime;
+use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -30,11 +31,17 @@ class RoutesDepartureTimesController extends Controller
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
+      $route_id =0;
+      if(request()->isMethod('post'))
+        {
+        $route_id =request()->input('route_id');
+        }
+        $route =Route::find($route_id);
         $routes = Route::where('status', 1)->get();
         $drivers = Driver::where('status', 1)->orderBy('name', 'ASC')->get();
         $buses = Bus::where('status', 1)->get();
 
-        return view('bustravel::backend.routes_departures.create', compact('buses', 'routes', 'drivers'));
+        return view('bustravel::backend.routes_departures.create', compact('buses', 'routes', 'drivers','route','route_id'));
     }
 
     // saving a new route departure times in the database  route('bustravel.routes.departures.store')
@@ -49,9 +56,23 @@ class RoutesDepartureTimesController extends Controller
         $route->arrival_time = request()->input('arrival_time');
         $route->bus_id = request()->input('bus_id') ?? 0;
         $route->driver_id = request()->input('driver_id') ?? 0;
+        $route->days_of_week = request()->input('days_of_week');
         $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');
         $route->status = request()->input('status');
         $route->save();
+        $stopovers = request()->input('stopover_routeid') ?? 0;
+        if ($stopovers != 0) {
+            $arrival = request()->input('stopover_arrival_time');
+            $departure = request()->input('stopover_departure_time');
+            foreach ($stopovers as $index => $stopover_routeid) {
+                $stopover = new RoutesStopoversDepartureTime();
+                $stopover->routes_times_id = $route->id;
+                $stopover->route_stopover_id = $stopover_routeid;
+                $stopover->arrival_time = $arrival[$index];
+                $stopover->departure_time = $departure[$index];
+                $stopover->save();
+            }
+        }
         $alerts = [
         'bustravel-flash'         => true,
         'bustravel-flash-type'    => 'success',
@@ -92,6 +113,20 @@ class RoutesDepartureTimesController extends Controller
         $route->days_of_week = request()->input('days_of_week');
         $route->status = request()->input('status');
         $route->save();
+        $overs = $route->stopovers_times()->delete();
+        $stopovers = request()->input('stopover_routeid') ?? 0;
+        if ($stopovers != 0) {
+            $arrival = request()->input('stopover_arrival_time');
+            $departure = request()->input('stopover_departure_time');
+            foreach ($stopovers as $index => $stopover_routeid) {
+                $stopover = new RoutesStopoversDepartureTime();
+                $stopover->routes_times_id = $route->id;
+                $stopover->route_stopover_id = $stopover_routeid;
+                $stopover->arrival_time = $arrival[$index];
+                $stopover->departure_time = $departure[$index];
+                $stopover->save();
+            }
+        }
         $alerts = [
         'bustravel-flash'         => true,
         'bustravel-flash-type'    => 'success',
