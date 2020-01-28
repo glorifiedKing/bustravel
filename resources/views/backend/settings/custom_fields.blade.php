@@ -119,20 +119,6 @@
 
               <div class="box-body">
                   <div class="row">
-                    <div class="form-group col-md-12">
-                         <label>Select  Operator</label><br>
-                         <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator" style="width:100%">
-                           <option value="">Select Operator</option>
-                           @foreach($operators as $operator)
-                               <option value="{{$operator->id}}">{{$operator->name}} - {{$operator->code}}</option>
-                           @endforeach
-                         </select>
-                         @if ($errors->has('operator_id'))
-                             <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('operator_id') }}</strong>
-                             </span>
-                         @endif
-                    </div>
                     <div class="form-group col-md-12 ">
                         <label for="exampleInputEmail1">Name</label>
                         <input type="text"  name="field_name" value="{{old('field_name')}}" class="form-control {{ $errors->has('field_name') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Name" >

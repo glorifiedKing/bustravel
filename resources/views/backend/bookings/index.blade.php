@@ -72,7 +72,7 @@
                                   @endif
                                </td>
                                <td>{{$booking->ticket_number}}</td>
-                                <td>{{$booking->route_departure_time->route->operator->name}}</td>
+                                <td>{{$booking->route_departure_time->route->operator->name??'None'}}</td>
                                 <td>{{$booking->route_departure_time->route->start->code??'None'}} - {{$booking->route_departure_time->route->end->code??'None'}} / {{$booking->route_departure_time->departure_time??'None'}}</td>
                                 <td>{{number_format($booking->amount,2)}} </td>
                                 <td>{{$booking->date_paid}}</td>

@@ -26,7 +26,17 @@ class BookingsController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-        $bookings = Booking::orderBy('id', 'DESC')->get();
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+        {
+         $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
+         $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
+         $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->get();
+        }
+      else
+        {
+           $bookings = Booking::orderBy('id', 'DESC')->get();
+        }
+
 
         return view('bustravel::backend.bookings.index', compact('bookings'));
     }
@@ -34,9 +44,10 @@ class BookingsController extends Controller
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
-        $routes_times = RoutesDepartureTime::all();
+        $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
+        $routes_times =RoutesDepartureTime::whereIn('route_id',$routes_ids)->get();
         $users = User::all();
-        $custom_fields = BookingCustomField::where('status', 1)->orderBy('field_order', 'ASC')->get();
+        $custom_fields = BookingCustomField::where('operator_id',auth()->user()->operator_id)->where('status', 1)->orderBy('field_order', 'ASC')->get();
 
         return view('bustravel::backend.bookings.create', compact('users', 'routes_times', 'custom_fields'));
     }

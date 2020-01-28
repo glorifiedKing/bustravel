@@ -19,10 +19,15 @@ class SettingsController extends Controller
     //fetching operators route('bustravel.operators')
     public function fields()
     {
-        $fields = BookingCustomField::all();
-        $operators = Operator::where('status', 1)->get();
-
-        return view('bustravel::backend.settings.custom_fields', compact('fields', 'operators'));
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+        {
+          $fields = BookingCustomField::where('operator_id',auth()->user()->operator_id)->get();
+        }
+      else
+        {
+           $fields = BookingCustomField::all();
+        }
+        return view('bustravel::backend.settings.custom_fields', compact('fields'));
     }
 
     public function storefields(Request $request)
@@ -31,7 +36,6 @@ class SettingsController extends Controller
         $validation = request()->validate(BookingCustomField::$rules);
         //saving to the database
         $fields = new BookingCustomField();
-        $fields->operator_id = request()->input('operator_id');
         $fields->field_prefix = strtolower(str_replace(' ', '_', request()->input('field_name')));
         $fields->field_name = request()->input('field_name');
         $fields->field_order = request()->input('field_order') ?? 0;

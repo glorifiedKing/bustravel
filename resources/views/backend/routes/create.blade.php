@@ -35,20 +35,6 @@
 
               <div class="box-body">
                   <div class="row">
-                    <div class="form-group col-md-6">
-                         <label> Operator</label>
-                         <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator">
-                           <option value="">Select Operator</option>
-                           @foreach($bus_operators as $operator)
-                               <option value="{{$operator->id}}" @php echo old('operator_id') == $operator->id ? 'selected' :  "" @endphp>{{$operator->name}} - {{$operator->code}}</option>
-                           @endforeach
-                         </select>
-                         @if ($errors->has('operator_id'))
-                             <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('operator_id') }}</strong>
-                             </span>
-                         @endif
-                    </div>
                     <div class="form-group col-md-3 ">
                       <label>Start Station</label>
                       <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Operator">
@@ -180,16 +166,17 @@
          $('#add_item').on('click',function(e){
         e.preventDefault();
         //get selected option
+        var uniqueid = Date.now();
         var routeid = $('#item-selector').find(":selected").data('startitemid');
         var endid = $('#item-selector2').find(":selected").data('enditemid');
         var startname = $('#item-selector').find(":selected").data('startitemname');
         var endname = $('#item-selector2').find(":selected").data('enditemname');
-        var markup = "<tr item-id='"+routeid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_startid[]'><input type='text' class='form-control' name='name1'size='4' value='"+startname+"' readonly /></td><td ><input type='hidden' value='"+endid+"' name='stopover_endid[]'><input type='text' class='form-control' name='name1'size='4' value='"+endname+"' readonly /></td><td><input type='text' class='form-control' name='stopover_price[]'size='4' value='0'  required /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
+        var markup = "<tr item-id='"+uniqueid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_startid[]'><input type='text' class='form-control' name='name1'size='4' value='"+startname+"' readonly /></td><td ><input type='hidden' value='"+endid+"' name='stopover_endid[]'><input type='text' class='form-control' name='name1'size='4' value='"+endname+"' readonly /></td><td><input type='text' class='form-control' name='stopover_price[]'size='4' value='0'  required /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
 
           var exists =  0;
          $("table tbody").find("tr").each(function () {
              var current_stock_id = $(this).attr('item-id');
-             if(current_stock_id == routeid)
+             if(current_stock_id == uniqueid)
              {
                exists = exists + 1;
              }

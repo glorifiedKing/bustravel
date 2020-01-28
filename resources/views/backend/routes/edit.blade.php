@@ -35,20 +35,6 @@
 
               <div class="box-body">
                   <div class="row">
-                    <div class="form-group col-md-6">
-                         <label> Operator</label>
-                         <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator">
-                           <option value="">Select Operator</option>
-                           @foreach($bus_operators as $operator)
-                               <option value="{{$operator->id}}" @php echo $route->operator_id == $operator->id ? 'selected' :  "" @endphp>{{$operator->name}} - {{$operator->code}}</option>
-                           @endforeach
-                         </select>
-                         @if ($errors->has('operator_id'))
-                             <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('operator_id') }}</strong>
-                             </span>
-                         @endif
-                    </div>
                     <div class="form-group col-md-3 ">
                       <label>Start Station</label>
                       <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Operator">
@@ -184,73 +170,13 @@
               <div class="box-footer">
                 <div class="form-group col-md-12">
                   <button type="submit" class="btn btn-primary">Submit</button>
+                  <a href="{{route('bustravel.routes.departures.create',$route->id)}}" class="btn btn-info">Create Departure and Arrival Times</a>
                 </div>
               </div>
-              <hr>
             </form>
             </div>
               @php $times =$route->departure_times()->get(); @endphp
-          <div class="row">
-            <div class="form-group col-md-12">
 
-              <div class="box-group" id="accordion">
-         <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-
-             <h4 class="box-title">
-               <a data-toggle="collapse" data-parent="#accordion" href="#collapsetwo">
-                  Routes Times
-               </a>
-             </h4>
-           <div id="collapsetwo" class="panel-collapse collapse in">
-             <div class="box-body">
-            <div class="row">
-              <div class="form-group col-md-12"><hr></div>
-             <div class="form-group col-md-12">
-               <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
-                      <thead>
-                          <tr>
-                              <th>Status</th>
-                              <th>Operator</th>
-                              <th>Route</th>
-                              <th>Price</th>
-                              <th>Bus </th>
-                              <th>times</th>
-                              <th>Driver</th>
-                              <th>Action</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-
-                      @foreach ($times as $route_departure_time)
-                          <tr>
-                            <td>@if($route_departure_time->status==1)
-                                  <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
-                                @else
-                                <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
-
-                                @endif
-                             </td>
-                              <td>{{$route_departure_time->route->operator->name}}</td>
-                              <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
-                              <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
-                              <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
-                              <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
-                              <td>{{$route_departure_time->driver->name??'NONE'}}</td>
-                              <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
-                                  <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
-                              </td>
-                          </tr>
-
-                      @endforeach
-                  </tbody>
-                  </table>
-             </div>
-           </div>
-         </div>
-           </div>
-         </div>
-       </div>
-            </div>
 
             <!-- /.row -->
             </div>
@@ -261,7 +187,65 @@
         <!-- /.card -->
         </div>
         <!-- /.col -->
+       <!-- /.col -->
     </div>
+<div class="col-md-12">
+  <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">
+      <a  data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Route {{$route->start->name}} [ {{$route->start->code}} ] - {{$route->end->name}} [ {{$route->end->code}} ]  Departure/Arrival  Times
+         <button type="button" class="btn btn-box-tool" data-toggle="collapse" data-target="#collapseExample" >
+           <i class="fa fa-plus"></i>
+         </button>
+      </a>
+    </h4>
+      </div>
+      <div class="collapse" id="collapseExample">
+        <div class=" card-body">
+          <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" style="width:100%">
+                 <thead>
+                     <tr>
+                         <th>Status</th>
+                         <th>Operator</th>
+                         <th>Route</th>
+                         <th>Price</th>
+                         <th>Bus </th>
+                         <th>times</th>
+                         <th>Driver</th>
+                         <th>Action</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+
+                 @foreach ($times as $route_departure_time)
+                     <tr>
+                       <td>@if($route_departure_time->status==1)
+                             <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                           @else
+                           <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+
+                           @endif
+                        </td>
+                         <td>{{$route_departure_time->route->operator->name}}</td>
+                         <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
+                         <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
+                         <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
+                         <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
+                         <td>{{$route_departure_time->driver->name??'NONE'}}</td>
+                         <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
+                             <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                         </td>
+                     </tr>
+
+                 @endforeach
+             </tbody>
+             </table>
+
+        </div>
+      </div>
+  </div>
+</div>
 </div>
 @stop
 
@@ -277,16 +261,17 @@
           $('#add_item').on('click',function(e){
          e.preventDefault();
          //get selected option
+         var uniqueid = Date.now();
          var routeid = $('#item-selector').find(":selected").data('startitemid');
          var endid = $('#item-selector2').find(":selected").data('enditemid');
          var startname = $('#item-selector').find(":selected").data('startitemname');
          var endname = $('#item-selector2').find(":selected").data('enditemname');
-         var markup = "<tr item-id='"+routeid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_startid[]'><input type='text' class='form-control' name='name1'size='4' value='"+startname+"' readonly /></td><td ><input type='hidden' value='"+endid+"' name='stopover_endid[]'><input type='text' class='form-control' name='name1'size='4' value='"+endname+"' readonly /></td><td><input type='text' class='form-control' name='stopover_price[]'size='4' value='0'  required /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
+         var markup = "<tr item-id='"+uniqueid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_startid[]'><input type='text' class='form-control' name='name1'size='4' value='"+startname+"' readonly /></td><td ><input type='hidden' value='"+endid+"' name='stopover_endid[]'><input type='text' class='form-control' name='name1'size='4' value='"+endname+"' readonly /></td><td><input type='text' class='form-control' name='stopover_price[]'size='4' value='0'  required /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
 
            var exists =  0;
           $("table tbody").find("tr").each(function () {
               var current_stock_id = $(this).attr('item-id');
-              if(current_stock_id == routeid)
+              if(current_stock_id == uniqueid)
               {
                 exists = exists + 1;
               }
