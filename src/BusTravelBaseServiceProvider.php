@@ -31,6 +31,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'text' => 'General Settings',
                             'url'  => route('bustravel.general_settings'),
                             'icon' => 'fa fa-cog',
+                            'can' => 'Manage BT General Settings',
 
                         ],
 
@@ -38,6 +39,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'text'    => 'Company Settings',
                             'url'     => route('bustravel.company_settings'),
                             'icon'    => 'fa fa-cog',
+                            'can' => 'Manage BT Operator Settings',
                             'submenu' => [
                               [
                                   'text' => 'Booking Custom Fields',
@@ -51,6 +53,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'text' => 'Stations',
                             'url'  => route('bustravel.stations'),
                             'icon' => 'fa fa-map-marker-alt',
+                            'can' => 'Manage BT Stations',
                         ],
 
                     ],
@@ -65,6 +68,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     'text' => 'Operators',
                     'url'  => route('bustravel.operators'),
                     'icon' => 'fa fa-list',
+                    'can' => 'Manage BT Operators',
 
                 ],
 
@@ -72,30 +76,28 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     'text' => 'Buses',
                     'url'  => route('bustravel.buses'),
                     'icon' => 'fa fa-bus',
+                    'can' => 'View BT Buses',
 
                 ],
                 [
                     'text' => 'Routes',
                     'url'  => route('bustravel.routes'),
                     'icon' => 'fa fa-route',
+                    'can' => 'View BT Routes',
 
                 ],
                 [
                     'text' => 'Drivers',
                     'url'  => route('bustravel.drivers'),
                     'icon' => 'fa fa-user',
-
-                ],
-                [
-                    'text' => 'Routes Departures Times',
-                    'url'  => route('bustravel.routes.departures'),
-                    'icon' => 'fa fa-clock',
+                    'can' => 'View BT Drivers',
 
                 ],
                 [
                     'text' => 'Bookings',
                     'url'  => route('bustravel.bookings'),
                     'icon' => 'fa fa-money-check',
+                    'can' => 'View BT Bookings',
 
                 ],
 
@@ -106,11 +108,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
             'text'    => 'Reports',
             'url'     => '#',
             'icon'    => 'fa fa-list',
+            'can' => 'View BT Reports',
             'submenu' => [
                     [
                         'text' => 'Sales',
                         'url'  => route('bustravel.reports.sales'),
                         'icon' => 'fa fa-money-bill',
+                        'can' => 'View BT Sales Reports',
 
                     ],
 
@@ -158,23 +162,27 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                                 'text'    => 'Users',
                                 'url'     => route('bustravel.testdefault'),
                                   'icon'  => 'fa fa-users',
+                                  'can' => 'View BT Users',
                                 'submenu' => [
                                   [
                                       'text' => 'User Accounts',
                                       'url'  => route('bustravel.users'),
                                       'icon' => 'fa fa-lock',
+                                      'can' => 'View BT Users',
 
                                   ],
                                   [
                                       'text' => 'Roles',
                                       'url'  => route('bustravel.users.roles'),
                                       'icon' => 'fa fa-lock',
+                                      'can' => 'Manage BT Permissions',
 
                                   ],
                                   [
                                       'text' => 'Permissions',
                                       'url'  => route('bustravel.users.permissions'),
                                       'icon' => 'fa fa-lock',
+                                      'can' => 'Manage BT Permissions',
 
                                   ],
                                 ],

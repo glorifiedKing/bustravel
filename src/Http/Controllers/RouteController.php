@@ -22,7 +22,14 @@ class RouteController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-        $routes = Route::all();
+        if(auth()->user()->hasAnyRole('BT Administrator'))
+          {
+            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
+          }
+        else
+          {
+             $routes = Route::all();
+          }
 
         return view('bustravel::backend.routes.index', compact('routes'));
     }
@@ -54,7 +61,6 @@ class RouteController extends Controller
             return redirect()->route('bustravel.routes.create')->with($alerts);
         }
         $route = new Route();
-        $route->operator_id = request()->input('operator_id');
         $route->start_station = request()->input('start_station');
         $route->end_station = request()->input('end_station');
         $route->price = str_replace(',', '', request()->input('price'));
@@ -118,7 +124,6 @@ class RouteController extends Controller
         }
         //saving to the database
         $route = Route::find($id);
-        $route->operator_id = request()->input('operator_id');
         $route->start_station = request()->input('start_station');
         $route->end_station = request()->input('end_station');
         $route->price = str_replace(',', '', request()->input('price'));

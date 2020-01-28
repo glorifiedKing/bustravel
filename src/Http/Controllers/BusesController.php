@@ -22,7 +22,16 @@ class BusesController extends Controller
         if (!auth()->user()->can('View BT Buses')) {
             return redirect()->route('bustravel.errors.403');
         }
-        $buses = Bus::all();
+
+        if(auth()->user()->hasAnyRole('BT Administrator'))
+          {
+            $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+          }
+        else
+          {
+           $buses = Bus::all();
+          }
+
 
         return view('bustravel::backend.buses.index', compact('buses'));
     }
@@ -30,9 +39,7 @@ class BusesController extends Controller
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
-        $bus_operators = Operator::where('status', 1)->orderBy('name', 'ASC')->get();
-
-        return view('bustravel::backend.buses.create', compact('bus_operators'));
+        return view('bustravel::backend.buses.create');
     }
 
     // saving a new buses in the database  route('bustravel.buses.store')
@@ -42,7 +49,6 @@ class BusesController extends Controller
         $validation = request()->validate(Bus::$rules);
         //saving to the database
         $bus = new Bus();
-        $bus->operator_id = request()->input('operator_id');
         $bus->number_plate = request()->input('number_plate');
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');
@@ -75,13 +81,11 @@ class BusesController extends Controller
     {
         //validation
         $validation = request()->validate([
-        'operator_id'      => 'required',
         'number_plate'     => 'required|unique:buses,number_plate,'.$id,
         'seating_capacity' => 'required|integer',
       ]);
         //saving to the database
         $bus = Bus::find($id);
-        $bus->operator_id = request()->input('operator_id');
         $bus->number_plate = request()->input('number_plate');
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');

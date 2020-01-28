@@ -21,15 +21,14 @@ class RoutesDepartureTimesTest extends TestCase
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
+        $user->operator_id = $operator->id;
+        $user->save();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
-        $driver = factory(Driver::class)->create([
-        'operator_id' => $operator->id,
-      ]);
-        $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
+        $driver = factory(Driver::class)->create();
+        $bus = factory(Bus::class)->create();
         //  create Route
         $route = factory(Route::class)->create([
-        'operator_id'   => $operator->id,
         'start_station' => $station1->id,
         'end_station'   => $station2->id,
       ]);
@@ -39,7 +38,7 @@ class RoutesDepartureTimesTest extends TestCase
         'driver_id' => $driver->id,
       ]);
         //When user visit the Routes Departure Times page
-      $response = $this->actingAs($user)->get('/transit/routes/departures'); // your route to get Routes Departure  Times
+      $response = $this->actingAs($user)->get('/transit/routes/'.$route->id.'/edit'); // your route to get Routes Departure  Times
       //$this->assertTrue(true);
       $response->assertStatus(200);
         // should be able to read the Route Departure Time
@@ -52,17 +51,16 @@ class RoutesDepartureTimesTest extends TestCase
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
+        $user->operator_id = $operator->id;
+        $user->save();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
-        $driver = factory(Driver::class)->create([
-        'operator_id' => $operator->id,
-      ]);
+        $driver = factory(Driver::class)->create();
         $route = factory(Route::class)->create([
-        'operator_id'   => $operator->id,
         'start_station' => $station1->id,
         'end_station'   => $station2->id,
       ]);
-        $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
+        $bus = factory(Bus::class)->create();
         $data = [
         'route_id'                           => $route->id,
         'departure_time'                     => '09:30:00',
@@ -82,17 +80,18 @@ class RoutesDepartureTimesTest extends TestCase
     {
         $user = factory(User::class)->create();
         $operator = factory(Operator::class)->create();
+        $user->operator_id = $operator->id;
+        $user->save();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
         $route = factory(Route::class)->create([
-        'operator_id'   => $operator->id,
         'start_station' => $station1->id,
         'end_station'   => $station2->id,
       ]);
         $driver = factory(Driver::class)->create([
         'operator_id' => $operator->id,
       ]);
-        $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
+        $bus = factory(Bus::class)->create();
         $route_departure_time = factory(RoutesDepartureTime::class)->create([
         'route_id'  => $route->id,
         'bus_id'    => $bus->id,
@@ -109,17 +108,16 @@ class RoutesDepartureTimesTest extends TestCase
     {
         $user = factory(User::class)->create();
         $operator = factory(Operator::class)->create();
+        $user->operator_id = $operator->id;
+        $user->save();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
         $route = factory(Route::class)->create([
-        'operator_id'   => $operator->id,
         'start_station' => $station1->id,
         'end_station'   => $station2->id,
       ]);
-        $driver = factory(Driver::class)->create([
-        'operator_id' => $operator->id,
-      ]);
-        $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
+        $driver = factory(Driver::class)->create();
+        $bus = factory(Bus::class)->create();
         $route_departure_time = factory(RoutesDepartureTime::class)->create([
         'route_id'  => $route->id,
         'bus_id'    => $bus->id,

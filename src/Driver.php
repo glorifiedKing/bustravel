@@ -1,15 +1,15 @@
 <?php
 
 namespace glorifiedking\BusTravel;
-
+use glorifiedking\BusTravel\Traits\OperatorTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Driver extends Model
 {
+  use OperatorTrait;
     protected $guarded = [];
     // validation
     public static $rules = [
-    'operator_id'       => 'required',
     'name'              => 'required',
     'nin'               => 'required|unique:drivers',
     'date_of_birth'     => 'required',

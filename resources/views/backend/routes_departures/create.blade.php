@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.departures')}}" class="btn btn-info">Back</a></small> Routes </h1>
+        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.edit',$route->id)}}" class="btn btn-info">Back</a></small> Routes  </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -24,35 +24,13 @@
         <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">Add Route Departure Time </h5>
+            <h5 class="card-title">Add Route {{$route->start->name}} [ {{$route->start->code}} ] - {{$route->end->name}} [ {{$route->end->code}} ]  Departure/Arrival  Time</h5>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
             <div class="row">
               <div class="col-md-12">
                 <div class="box-body">
-                  <form role="form" action="{{route('bustravel.routes.departures.route_times')}}" method="POST" >
-                  {{csrf_field() }}
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                           <label> Routes</label>
-                           <select class="form-control select2 {{ $errors->has('route_id') ? ' is-invalid' : '' }}" name="route_id"  placeholder="Select Operator" onchange="this.form.submit()">
-                             <option value="">Select Route</option>
-                             @foreach($routes as $route_course)
-                                 <option value="{{$route_course->id}}" @php echo $route_id == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->start->name}} ( {{$route_course->start->code}} ) - {{$route_course->end->name}} ( {{$route_course->end->code}} )</option>
-                             @endforeach
-                           </select>
-                           @if ($errors->has('route_id'))
-                               <span class="invalid-feedback">
-                                   <strong>{{ $errors->first('route_id') }}</strong>
-                               </span>
-                           @endif
-                      </div>
-                    </div>
-                  </div>
-                </form>
-
-               @if(!is_null($route))
               <form role="form" action="{{route('bustravel.routes.departures.store')}}" method="POST" >
               {{csrf_field() }}
 
@@ -184,7 +162,6 @@
               </div>
               </div>
             </form>
-            @endif
             </div>
 
             <!-- /.row -->

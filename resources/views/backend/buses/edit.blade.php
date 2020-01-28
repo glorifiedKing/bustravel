@@ -35,20 +35,6 @@
 
               <div class="box-body">
                   <div class="row">
-                        <div class="form-group col-md-6">
-                             <label>Select  Operator</label>
-                             <select class="select2 form-control {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id" required placeholder="Select Operator">
-                               <option value=""></option>
-                               @foreach($bus_operators as $operator)
-                                   <option value="{{$operator->id}}" @php echo $bus->operator_id == $operator->id ? 'selected' :  "" @endphp>{{$operator->name}} - {{$operator->code}}</option>
-                               @endforeach
-                             </select>
-                             @if ($errors->has('operator_id'))
-                                 <span class="invalid-feedback">
-                                     <strong>{{ $errors->first('operator_id') }}</strong>
-                                 </span>
-                             @endif
-                        </div>
                         <div class="form-group col-md-3 ">
                             <label for="exampleInputEmail1">Number Plate</label>
                             <input type="text"  name="number_plate" value="{{$bus->number_plate}}" class="form-control {{ $errors->has('number_plate') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Number Plate" required>

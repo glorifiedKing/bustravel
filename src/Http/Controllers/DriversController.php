@@ -5,10 +5,12 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 use File;
 use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+
 
 class DriversController extends Controller
 {
@@ -21,7 +23,17 @@ class DriversController extends Controller
     //fetching Drivers route('bustravel.drivers')
     public function index()
     {
-        $drivers = Driver::all();
+      //$user =User::find(auth()->user()->id);
+
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+        {
+          $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();
+        }
+      else
+        {
+           $drivers = Driver::all();
+        }
+
 
         return view('bustravel::backend.drivers.index', compact('drivers'));
     }
@@ -29,9 +41,7 @@ class DriversController extends Controller
     //creating Driver form route('bustravel.buses.create')
     public function create()
     {
-        $bus_operators = Operator::where('status', 1)->orderBy('name', 'ASC')->get();
-
-        return view('bustravel::backend.drivers.create', compact('bus_operators'));
+        return view('bustravel::backend.drivers.create');
     }
 
     // saving a new Driver in the database  route('bustravel.drivers.store')
@@ -52,7 +62,6 @@ class DriversController extends Controller
         }
         //saving to the database
         $driver = new Driver();
-        $driver->operator_id = request()->input('operator_id');
         $driver->name = request()->input('name');
         $driver->nin = strtoupper(request()->input('nin'));
         $driver->date_of_birth = request()->input('date_of_birth');
@@ -111,8 +120,6 @@ class DriversController extends Controller
         }
         //saving to the database
         $driver = Driver::find($id);
-
-        $driver->operator_id = request()->input('operator_id');
         $driver->name = request()->input('name');
         $driver->nin = strtoupper(request()->input('nin'));
         $driver->date_of_birth = request()->input('date_of_birth');

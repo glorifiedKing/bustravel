@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.departures')}}" class="btn btn-info">Back</a></small> Routes Departure Times </h1>
+        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.edit',$route_departure_time->route_id)}}" class="btn btn-info">Back</a></small> Routes Departure Times </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -35,21 +35,8 @@
 
               <div class="box-body">
                 <div class="row">
-                  <div class="form-group col-md-6">
-                       <label> Routes</label>
-                       <select class="form-control select2 {{ $errors->has('route_id') ? ' is-invalid' : '' }}" name="route_id"  placeholder="Select Operator">
-                         <option value="">Select Route</option>
-                         @foreach($routes as $route_course)
-                             <option value="{{$route_course->id}}" @php echo $route_departure_time->route_id == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->start->name}} ( {{$route_course->start->code}} ) - {{$route_course->end->name}} ( {{$route_course->end->code}} )</option>
-                         @endforeach
-                       </select>
-                       @if ($errors->has('route_id'))
-                           <span class="invalid-feedback">
-                               <strong>{{ $errors->first('route_id') }}</strong>
-                           </span>
-                       @endif
-                  </div>
                   <div class="form-group col-md-6 ">
+                    <input type="hidden" value="{{$route_departure_time->route_id}}">
                     <label>Start Bus</label>
                     <select class="form-control select2 {{ $errors->has('bus_id') ? ' is-invalid' : '' }}" name="bus_id"  placeholder="Select Operator">
                       <option value="">Select Bus</option>

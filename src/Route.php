@@ -1,15 +1,15 @@
 <?php
 
 namespace glorifiedking\BusTravel;
-
+use glorifiedking\BusTravel\Traits\OperatorTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
+  use OperatorTrait;
     protected $guarded = [];
     // validation
     public static $rules = [
-    'operator_id'   => 'required',
     'start_station' => 'required',
     'end_station'   => 'required',
     'start_station' => 'required',

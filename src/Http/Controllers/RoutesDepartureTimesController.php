@@ -29,19 +29,15 @@ class RoutesDepartureTimesController extends Controller
     }
 
     //creating buses form route('bustravel.buses.create')
-    public function create()
+    public function create($id)
     {
-      $route_id =0;
-      if(request()->isMethod('post'))
-        {
-        $route_id =request()->input('route_id');
-        }
-        $route =Route::find($route_id);
-        $routes = Route::where('status', 1)->get();
-        $drivers = Driver::where('status', 1)->orderBy('name', 'ASC')->get();
-        $buses = Bus::where('status', 1)->get();
 
-        return view('bustravel::backend.routes_departures.create', compact('buses', 'routes', 'drivers','route','route_id'));
+        $route =Route::find($id);
+        $routes = Route::where('status', 1)->get();
+        $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
+
+        return view('bustravel::backend.routes_departures.create', compact('buses', 'routes', 'drivers','route'));
     }
 
     // saving a new route departure times in the database  route('bustravel.routes.departures.store')
@@ -80,7 +76,7 @@ class RoutesDepartureTimesController extends Controller
         'bustravel-flash-message' => 'Route has successfully been saved',
     ];
 
-        return redirect()->route('bustravel.routes.departures')->with($alerts);
+        return redirect()->route('bustravel.routes.edit',$route->route_id)->with($alerts);
     }
 
     //Bus Edit form route('bustravel.buses.edit')
