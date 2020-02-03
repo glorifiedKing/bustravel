@@ -67,7 +67,12 @@
                     </div>
                     <div class="form-group col-md-3 ">
                       <label>Departure Time</label>
-                      <input type="text"  name="departure_time" value="{{old('departure_time')}}" class="form-control {{ $errors->has('departure_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Departure Time" required>
+                      <div class="input-group date timepicker" id="departuretime"  data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input" data-target="#departuretime"  name="departure_time" value="{{old('departure_time')}}"/>
+                          <div class="input-group-append" data-target="#departuretime" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                          </div>
+                      </div>
                       @if ($errors->has('departure_time'))
                           <span class="invalid-feedback">
                               <strong>{{ $errors->first('departure_time') }}</strong>
@@ -76,8 +81,13 @@
                     </div>
                     <div class="form-group col-md-3 ">
                       <label>Arrival Time</label>
-                      <input type="text"  name="arrival_time" value="{{old('arrival_time')}}" class="form-control {{ $errors->has('arrival_time') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Arrival Time" required >
-                      @if ($errors->has('arrival_time'))
+                      <div class="input-group date timepicker" id="arrival_time" data-target-input="nearest">
+                         <input type="text" class="form-control datetimepicker-input" data-target="#arrival_time"  name="arrival_time" value="{{old('arrival_time')}}"/>
+                         <div class="input-group-append" data-target="#arrival_time" data-toggle="datetimepicker">
+                             <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                         </div>
+                      </div>
+                        @if ($errors->has('arrival_time'))
                           <span class="invalid-feedback">
                               <strong>{{ $errors->first('arrival_time') }}</strong>
                           </span>
@@ -105,9 +115,25 @@
                                   <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
                               </td>
                               <td >
-                                  <input type='text' value='' class='form-control' name='stopover_arrival_time[]' required>
+                                <div class="form-group">
+                                 <div class="input-group date timepicker" id="arrival_time{{$stoverstation->id}}" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#arrival_time{{$stoverstation->id}}"  name="stopover_arrival_time[]" value="" required/>
+                                    <div class="input-group-append" data-target="#arrival_time{{$stoverstation->id}}" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                    </div>
+                                 </div>
+                               </div>
                               </td>
-                              <td><input type='text' value='' class='form-control' name='stopover_departure_time[]' required></td>
+                              <td>
+                                <div class="form-group">
+                                 <div class="input-group date timepicker" id="departure_time{{$stoverstation->id}}" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#departure_time{{$stoverstation->id}}"  name="stopover_departure_time[]" value="" required/>
+                                    <div class="input-group-append" data-target="#departure_time{{$stoverstation->id}}" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-clock"></i></div>
+                                    </div>
+                                 </div>
+                                </div>
+                              </td>
                             </tr>
                              @endforeach
 
@@ -187,6 +213,9 @@
        $(function () {
          $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
          $('.select2').select2();
+         $('.timepicker').datetimepicker({
+                    format: 'LT'
+                });
        })
 </script>
 @stop
