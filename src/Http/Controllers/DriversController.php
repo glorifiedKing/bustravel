@@ -23,8 +23,7 @@ class DriversController extends Controller
     //fetching Drivers route('bustravel.drivers')
     public function index()
     {
-      //$user =User::find(auth()->user()->id);
-
+      
       if(auth()->user()->hasAnyRole('BT Administrator'))
         {
           $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();

@@ -1,10 +1,10 @@
 <?php
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-use Faker\Generator as Faker;
+
 use glorifiedking\BusTravel\Route;
 
-$factory->define(Route::class, function (Faker $faker) {
+$factory->define(Route::class, function () {
     return [
         'operator_id'   => 1,
         'start_station' => 1,

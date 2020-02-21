@@ -2,7 +2,7 @@
 
 /* @var $factory \Illuminate\Database\Eloquent\Factory */
 
-use Faker\Generator as Faker;
+
 use Spatie\Permission\Models\Role;
 
 /*
@@ -16,7 +16,7 @@ use Spatie\Permission\Models\Role;
 |
 */
 
-$factory->define(Role::class, function (Faker $faker) {
+$factory->define(Role::class, function () {
     return [
         'name'       => 'Administrator',
         'guard_name' => 'web',
