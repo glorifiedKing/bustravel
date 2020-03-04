@@ -5,3 +5,4 @@ To use this package you have to symlink it to your laravel application and run c
 ## other packages used/required
 spatie/laravel-permission
 jeroennoten/laravel-adminlte
+php artisan db:seed --class="glorifiedking\\BusTravel\\Seeds\\PermissionSeeder"
