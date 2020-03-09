@@ -11,7 +11,8 @@
     "require": {
         "jeroennoten/laravel-adminlte": "^3.0",
         "spatie/laravel-permission": "3.0",
-        "doctrine/dbal": "^2.10"
+        "doctrine/dbal": "^2.10",
+        "guzzlehttp/guzzle": "^6.5"
     },
     "require-dev": {
         "orchestra/testbench": "^4.3",
