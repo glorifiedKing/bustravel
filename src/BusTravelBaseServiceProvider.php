@@ -207,6 +207,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
     {
         $this->app->register('JeroenNoten\LaravelAdminLte\AdminLteServiceProvider');
         $this->app->register('Spatie\Permission\PermissionServiceProvider');
+        //$this->app->register("Barryvdh\DomPDF\ServiceProvider");
     }
 
     private function registerResources()

@@ -105,7 +105,7 @@ class BusesController extends Controller
     public function delete($id)
     {
         $bus = Bus::find($id);
-        $name = $bus->number_plate;
+        
         $bus->delete();
         $alerts = [
             'bustravel-flash'         => true,

@@ -14,6 +14,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use PDF;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
+use Mike42\Escpos\CapabilityProfile;
+use Mike42\Escpos\EscposImage;
+
 
 class BookingsController extends Controller
 {
@@ -89,7 +95,58 @@ class BookingsController extends Controller
         'bustravel-flash-title'   => 'Booking Saving',
         'bustravel-flash-message' => 'Booking has successfully been saved',
     ];
+       
+        $bus_reg_no = "RW 123a";  //GET         
+        $departure_station = $booking->route_departure_time->route->start->name;
+        $arrival_station = $booking->route_departure_time->route->end->name;
+        $arrival_time = "00:00:00"; //get
+        $connector = new DummyPrintConnector();
+        $profile = CapabilityProfile::load("simple");
+        $printer = new Printer($connector);  
+        $operator_logo = EscposImage::load("ritco_black.jpg",false);
+        $printer -> setJustification(Printer::JUSTIFY_CENTER);
+        $printer->bitImage($operator_logo);
+        $printer->text("\n");      
+        //$printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+        $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
+        $printer->text("Bus Travel Ticket \n");
+        $printer -> setJustification(Printer::JUSTIFY_LEFT);
+        $printer->selectPrintMode();
+        $printer->text("\n");
+        $printer->text("Ticket No: ".$booking->ticket_number."\n");
+        $printer->text("Date of Travel: ".$booking->date_of_travel." ".$booking->time_of_travel."\n");
+        $printer->text("Bus Reg No: ".$bus_reg_no."\n");
+        $printer->text("Price: ".$booking->amount."\n");
+        $printer->text("FROM: ".$departure_station."\n");
+        $printer->text("TO: ".$arrival_station."\n");
+        $printer->text("Arriving at: ".$arrival_time."\n");
+        $printer->text("\n");
+        $printer->text("\n");
 
+        //add custom fields to receipt
+        if ($fields_values != 0) {
+            foreach ($fields_values as $index =>  $fields_value) {
+                $custom_field = BookingCustomField::where([
+                    ['operator_id','=',auth()->user()->operator_id],
+                    ['id',$fields_id[$index]],
+                ])->first();
+                $printer->text($custom_field->field_name.":".$fields_values[$index]."\n");
+                
+            }
+        }
+        $printer->text("\n");
+        $printer->text("\n");
+        $printer->text("\n");
+        $printer->text("\n");
+        $printer->barcode("12365418568",Printer::BARCODE_UPCA);
+    //$printer->qrcode($booking->ticket_number/*,Printer::QR_ECLEVEL_M,10,Printer::QR_MODEL_2*/);
+        $printer->text("\n");
+        $printer->text("Powered by PalmKash \n");
+        $printer->text("www.transport.palmkash.com \n");
+        $printer->text("\n");
+        $printer->cut();
+        //dd(base64_encode($connector->getData()));
+        return redirect()->away('rawbt:base64,'.base64_encode($connector->getData()));
         return redirect()->route('bustravel.bookings')->with($alerts);
     }
 
