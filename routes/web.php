@@ -93,3 +93,8 @@ Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.repo
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
+
+Route::get('faqs', 'FaqsController@faqs')->name('bustravel.faqs');
+Route::post('faqs', 'FaqsController@storefaqs')->name('bustravel.faqs.store');
+Route::any('faqs/{id}/update', 'FaqsController@updatefaqs')->name('bustravel.faqs.update');
+Route::any('faqs/{id}/delete', 'FaqsController@deletefaqs')->name('bustravel.faqs.delete');

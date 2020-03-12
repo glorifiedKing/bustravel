@@ -10,15 +10,15 @@
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{route('bustravel.bus.times')}}">
                     Bus Times / Tickets <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Station / Bus Info</a>
+                <a class="nav-link" href="{{route('bustravel.bus.stations')}}">Station / Bus Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Help</a>
+                <a class="nav-link" href="{{route('bustravel.bus.faqs')}}">Help</a>
             </li>
         </ul>
         @if (session('cart'))
@@ -33,9 +33,9 @@
                     <span class="cart-items-number">{{count(session('cart.items'))}}</span>
                 </a>
             </li>
-        </ul>  
-        @endif     
-        @if (Route::has('login'))    
+        </ul>
+        @endif
+        @if (Route::has('login'))
         <div class="dropdown accnt-area-menu">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="account-ico">
