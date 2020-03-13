@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -106,5 +107,22 @@ class FrontendController extends Controller
     public function checkout(Request $request)
     {
         return view('bustravel::frontend.checkout');
+    }
+
+    public function bus_times(Request $request)
+    {
+        $routes_times =RoutesDepartureTime::paginate(10);
+        return view('bustravel::frontend.bus_times',compact('routes_times'));
+    }
+    public function stations(Request $request)
+    {
+        $stations =Station::orderBy('name','ASC')->paginate(10);
+        return view('bustravel::frontend.stations',compact('stations'));
+    }
+
+    public function faqs(Request $request)
+    {
+        $faqs =Faq::paginate(10);
+        return view('bustravel::frontend.faqs',compact('faqs'));
     }
 }

@@ -192,11 +192,26 @@ class BusTravelBaseServiceProvider extends ServiceProvider
             //        ]
 
                 ];
+                $help_menu = [
+
+                            'text'    => 'Help',
+                            'url'     => '#',
+                            'icon'    => 'fas fa-fw fa-flag',
+                            'submenu' => [
+                                [
+                                    'text' => 'Faqs',
+                                    'url'  => route('bustravel.faqs'),
+                                    'icon' => 'fas fa-fw fa-flag',
+                                ],
+                            ],
+
+                    ];
 
             $event->menu->add($settings_menu);
             $event->menu->add($operations_menu);
             $event->menu->add($reports_menu);
             $event->menu->add($users_menu);
+            $event->menu->add($help_menu);
         });
     }
 
