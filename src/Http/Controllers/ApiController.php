@@ -48,7 +48,7 @@ class ApiController extends Controller
             <tomessage>".$from."</tomessage>
             <referenceid>".$ref_id."</referenceid>
             </ns2:debitrequest>";
-        $request_uri = "https://10.33.1.14";
+        $request_uri = "https://10.33.10.199:8100/mot/mm/debit";
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', $request_uri, [
                     'headers' => [
