@@ -51,6 +51,7 @@ class ApiController extends Controller
         $request_uri = "https://10.33.10.199:8100/mot/mm/debit";
         $client = new \GuzzleHttp\Client(['verify' => false]);
         $response = $client->request('POST', $request_uri, [
+                    ['cert' => ['/home/sslcertificates/197_243_14_94.crt']],
                     'headers' => [
                         'Content-Type' => 'text/xml'
                     ],
