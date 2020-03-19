@@ -28,7 +28,7 @@ class ApiController extends Controller
         $amount = $request->amount;
         $api_username = config('bustravel.payment_gateways.mtn_rw.username');
         $api_password = config('bustravel.payment_gateways.mtn_rw.password');
-        $base_api_url = config('bustravel.payment_gaeteways.mtn_rw.url');
+        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
         if(!isset($to) || !isset($from) || !isset($amount))
         {
             return response()->json([
@@ -36,6 +36,7 @@ class ApiController extends Controller
                 'message' => 'All fields are required'
             ]);
         }
+        
         $ref_id = rand();
         $external_transaction_id = uniqid();
         //send request to mtn url 
@@ -65,9 +66,10 @@ class ApiController extends Controller
         $request_headers = array();
         $auth_header = "Authorization: Basic " . base64_encode($api_username . ':' . $api_password);
         $request_headers[] = $auth_header;
+       
                 $ch = curl_init();
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-        curl_setopt($ch, CURLOPT_URL, "https://10.33.10.199:8100/mot/mm/debit");
+        curl_setopt($ch, CURLOPT_URL, $request_uri);
         curl_setopt($ch, CURLOPT_SSLCERT ,  "/home/sslcertificates/197_243_14_94.crt" );
         curl_setopt($ch, CURLOPT_SSLKEY ,  "/home/sslcertificates/197_243_14_94.pem" );
         curl_setopt($ch, CURLOPT_SSLVERSION, 6);
