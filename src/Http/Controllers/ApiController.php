@@ -49,7 +49,7 @@ class ApiController extends Controller
             <referenceid>".$ref_id."</referenceid>
             </ns2:debitrequest>";
         $request_uri = "https://10.33.10.199:8100/mot/mm/debit";
-        $client = new \GuzzleHttp\Client(['verify' => false]);
+       /* $client = new \GuzzleHttp\Client(['verify' => false]);
         $response = $client->request('POST', $request_uri, [
                     ['cert' => ['/home/sslcertificates/197_243_14_94.crt']],
                     'headers' => [
@@ -58,7 +58,29 @@ class ApiController extends Controller
                     'body'   => $xml_body
                     ]);
          dd($response);           
+            */
+                $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://10.33.10.199:8100/mot/mm/debit");
+        curl_setopt($ch, CURLOPT_SSLCERT ,  "/home/sslcertificates/197_243_14_94.crt" );
+        curl_setopt($ch, CURLOPT_SSLKEY ,  "/home/sslcertificates/197_243_14_94.pem" );
+        curl_setopt($ch, CURLOPT_SSLVERSION, 6);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+        curl_setopt($ch, CURLOPT_TIMEOUT,        15);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST,           true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,    $xml_body);
+        $result = curl_exec($ch);
 
+        if (curl_errno($ch) > 0) {
+            $result = array('errocurl' => curl_errno($ch), 'msgcurl' => curl_error($ch));
+            echo curl_error($ch);
+            // $result = false;
+        }
+
+        curl_close($ch);
+       print_r($result); die();
     }
 
     //save successfull debits
