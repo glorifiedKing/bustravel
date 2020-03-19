@@ -26,6 +26,9 @@ class ApiController extends Controller
         $to = $request->to;
         $from = $request->from;
         $amount = $request->amount;
+        $api_username = config('bustravel.payment_gateways.mtn_rw.username');
+        $api_password = config('bustravel.payment_gateways.mtn_rw.password');
+        $base_api_url = config('bustravel.payment_gaeteways.mtn_rw.url');
         if(!isset($to) || !isset($from) || !isset($amount))
         {
             return response()->json([
@@ -39,7 +42,7 @@ class ApiController extends Controller
         $xml_body = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
             <ns2:debitrequest xmlns:ns2='http://www.ericsson.com/em/emm'>
             <fromfri>FRI:".$from."/MSISDN</fromfri>
-            <tofri>FRI:".$to."@pascal.sp/SP</tofri>
+            <tofri>FRI:".$to."@".$api_username."/SP</tofri>
             <amount>
             <amount>".$amount."</amount>
             <currency>FRW</currency>
@@ -48,7 +51,7 @@ class ApiController extends Controller
             <tomessage>".$from."</tomessage>
             <referenceid>".$ref_id."</referenceid>
             </ns2:debitrequest>";
-        $request_uri = "https://10.33.10.199:8100/mot/mm/debit";
+        $request_uri = $base_api_url."/mot/mm/debit";
        /* $client = new \GuzzleHttp\Client(['verify' => false]);
         $response = $client->request('POST', $request_uri, [
                     ['cert' => ['/home/sslcertificates/197_243_14_94.crt']],
@@ -59,7 +62,11 @@ class ApiController extends Controller
                     ]);
          dd($response);           
             */
+        $request_headers = array();
+        $auth_header = "Authorization: Basic " . base64_encode($api_username . ':' . $api_password);
+        $request_headers[] = $auth_header;
                 $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
         curl_setopt($ch, CURLOPT_URL, "https://10.33.10.199:8100/mot/mm/debit");
         curl_setopt($ch, CURLOPT_SSLCERT ,  "/home/sslcertificates/197_243_14_94.crt" );
         curl_setopt($ch, CURLOPT_SSLKEY ,  "/home/sslcertificates/197_243_14_94.pem" );
