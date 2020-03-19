@@ -6,7 +6,7 @@
             @section('content')
                 <div class="row">
                     <div class="col-md-8">
-                        <h1 class="h3 mb-3 font-weight-normal">Momo Tests</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Momo Debit Test</h1>
                         <ul class="form-header-custom">
                           
                         </ul>
@@ -43,7 +43,7 @@
                                     
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary cust-btn-link">Login</button>
+                            <button type="submit" class="btn btn-primary cust-btn-link">Pay</button>
                         </form>
                     </div>
                 </div>
