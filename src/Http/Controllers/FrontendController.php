@@ -5,8 +5,10 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 use Carbon\Carbon;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\RoutesDepartureTime;
+use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\Faq;
+use glorifiedking\BusTravel\StopoverStation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -36,34 +38,83 @@ class FrontendController extends Controller
         ]);
 
         //search
-        $route_results = Route::where([
+
+        // get which day of the week it is for date 
+        $travel_day_of_week = Carbon::parse($request->date_of_travel)->format('l');
+        $travel_time = Carbon::parse($request->time_of_travel)->format('G:i');
+        //dd($travel_day_of_week);
+        $departure_time = RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get();   
+        //dd($departure_time);
+        // first search for main route 
+        $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
+            $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
+        }])->where([
             ['start_station', '=', $request->departure_station],
-            ['end_station', '=', $request->to_station],
+            ['end_station', '=', $request->to_station],            
         ])->get();
+        //dd($route_results);  
         if ($route_results->isEmpty()) {
 
             //check if bus is full
 
             //filter by time
         }
+        $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
+            
+            $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
+                $query->where('days_of_week', 'like', "%$travel_day_of_week%");
+            });
+            $query->whereTime('arrival_time','>',$travel_time);
+        },
+        
+        ])->where([
+            ['start_station', '=', $request->departure_station],
+            ['end_station', '=', $request->to_station],            
+        ])->get();
         $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
 
-        return view('bustravel::frontend.route_search_results', compact('route_results', 'date_of_travel'));
+        return view('bustravel::frontend.route_search_results', compact('route_results','stop_over_routes', 'date_of_travel'));
     }
 
     public function cart(Request $request)
     {
         //get cart items
         $cart = $request->session()->get('cart.items') ?? [];
-        $departure_ids = (!empty($cart)) ? array_column($cart, 'id') : [0];
-        $route_departures = RoutesDepartureTime::whereIn('id', $departure_ids)->get();
+        $main_route_ids = [0];
+        $stop_over_route_ids = [0];
+        if(!empty($cart))
+        {
+            foreach($cart as $c)
+            {
+                if($c['route_type'] == 'main_route')
+                {
+                    $main_route_ids[] = (int)$c['id'];
+                }
+                else if($c['route_type'] == 'stop_over_route')
+                {
+                    $stop_over_route_ids[] = (int)$c['id'];
+                }
+            }
+            
+        }
+        
+        $main_route_departures = RoutesDepartureTime::whereIn('id', $main_route_ids)->get();
+        $stop_over_route_departures = RoutesStopoversDepartureTime::whereIn('id',$stop_over_route_ids)->get();
 
-        return view('bustravel::frontend.cart', compact('route_departures'));
+        return view('bustravel::frontend.cart', compact('main_route_departures','stop_over_route_departures'));
     }
 
-    public function add_to_basket(Request $request, $route_departure_time_id, $date_of_travel)
+    public function add_to_basket(Request $request, $route_departure_time_id, $date_of_travel,$route_type)
     {
-        $route_time = RoutesDepartureTime::findOrFail($route_departure_time_id);
+        if($route_type == 'main_route')
+        {
+            $route_time = RoutesDepartureTime::findOrFail($route_departure_time_id);
+        }
+        else if($route_type == 'stop_over_route')
+        {
+            $route_time = RoutesStopoversDepartureTime::findOrFail($route_departure_time_id);
+        }
+        
         if ($request->session()->has('cart')) {
             if (!in_array($route_departure_time_id, array_column($request->session()->get('cart.items'), 'id'))) {
                 $request->session()->push('cart.items', [
@@ -71,6 +122,7 @@ class FrontendController extends Controller
                      'quantity'       => 1,
                      'amount'         => $route_time->route->price,
                      'date_of_travel' => $date_of_travel,
+                     'route_type'     => $route_type,
                 ]);
             }
         } elseif (!$request->session()->has('cart')) {
@@ -80,6 +132,7 @@ class FrontendController extends Controller
                 'quantity'       => 1,
                 'amount'         => $route_time->route->price,
                 'date_of_travel' => $date_of_travel,
+                'route_type'     => $route_type,
            ]);
         }
 

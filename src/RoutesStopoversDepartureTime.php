@@ -12,4 +12,14 @@ class RoutesStopoversDepartureTime extends Model
     {
         return $this->belongsTo(StopoverStation::class, 'route_stopover_id');
     }
+
+    public function route()
+    {
+        return $this->belongsTo(StopoverStation::class, 'route_stopover_id');
+    }
+
+    public function main_route_departure_time()
+    {
+        return $this->belongsTo(RoutesDepartureTime::class,'routes_times_id');
+    }
 }

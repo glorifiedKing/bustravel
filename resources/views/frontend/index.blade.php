@@ -14,20 +14,6 @@
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <h4>Where to?</h4>
-                                            <select name="to_station"  class="form-control select_search @error('to_station') is-invalid @enderror" id="inputEmail4" >
-                                                <option value="">Select a station</option>
-                                                @foreach ($bus_stations as $station)                                                    
-                                                    <option value="{{$station->id}}">{{$station->name.' ['.$station->code.']'}}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('to_station')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-6">
                                             <h4>Where from?</h4>
                                             <select name="departure_station" type="text" class="form-control select_search @error('departure_station') is-invalid @enderror" >
                                                 <option value="">Select a station</option>
@@ -41,6 +27,21 @@
                                             </span>
                                             @enderror
                                         </div>
+                                        <div class="form-group col-md-6">
+                                            <h4>Where to?</h4>
+                                            <select name="to_station"  class="form-control select_search @error('to_station') is-invalid @enderror" id="inputEmail4" >
+                                                <option value="">Select a station</option>
+                                                @foreach ($bus_stations as $station)                                                    
+                                                    <option value="{{$station->id}}">{{$station->name.' ['.$station->code.']'}}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('to_station')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                        
                                     </div>
                                 
                             </div>
