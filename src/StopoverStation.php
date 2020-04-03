@@ -27,4 +27,14 @@ class StopoverStation extends Model
     {
         return $this->hasMany(RoutesStopoversDepartureTime::class, 'route_stopover_id');
     }
+
+    public function start()
+    {
+        return $this->belongsTo(Station::class, 'start_station');
+    }
+
+    public function end()
+    {
+        return $this->belongsTo(Station::class, 'end_station');
+    }
 }
