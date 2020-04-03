@@ -24,7 +24,7 @@ class CreateBookingsTable extends Migration
             $table->integer('user_id')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
-            $table->foreign('routes_departure_time_id')->references('id')->on('routes_departure_times')->onDelete('cascade');
+            
         });
     }
 

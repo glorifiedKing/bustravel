@@ -19,4 +19,17 @@ class Booking extends Model
     {
         return $this->belongsTo(RoutesDepartureTime::class, 'routes_departure_time_id');
     }
+    public function stop_over_route_departure_time()
+    {
+        return $this->belongsTo(RoutesStopOversDepartureTime::class, 'routes_departure_time_id');
+    }
+    
+
+    public function getNextId() 
+   {
+
+     $statement = \DB::select("show table status like 'bookings'");
+
+     return $statement[0]->Auto_increment;
+   }
 }

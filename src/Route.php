@@ -40,4 +40,14 @@ class Route extends Model
     {
         return $this->hasMany(StopoverStation::class, 'route_id');
     }
+
+    public function delete()
+    {
+        // delete all related departure times 
+        $this->departure_times()->delete();
+        // delete all related stop overs
+        $this->stopovers()->delete();
+        
+        return parent::delete();
+    }
 }

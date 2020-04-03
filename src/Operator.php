@@ -13,5 +13,6 @@ class Operator extends Model
     'phone_number'        => 'required',
     'contact_person_name' => 'required',
     'address'             => 'required',
+    'code'       => 'required|digits:2|unique:operators'
   ];
 }
