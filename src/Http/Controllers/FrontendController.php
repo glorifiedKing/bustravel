@@ -282,8 +282,9 @@ class FrontendController extends Controller
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');    
         // send json request 
         $request_uri = $base_api_url."/makedebitrequest";
-        $client = new \GuzzleHttp\Client(['verify' => false]);
-        $debit_request = $client->request('POST', $request_uri, [                    
+        $client = new \GuzzleHttp\Client(['decode_content' => false]);
+        $debit_request = $client->request('POST', $request_uri, [ 
+                              
                     'json'   => [
                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
                         "transaction_amount" => $amount,
@@ -304,26 +305,30 @@ class FrontendController extends Controller
             $request->session()->forget('cart');
         }
 
+        // create notification 
+        $notification_type = 'error';  
+        $notification_message = 'Payment Error: Payment has not been successfull! Try again';            
+         
         // wait 1 minute and call check status// for final result of payment  
         sleep(60);    
         $request_uri = $base_api_url."/checkstatus";
-        $client = new \GuzzleHttp\Client(['verify' => false]);
-        $checkstatus = $client->request('POST', $request_uri, [                    
+        try{
+            $client = new \GuzzleHttp\Client(['verify' => false]);
+            $checkstatus = $client->request('POST', $request_uri, [                    
                     'json'   => [
                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                         "transaction_reference" => $payee_reference,
                         "transaction_reference_number" => $payment_transaction->id,                       
                     ]
                     ]); 
+        
+        
        
         
         $code = $checkstatus->getStatusCode(); 
         if($code == 200) 
         {               
-        // create notification 
-          $notification_type = 'error';  
-          $notification_message = 'Payment Error: Payment has not been successfull! Try again';            
-            
+         
           
           
         // ignore if callback has already updated transaction 
@@ -449,6 +454,10 @@ class FrontendController extends Controller
                 
             }
         }
+    }catch(\Exception $e)
+    {
+
+    }
             $notification = array(
                 'type' => $notification_type,
                 'message' => $notification_message
@@ -462,6 +471,13 @@ class FrontendController extends Controller
 
     public function process_payment_callback(Request $request)
     {
+        $url = $request->fullUrl();
+        $method = $request->method();
+        $variables = $request->all();
+        $variables_to_string = http_build_query($variables);//implode(":",$variables);
+        $log = date('Y-m-d H:i:s')." FROM:".$url." BY:".$method." WITH:".$variables_to_string."";
+        //log the request 
+        \Storage::disk('local')->append('payment_callback_log.txt',$log);
         $transaction_reference = $request->transaction_reference;
         $transaction = PaymentTransaction::find($transaction_reference);
         if($transaction)
@@ -571,7 +587,18 @@ class FrontendController extends Controller
                     
 
                 }
+                else if($new_transaction_status == 'failed')
+                {
+                   $transaction->status = 'failed';
+                   $transaction->save(); 
+                }
+                else {
+                    $transaction->status = 'failed';
+                    $transaction->payment_gateway_result = $new_transaction_status;
+                    $transaction->save();
+                }
             }
+           
         }
 
         return response()->json([
