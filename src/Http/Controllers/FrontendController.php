@@ -472,7 +472,7 @@ class FrontendController extends Controller
     public function process_payment_callback(Request $request)
     {
         $url = $request->fullUrl();
-        $client_ip = $request->ip;
+        $client_ip = $request->ip();
         $method = $request->method();
         $variables = $request->all();
         $variables_to_string = http_build_query($variables);//implode(":",$variables);
