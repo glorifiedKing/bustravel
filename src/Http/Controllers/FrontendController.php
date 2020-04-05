@@ -472,10 +472,11 @@ class FrontendController extends Controller
     public function process_payment_callback(Request $request)
     {
         $url = $request->fullUrl();
+        $client_ip = $request->ip;
         $method = $request->method();
         $variables = $request->all();
         $variables_to_string = http_build_query($variables);//implode(":",$variables);
-        $log = date('Y-m-d H:i:s')." FROM:".$url." BY:".$method." WITH:".$variables_to_string."";
+        $log = date('Y-m-d H:i:s')." FROM:".$client_ip." BY:".$method." WITH:".$variables_to_string."";
         //log the request 
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
         $transaction_reference = $request->transaction_reference;
