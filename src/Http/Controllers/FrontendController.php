@@ -462,7 +462,7 @@ class FrontendController extends Controller
     }catch(\Exception $e)
     {
             $error = $e->getMessage();
-            $error_log = date('Y-m-d H:i:s)."error: ".$error."";
+            $error_log = date('Y-m-d H:i:s')."error: ".$error."";
         \Storage::disk('local')->append('payment_errors_log.txt',$error_log);
     }
             $notification = array(
