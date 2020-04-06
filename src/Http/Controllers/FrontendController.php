@@ -342,7 +342,7 @@ class FrontendController extends Controller
 
                 $response_body = json_decode($checkstatus->getBody(),true);
                 // log request
-                $status_variables = var_export($response_body,$true);
+                $status_variables = var_export($response_body,true);
                  $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
         //log the request 
         \Storage::disk('local')->append('payment_checkstatus_log.txt',$status_log);
@@ -488,7 +488,7 @@ class FrontendController extends Controller
         $variables2 = var_export($request,true);
         $log2 = date('Y-m-d H:i:s')." WITH:".$variables2;
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
-        Storage::disk('local')->append('payment_callback_2_log.txt',$log2);
+        \Storage::disk('local')->append('payment_callback_2_log.txt',$log2);
         $transaction_reference = $request->transaction_reference;
         $transaction = PaymentTransaction::find($transaction_reference);
         if($transaction)
