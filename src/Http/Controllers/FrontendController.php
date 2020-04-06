@@ -311,7 +311,7 @@ class FrontendController extends Controller
          
         // wait 1 minute and call check status// for final result of payment  
         sleep(60);    
-        $request_uri = $base_api_url."/checkstatus";
+        $request_uri = $base_api_url."/checktransactionstatus";
         try{
             $client = new \GuzzleHttp\Client(['verify' => false]);
             $checkstatus = $client->request('POST', $request_uri, [                    
@@ -341,6 +341,11 @@ class FrontendController extends Controller
                 
 
                 $response_body = json_decode($checkstatus->getBody(),true);
+                // log request
+                $status_variables = var_export($response_body,$true);
+                 $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+        //log the request 
+        \Storage::disk('local')->append('payment_checkstatus_log.txt',$status_log);
                 $new_transaction_status = $response_body['transaction_status'];
                 //for success create ticket add to email and sms queue
                 if($new_transaction_status == 'completed')
