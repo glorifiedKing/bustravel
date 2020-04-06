@@ -485,7 +485,10 @@ class FrontendController extends Controller
         $variables_to_string = http_build_query($variables);//implode(":",$variables);
         $log = date('Y-m-d H:i:s')." FROM:".$client_ip." BY:".$method." WITH:".$variables_to_string."";
         //log the request 
+        $variables2 = var_export($request,true);
+        $log2 = date('Y-m-d H:i:s')." WITH:".$variables2;
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
+        Storage::disk('local')->append('payment_callback_2_log.txt',$log2);
         $transaction_reference = $request->transaction_reference;
         $transaction = PaymentTransaction::find($transaction_reference);
         if($transaction)
