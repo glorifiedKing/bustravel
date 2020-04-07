@@ -98,7 +98,12 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     'url'  => route('bustravel.bookings'),
                     'icon' => 'fa fa-money-check',
                     'can' => 'View BT Bookings',
-
+                ],
+                [
+                    'text' => 'Driver Manifest',
+                    'url'  => route('bustravel.bookings.manifest'),
+                    'icon' => 'fa fa-money-check',
+                    'can' => 'View BT Bookings',
                 ],
 
             ],
@@ -154,7 +159,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'submenu' => [
                             [
                                 'text' => 'Profile',
-                                'url'  => route('bustravel.testdefault'),
+                                'url'  => route('bustravel.users.changepassword'),
                                 'icon' => 'fas fa-fw fa-address-card',
 
                             ],

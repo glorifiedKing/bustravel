@@ -296,4 +296,30 @@ class UsersController extends Controller
 
         return Redirect::route('bustravel.users')->with($alerts);
     }
+
+    public function changepassword()
+    {
+        return view('bustravel::backend.users.users.changepassword');
+    }
+
+    public function changepassword_save()
+    {
+      $validation = request()->validate([
+      'password'           => 'required|min:7|confirmed',
+      'password_confirmation' => 'required|same:password',
+    ]);
+      $id =auth()->user()->id;
+      $user = config('bustravel.user_model', User::class)::find($id);
+      $user->password = bcrypt(request()->input('password'));
+      $user->save();
+
+      $alerts = [
+        'bustravel-flash'         => true,
+        'bustravel-flash-type'    => 'success',
+        'bustravel-flash-title'   => 'Change Password',
+        'bustravel-flash-message' => 'User Password  has successfully been Changed',
+    ];
+
+         return redirect()->route('bustravel.users.changepassword')->with($alerts);
+    }
 }

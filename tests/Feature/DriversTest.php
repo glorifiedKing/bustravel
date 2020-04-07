@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\User;
@@ -30,6 +30,7 @@ class DriversTest extends TestCase
     //testing create Driver
     public function testCreateDriver()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
@@ -42,6 +43,7 @@ class DriversTest extends TestCase
         'picture'           => 'picture.jpg',
         'phone_number'      => '25678999999',
         'address'           => 'Makidye, Kampala Uganda',
+        'email'           => 'info@gmail.com',
         'status'            => 1,
       ];
         //When user submits Driver request to create endpoint
@@ -53,17 +55,26 @@ class DriversTest extends TestCase
     //testing Driver Update
     public function testUpdateDriver()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
         $operator = factory(Operator::class)->create();
-        $driver = factory(Driver::class)->create(['operator_id' => $operator->id]);
+        $user1 =factory(User::class)->create();
+        $user1->syncRoles('BT Driver');
+        $driver = factory(Driver::class)->create(['operator_id' => $operator->id,'user_id'=>$user1->id]);
         $driver->name = 'Bagonza Gerald';
-        $this->actingAs($user)->patch('/transit/drivers/'.$driver->id.'/update', $driver->toArray()); // your route to update Driver
+        $driver_array = $driver->toArray();
+        $user_array = [
+        'email'=> $user1->email,
+         ];
+
+          $data = array_merge($driver_array, $user_array);
+        $this->actingAs($user)->patch('/transit/drivers/'.$driver->id.'/update', $data); // your route to update Driver
         //The operator should be updated in the database.
         $this->assertDatabaseHas('drivers', ['id'=> $driver->id, 'name' => 'Bagonza Gerald']);
     }
 
     // testing Driver Delete
-    public function testDeleteBus()
+    public function testDeleteDriver()
     {
         $user = factory(User::class)->create();
         $operator = factory(Operator::class)->create();

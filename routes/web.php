@@ -56,10 +56,16 @@ Route::any('routes/departures/{id}/delete', 'RoutesDepartureTimesController@dele
 Route::get('bookings', 'BookingsController@index')->name('bustravel.bookings');
 Route::get('bookings/create', 'BookingsController@create')->name('bustravel.bookings.create');
 Route::post('bookings', 'BookingsController@store')->name('bustravel.bookings.store');
+Route::any('bookings/boarded/{id}', 'BookingsController@boarded')->name('bustravel.bookings.boarded');
 Route::get('bookings/{id}/edit', 'BookingsController@edit')->name('bustravel.bookings.edit');
 Route::any('bookings/{id}/update', 'BookingsController@update')->name('bustravel.bookings.update');
 Route::any('bookings/{id}/delete', 'BookingsController@delete')->name('bustravel.bookings.delete');
-
+Route::get('route/tracking/{id}', 'BookingsController@route_tracking')->name('bustravel.bookings.route.tracking');
+Route::get('route/tracking/start/{id}', 'BookingsController@route_tracking_start')->name('bustravel.bookings.route.tracking.start');
+Route::get('route/tracking/end/{id}', 'BookingsController@route_tracking_end')->name('bustravel.bookings.route.tracking.end');
+Route::get('driver/manifest', 'BookingsController@manifest')->name('bustravel.bookings.manifest');
+Route::get('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest');
+Route::post('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest.search');
 //users
 
 //permissions
@@ -81,6 +87,8 @@ Route::post('users', 'UsersController@storeusers')->name('bustravel.users.store'
 Route::get('users/{id}/edit', 'UsersController@editusers')->name('bustravel.users.edit');
 Route::any('users/{id}/update', 'UsersController@updateusers')->name('bustravel.users.update');
 Route::any('users/{id}/delete', 'UsersController@deleteusers')->name('bustravel.users.delete');
+Route::get('users/changepassword', 'UsersController@changepassword')->name('bustravel.users.changepassword');
+Route::post('users/changepassword/save', 'UsersController@changepassword_save')->name('bustravel.users.changepassword.save');
 // errors
 Route::get('error/access_denied', 'ExceptionsController@accessDenied')->name('bustravel.errors.403');
 

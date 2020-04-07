@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 
 $factory->define(Driver::class, function (Faker $faker) {
     return [
+            'user_id'       => 1,
             'operator_id'       => 1,
             'name'              => $faker->name,
             'nin'               => strtoupper(Str::random(13)),

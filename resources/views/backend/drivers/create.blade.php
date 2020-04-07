@@ -80,6 +80,15 @@
                             </span>
                         @endif
                     </div>
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1">Email</label>
+                        <input type="text" name="email" value="{{old('email')}}"  class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Email">
+                        @if ($errors->has('email'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('email') }}</strong>
+                            </span>
+                        @endif
+                    </div>
                     <div class="form-group col-md-6 ">
                         <label for="exampleInputEmail1">Address *</label>
                         <textarea class="form-control {{ $errors->has('address') ? ' is-invalid' : '' }}" rows="3" placeholder="Enter Description" name="address" >{{old('address')}}</textarea>

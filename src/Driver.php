@@ -10,6 +10,7 @@ class Driver extends Model
     protected $guarded = [];
     // validation
     public static $rules = [
+    'email'              => 'required|unique:users',
     'name'              => 'required',
     'nin'               => 'required|unique:drivers',
     'date_of_birth'     => 'required',
