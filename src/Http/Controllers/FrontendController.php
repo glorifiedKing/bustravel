@@ -612,6 +612,7 @@ class FrontendController extends Controller
                 else if($new_transaction_status == 'failed')
                 {
                    $transaction->status = 'failed';
+                   $transactioin->payment_gateway_result = $request->status_code; 
                    $transaction->save(); 
                 }
                 else {
