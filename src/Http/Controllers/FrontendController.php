@@ -499,7 +499,7 @@ class FrontendController extends Controller
         $log2 = date('Y-m-d H:i:s')." WITH:".$variables2."";
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
         \Storage::disk('local')->append('payment_callback_2_log.txt',$log2);
-        $transaction_reference = $request->transaction_reference;
+        $transaction_reference = $request->transaction_reference_number;
         $transaction = PaymentTransaction::find($transaction_reference);
         if($transaction)
         {
@@ -508,6 +508,7 @@ class FrontendController extends Controller
             {
                 //get new status 
                 $new_transaction_status = $request->transaction_status;
+                
                 //for success create ticket add to email and sms queue
                 if($new_transaction_status == 'completed')
                 {
