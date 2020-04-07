@@ -348,7 +348,17 @@ class FrontendController extends Controller
         \Storage::disk('local')->append('payment_checkstatus_log.txt',$status_log);
                 $new_transaction_status = $response_body['transaction_status'];
                 //for success create ticket add to email and sms queue
-                if($new_transaction_status == 'completed')
+                if($new_transaction_status == 'failed')
+                {
+                 // immediate failure 
+                    $transaction->status = 'failed';
+                    $transaction->payment_gateway_result = $response_body['status_code'];
+                    $transaction->save();
+                    $notification_type = 'Failed';
+                    $notification_message = 'Payment has not been successful!';
+                    
+                }
+                else if($new_transaction_status == 'completed')
                 {
                     // create tickets
                     $tickets_bought = array();
