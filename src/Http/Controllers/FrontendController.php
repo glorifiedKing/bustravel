@@ -15,7 +15,9 @@ use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\SmsTemplate;
 use glorifiedking\BusTravel\EmailTemplate;
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\CreditTransaction;
 use glorifiedking\BusTravel\Mail\TicketEmail;
+use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Auth;
@@ -24,8 +26,8 @@ class FrontendController extends Controller
 {
     public function __construct()
     {
-        //$this->middleware('web');//->only('checkout');
-        //$this->middleware('auth')->only('checkout');
+        $this->middleware('web')->only('checkout');
+        $this->middleware('auth')->only('checkout');
     }
 
     public function homepage()
@@ -232,7 +234,7 @@ class FrontendController extends Controller
         //add sms amount
         if($send_sms == 1)
         {
-            $sms_cost = 5;
+            $sms_cost = 5;  // must get it from config later 
             $amount += $sms_cost;
         }      
         
@@ -310,7 +312,7 @@ class FrontendController extends Controller
         $notification_message = 'Payment Error: Payment has not been successfull! Try again';            
          
         // wait 1 minute and call check status// for final result of payment  
-        sleep(60);    
+ /*       sleep(60);    
         $request_uri = $base_api_url."/checktransactionstatus";
         try{
             $client = new \GuzzleHttp\Client(['verify' => false]);
@@ -469,18 +471,21 @@ class FrontendController extends Controller
                 
             }
         }
+        
     }catch(\Exception $e)
     {
             $error = $e->getMessage();
             $error_log = date('Y-m-d H:i:s')."error: ".$error."";
         \Storage::disk('local')->append('payment_errors_log.txt',$error_log);
     }
+ */   
             $notification = array(
                 'type' => $notification_type,
                 'message' => $notification_message
             ); 
+            $transactionId = $payment_transaction->id;
 
-            return view('bustravel::frontend.notification',compact('notification'));
+            return view('bustravel::frontend.notification',compact('notification','transactionId'));
                    
 
           
@@ -495,6 +500,7 @@ class FrontendController extends Controller
         $variables_to_string = http_build_query($variables);//implode(":",$variables);
         $log = date('Y-m-d H:i:s')." FROM:".$client_ip." BY:".$method." WITH:".$variables_to_string."";
         //log the request 
+        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
         $variables2 = var_export($request,true);
         $log2 = date('Y-m-d H:i:s')." WITH:".$variables2."";
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
@@ -585,6 +591,59 @@ class FrontendController extends Controller
                         $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,$transaction->date_of_travel,$departure_route->arrival_time,$transaction->date_of_travel,$ticket->amount,$ticket->date_paid,$transaction->payment_method);
                         $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
                         $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
+                        
+                        //send credit merchant 
+                        //get default payment method of operator 
+                        $default_payment_method = OperatorPaymentMethod::where([
+                            ['operator_id','=', $operator->id],
+                            ['is_default','=', '1'],
+                        ])->first();
+                        $sms_cost = 5; // must get from config later
+
+                        // remove sms_cost from amount 
+                       $merchant_credit = ($transaction->send_sms == 1) ? $transaction->amount - $sms_cost : $transaction->amount;
+                        $credit_transaction = new CreditTransaction;
+                        $credit_transaction->amount = $merchant_credit;
+                        $credit_transaction->transaction_id = $transaction->id;
+                        $credit_transaction->status = 'pending';
+                        $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
+                        $credit_transaction->save();
+                        $request_uri = $base_api_url."/makecreditrequest";
+                        try{
+                            $client = new \GuzzleHttp\Client(['verify' => false]);
+                            $checkstatus = $client->request('POST', $request_uri, [                    
+                                    'json'   => [
+                                        "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
+                                        "transaction_account" => $default_payment_method->sp_phone_number,
+                                        "transaction_reference_number" => $credit_transaction->id, 
+                                        "tranasaction_amount"=>$merchant_credit,
+                                        "account_number" => "100023",
+                                        "payment_operator" => 1001,                                        
+                                        "merchant_account" => $default_payment_method->sp_phone_number,
+                                        "transaction_source" => "web",
+                                        "transaction_destination" => "web",
+                                        "transaction_reason" => "Bus Ticket Payment",
+                                        "currency" => "RWF",
+                                        "first_name" => $operator->name,
+                                        "last_name" => $operator->name
+                                    ]
+                                    ]); 
+                        
+                        
+                       
+                        
+                        $code = $checkstatus->getStatusCode(); 
+                        if($code == 200) 
+                        {
+                        }
+                        }
+                        catch(\Exception $e)
+                        {
+                            $error_log = date('Y-m-d H:i:s')." error:".$e->getMessage()."";
+                            \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
+
+                        }
+                        
                         if($sms_template)
                         {
                           // send sms 
@@ -612,7 +671,7 @@ class FrontendController extends Controller
                 else if($new_transaction_status == 'failed')
                 {
                    $transaction->status = 'failed';
-                   $transactioin->payment_gateway_result = $request->status_code; 
+                   $transaction->payment_gateway_result = $request->status_code; 
                    $transaction->save(); 
                 }
                 else {
@@ -621,11 +680,49 @@ class FrontendController extends Controller
                     $transaction->save();
                 }
             }
+
+            event(new TransactionStatusUpdated($transaction));
            
         }
 
         return response()->json([
             "status_code" => "200"
         ]);
+    }
+
+    public function credit_request_callback (Request $request)
+    {
+        $client_ip = $request->ip();
+        $method = $request->method();
+        $variables = $request->all();
+        $variables_to_string = http_build_query($variables);//implode(":",$variables);
+        $log = date('Y-m-d H:i:s')." FROM:".$client_ip." BY:".$method." WITH:".$variables_to_string."";
+        \Storage::disk('local')->append('payment_credit_callback_log.txt',$log);
+        $transaction_reference = $request->transaction_reference_number;
+        $credit_transaction = CreditTransaction::find($transaction_reference);
+        if($credit_transaction)
+        {
+            if($credit_transaction->status == 'pending')
+            {
+                $new_transaction_status = $request->transaction_status;
+                if($new_transaction_status == 'completed')
+                {
+                    $credit_transaction->status = 'completed';
+                    $credit_transaction->save();
+                }
+
+                else if($new_transaction_status == 'failed')
+                {
+                    $credit_transaction->status = 'failed';
+                    $credit_transaction->payment_gateway_result = $request->status_code;
+                    $credit_transaction->save();
+                }
+                else {
+                    $credit_transaction->status = $new_transaction_status;
+                    $credit_transaction->payment_gateway_result = $request->status_code;
+                    $credit_transaction->save();
+                }
+            }
+        }
     }
 }

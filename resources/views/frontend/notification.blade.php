@@ -11,13 +11,36 @@
                             <div class="card-body">
                                 
                                 <ul class="list-inline">
-                                    <li class="list-inline-item">{{$notification['type']}}</li>
+                                    <li id="notification_title"  class="list-inline-item">please wait...</li>
                                 </ul>
                                 
-                                <h3 class="card-title">{{$notification['message']}}}</h3>
+                                <h3 id="notification_message" class="card-title"></h3>
                             </div>
                         </div>
                         
                     </div>
                 </div>
                 @endsection
+
+                <script src="//{{ Request::getHost() }}:{{env('LARAVEL_ECHO_PORT')}}/socket.io/socket.io.js"></script>
+
+                <script src="{{ url('/js/app.js') }}" type="text/javascript"></script>
+            
+                  
+            
+                <script type="text/javascript">
+            
+                    
+            
+                    window.Echo.private('transaction.${transactionId}')
+            
+                     .listen('TransactionStatusUpdated', (data) => {
+            
+                       
+            
+                        $("#notifification_title").html('<span>'+data.status+'</span>');
+                        $("#notifification_message").html(''+data.status+'');
+            
+                    });
+            
+                </script>

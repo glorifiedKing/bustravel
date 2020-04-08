@@ -35,7 +35,13 @@
                                     <a href="" class="forgot-pass">Forgot Password</a>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary cust-btn-link">Login</button>
+                            <button type="submit" class="btn btn-primary cust-btn-link">Login</button> 
+                        </form> OR
+                        <form method="post" action="{{ route('login') }}">
+                            @csrf
+                                <input hidden value="guest@palmkash.com" name="email">
+                                <input hidden value="guestofpalmkash" name="password">
+                            <button type="submit" class="btn btn-primary cust-btn-link">Guest Login</button>
                         </form>
                     </div>
                 </div>
