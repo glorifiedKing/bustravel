@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="msapplication-TileColor" content="#0F1624">
   <meta name="theme-color" content="#0F1624">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title', config('adminlte.title', 'PalmKash Bus Ticketing System'))</title>
   <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendor/glorifiedking/fav/apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendor/glorifiedking/fav/favicon-32x32.png') }}">
