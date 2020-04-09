@@ -36,7 +36,7 @@
             
                      .listen('TransactionStatusUpdated', (data) => {
             
-                       
+                       console.log('status'+data.status+'');
             
                         $("#notifification_title").html('<span>'+data.status+'</span>');
                         $("#notifification_message").html(''+data.status+'');
