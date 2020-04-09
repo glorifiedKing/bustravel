@@ -30,16 +30,7 @@ class TransactionStatusUpdated implements ShouldBroadcast
         $this->update = $update;
     }
     
-        /**
-     * Create a new event instance.
-     *
-     * @param  \App\Order  $order
-     * @return void
-     */
-    public function __construct(Order $order)
-    {
-        $this->order = $order;
-    }
+
 
     /**
      * Get the channels the event should broadcast on.
