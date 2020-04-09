@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
+use glorifiedking\BusTravel\PaymentTransaction;
 
 class TransactionStatusUpdated implements ShouldBroadcast
 {
@@ -16,7 +17,29 @@ class TransactionStatusUpdated implements ShouldBroadcast
      *
      * @var string
      */
-    public $update;
+    public $update;    
+    
+    /**
+     * Create a new event instance.
+     *
+     * @param  \App\Order  $order
+     * @return void
+     */
+    public function __construct(PaymentTransaction $update)
+    {
+        $this->update = $update;
+    }
+    
+        /**
+     * Create a new event instance.
+     *
+     * @param  \App\Order  $order
+     * @return void
+     */
+    public function __construct(Order $order)
+    {
+        $this->order = $order;
+    }
 
     /**
      * Get the channels the event should broadcast on.
