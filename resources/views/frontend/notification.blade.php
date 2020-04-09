@@ -6,7 +6,7 @@
             @section('content')
                 <div class="row">
                     <div class="col-md-8">
-                        <h1 class="h3 mb-3 font-weight-normal">Payment Processing</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Payment Processing{{$transactionId ?? '0'}}</h1>
                         <div class="card">
                             <div class="card-body">
                                 
