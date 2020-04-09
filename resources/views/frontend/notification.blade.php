@@ -32,9 +32,9 @@
             
                     var trans_id = "{!! $transactionId !!}";
             
-                    window.Echo.private('transaction.'+trans_id)
+                    window.Echo.private('palmkash_database_private-transaction.'+trans_id)
             
-                     .listen('TransactionStatusUpdated', (data) => {
+                     .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', (data) => {
             
                        console.log('status'+data.status+'');
             
