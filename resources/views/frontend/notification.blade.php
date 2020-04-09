@@ -30,9 +30,9 @@
             
                 <script type="text/javascript">
             
-                    
+                    var trans_id = "{!! $transactionId !!}";
             
-                    window.Echo.private('transaction.${transactionId}')
+                    window.Echo.private('transaction.'+trans_id)
             
                      .listen('TransactionStatusUpdated', (data) => {
             
