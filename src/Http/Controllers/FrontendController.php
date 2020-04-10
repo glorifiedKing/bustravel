@@ -724,5 +724,8 @@ class FrontendController extends Controller
                 }
             }
         }
+        return response()->json([
+            "status_code" => "200"
+        ]);
     }
 }
