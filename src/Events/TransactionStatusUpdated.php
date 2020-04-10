@@ -39,6 +39,6 @@ class TransactionStatusUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('transaction.'.$this->update->id);
+        return new Channel('transaction.'.$this->update->id);
     }
 }
