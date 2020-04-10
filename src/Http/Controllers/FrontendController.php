@@ -633,8 +633,11 @@ class FrontendController extends Controller
                        
                         
                         $code = $checkstatus->getStatusCode(); 
+                        $request_log = date('Y-m-d H:i:s')." code:".$code."";
+                        \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
                         if($code == 200) 
                         {
+                            
                         }
                         }
                         catch(\Exception $e)
