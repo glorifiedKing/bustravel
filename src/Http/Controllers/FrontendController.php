@@ -291,7 +291,7 @@ class FrontendController extends Controller
                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
                         "transaction_amount" => $amount,
                         "account_number" => "100023",
-                        "payment_operator" => 1001,
+                        "payment_operator" => 1002,
                         "transaction_account" => $payee_reference,
                         "transaction_reference_number" => $payment_transaction->id,
                         "merchant_account" => $default_payment_method->sp_phone_number,
