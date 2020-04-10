@@ -657,8 +657,8 @@ class FrontendController extends Controller
 
                             \Mail::to($transaction->email)->send(new TicketEmail($data));
 
-                            $notification_type = 'success';
-                            $notification_message .= 'An Email has been sent to you with your ticket details!';
+                           // $notification_type = 'success';
+                            //$notification_message .= 'An Email has been sent to you with your ticket details!';
 
 
                         }
