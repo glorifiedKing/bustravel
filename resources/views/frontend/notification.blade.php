@@ -35,10 +35,10 @@
                     window.Echo.channel('palmkash_database_transaction.'+trans_id+'')            
                      .listen('.transaction.updated', function (data){
             
-                       console.log('status'+data.status+'');
+                       console.log('status'+data.transaction_status+'');
             
-                        $("#notifification_title").html('<span>'+data.status+'</span>');
-                        $("#notifification_message").html(''+data.status+'');
+                        $("#notifification_title").html('<span>'+data.transaction_status+'</span>');
+                        $("#notifification_message").html(''+data.transaction_status+'');
             
                     });
             
