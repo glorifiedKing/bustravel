@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-md-12 scheduling-area border-b-color pad-top-bottom">
                                 <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-8">
                                         <h4 class="top">Scheduling</h4>
                                         
                                             <div class="form-row">
@@ -72,33 +72,18 @@
                                             </div>
                                         
                                     </div>
-                                    <div class="col-md-3 extras">
+                                    <div class="col-md-4 extras">
                                         <h4>Extras</h4>
                                        
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        <input type="checkbox" aria-label="Checkbox for following text input">
-                                                    </div>
-                                                </div>
+                                            <div class="input-group mb-3">                                                
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Adult</label>
                                                 <input type="number" name="adults" class="form-control" aria-label="Text input with checkbox" value="1">
                                             </div>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        <input type="checkbox" aria-label="Checkbox for following text input">
-                                                    </div>
-                                                </div>
+                                            <div class="input-group mb-3">                                                
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Child</label>
                                                 <input type="number" name="children" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        <input type="checkbox" aria-label="Checkbox for following text input">
-                                                    </div>
-                                                </div>
+                                            <div class="input-group mb-3">                                                
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Luggage pieces</label>
                                                 <input type="number" name="luggage" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
@@ -111,7 +96,7 @@
                     </form>
                     </div>
                     <div class="offset-1 col-md-3 area-extras">
-                        <div>AREA FOR ANY FUTURE INCLUSIONS</div>
+                        <div>WE ACCEPT MTN MOMO</div>
                     </div>
                 </div>
             @endsection   
