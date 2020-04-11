@@ -35,7 +35,7 @@
                     window.Echo.channel('palmkash_database_transaction.'+trans_id+'')            
                      .listen('.transaction.updated', function (data){
             
-                       console.log(data.status);
+                       console.log(data.JSON.stringify());
             
                         $("#notifification_title").html('<span>'+data.status+'</span>');
                         $("#notifification_message").html(''+data.status+'');
@@ -43,7 +43,7 @@
                     })
                     .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', function (data){
             
-                       console.log(data.status);
+                       console.log(data.JSON.stringify());
             
                         $("#notifification_title").html('<span>'+data.status+'</span>');
                         $("#notifification_message").html(''+data.status+'');
