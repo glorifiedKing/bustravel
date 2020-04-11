@@ -40,6 +40,15 @@
                         $("#notifification_title").html('<span>'+data.status+'</span>');
                         $("#notifification_message").html(''+data.status+'');
             
+                    })
+                    .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', function (data){
+            
+                       console.log(data.status);
+            
+                        $("#notifification_title").html('<span>'+data.status+'</span>');
+                        $("#notifification_message").html(''+data.status+'');
+            
                     });
+                    
             
                 </script>
