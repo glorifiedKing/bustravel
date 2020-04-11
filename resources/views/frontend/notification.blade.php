@@ -32,7 +32,7 @@
             
                     var trans_id = '{!! $transactionId !!}';
             
-                    window.Echo.channel('palmkash_database-transaction.'+trans_id+'')
+                    window.Echo.channel('palmkash_database_transaction.'+trans_id+'')
             
                      .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', (data) => {
             
