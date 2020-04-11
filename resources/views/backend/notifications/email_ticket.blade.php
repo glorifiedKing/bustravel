@@ -5,7 +5,7 @@
   </head>
   <body>
     <h2>Bus Travel Ticket</h2>
-    <p>{{ $email_message }}</p>
+    {!! $email_message !!}
   </body>
 </html>
 

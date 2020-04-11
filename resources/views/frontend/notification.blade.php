@@ -6,7 +6,7 @@
             @section('content')
                 <div class="row">
                     <div class="col-md-8">
-                        <h1 class="h3 mb-3 font-weight-normal">Payment Processing{{$transactionId ?? '0'}}</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Payment Processing.Ref Number: {{$transactionId ?? '0'}}</h1>
                         <div class="card">
                             <div class="card-body">
                                 
@@ -32,7 +32,7 @@
             
                     var trans_id = '{!! $transactionId !!}';
             
-                    window.Echo.channel('palmkash_database_private-transaction.'+trans_id+'')
+                    window.Echo.channel('palmkash_database-transaction.'+trans_id+'')
             
                      .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', (data) => {
             

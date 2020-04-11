@@ -22,7 +22,7 @@
                         @foreach($cart as $index=> $item)
                         @php                                
                                 
-                                $total_amount += $item['amount'];
+                                $total_amount += $item['quantity']*$item['amount'];
                             @endphp
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>

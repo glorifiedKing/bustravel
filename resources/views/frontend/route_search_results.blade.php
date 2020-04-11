@@ -25,7 +25,7 @@
                                                 <li class="list-inline-item">From: {{$route->start->name}}</li>
                                                 <li class="list-inline-item">To: {{$route->end->name}}</li>
                                                 <li class="list-inline-item">Operator: {{$route->operator->name}}</li>
-                                                <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'main_route'])}}">Add</a></li>
+                                                <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'main_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
                                             </ul>
                                             <h3 class="card-title">departure : {{$date_of_travel}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{$date_of_travel}} at {{$result->arrival_time}} hrs</h3>
@@ -54,7 +54,7 @@
                                                 <li class="list-inline-item">From: {{$route->start_stopover_station->name}}</li>
                                                 <li class="list-inline-item">To: {{$route->end_stopover_station->name}}</li>
                                                 <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
-                                                <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'stop_over_route'])}}">Add</a></li>
+                                            <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'stop_over_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
                                             </ul>
                                             <h3 class="card-title">departure : {{$date_of_travel}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{$date_of_travel}} at {{$result->arrival_time}} hrs</h3>
