@@ -32,9 +32,8 @@
             
                     var trans_id = '{!! $transactionId !!}';
             
-                    window.Echo.channel('palmkash_database_transaction.'+trans_id+'')
-            
-                     .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', (data) => {
+                    window.Echo.channel('palmkash_database_transaction.'+trans_id+'')            
+                     .listen('.server.created', function (data){
             
                        console.log('status'+data.status+'');
             
