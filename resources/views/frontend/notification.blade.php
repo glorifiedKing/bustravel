@@ -21,6 +21,7 @@
                     </div>
                 </div>
                 @endsection
+                @section('js')
 
                 <script src="//{{ Request::getHost() }}:{{env('LARAVEL_ECHO_PORT')}}/socket.io/socket.io.js"></script>
 
@@ -52,3 +53,4 @@
                     
             
                 </script>
+                @endsection
