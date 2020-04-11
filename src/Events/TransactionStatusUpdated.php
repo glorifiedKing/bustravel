@@ -41,4 +41,14 @@ class TransactionStatusUpdated implements ShouldBroadcast
     {
         return new Channel('transaction.'.$this->update->id);
     }
+    
+    /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'transaction.updated';
+    }
 }
