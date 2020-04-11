@@ -35,18 +35,18 @@
                     window.Echo.channel('palmkash_database_transaction.'+trans_id+'')            
                      .listen('.transaction.updated', function (data){
             
-                       console.log(data);
+                       console.log(data.update.status);
             
-                        $("#notifification_title").html('<span>'+data.status+'</span>');
-                        $("#notifification_message").html(''+data.status+'');
+                        $("#notifification_title").html("<span>"+data.update.status+"</span>");
+                        $("#notifification_message").html(""+data.update.status+"");
             
                     })
                     .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', function (data){
             
-                       console.log(data);
+                       console.log(data.update.status);
             
-                        $("#notifification_title").html('<span>'+data.status+'</span>');
-                        $("#notifification_message").html(''+data.status+'');
+                        $("#notifification_title").html("<span>"+data.update.status+"</span>");
+                        $("#notifification_message").html(""+data.update.status+"");
             
                     });
                     
