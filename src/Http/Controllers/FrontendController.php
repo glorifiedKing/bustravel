@@ -306,7 +306,28 @@ class FrontendController extends Controller
                         "currency" => "RWF",
                     ]
                     ]);
-                       
+        $code = $debit_request->getStatusCode(); 
+        if($code == 200) 
+        { 
+           $response_body = json_decode($debit_request->getBody(),true);
+                // log request
+           $status_variables = var_export($response_body,true);
+           $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+           //log the request 
+           \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log); 
+            $new_transaction_status = $response_body['transaction_status'];
+                //for success create ticket add to email and sms queue
+                if($new_transaction_status == 'failed')
+                {
+                 // immediate failure 
+                    $payment_transaction->status = 'failed';
+                    $payment_transaction->payment_gateway_result = $response_body['status_code'];
+                    $payment_transaction->save();
+                    //$payment_transaction = $payment_transaction->refresh();
+                    event(new TransactionStatusUpdated($transaction));
+                    
+                }
+        }
         // clear cart 
         if ($request->session()->has('cart')) {
             $request->session()->forget('cart');
