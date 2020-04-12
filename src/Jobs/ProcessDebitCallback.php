@@ -168,9 +168,9 @@ class ProcessDebitCallback implements ShouldQueue
                             $checkstatus = $client->request('POST', $request_uri, [                    
                                     'json'   => [
                                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                        "transaction_account" => $default_payment_method->sp_phone_number,
-                                        "transaction_reference_number" => $credit_transaction->id, 
-                                        "tranasaction_amount"=>$merchant_credit,
+                                        "transaction_account" => "RWOO2",
+                                        "transaction_reference_number" => $transaction->id, 
+                                        "transaction_amount"=>$merchant_credit,
                                         "account_number" => "100023",
                                         "payment_operator" => 1001,                                        
                                         "merchant_account" => $default_payment_method->sp_phone_number,
@@ -191,7 +191,12 @@ class ProcessDebitCallback implements ShouldQueue
                         \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
                         if($code == 200) 
                         {
-                            
+                            $response_body = json_decode($checkstatus->getBody(),true);
+                            // log request
+                             $status_variables = var_export($response_body,true);
+                             $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+                            //save the request 
+                            \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
                         }
                         }
                         catch(\Exception $e)
