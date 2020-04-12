@@ -168,12 +168,12 @@ class ProcessDebitCallback implements ShouldQueue
                             $checkstatus = $client->request('POST', $request_uri, [                    
                                     'json'   => [
                                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                        "transaction_account" => "RWOO2",
+                                        "transaction_account" => $default_payment_method->sp_phone_number,
                                         "transaction_reference_number" => $transaction->id, 
                                         "transaction_amount"=>$merchant_credit,
                                         "account_number" => "100023",
                                         "payment_operator" => 1001,                                        
-                                        "merchant_account" => $default_payment_method->sp_phone_number,
+                                        "merchant_account" => "RW002",
                                         "transaction_source" => "web",
                                         "transaction_destination" => "web",
                                         "transaction_reason" => "Bus Ticket Payment",
