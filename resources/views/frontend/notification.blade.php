@@ -31,6 +31,8 @@
             
                 <script type="text/javascript">
                 $(document).ready(function(){
+                
+                     var home_url = "//{{ Request::getHost() }}";  
             
                     var trans_id = '{!! $transactionId !!}';
             
@@ -39,16 +41,16 @@
             
                        console.log(data.update.status);
             
-                        $("#notifification_title").html("<span>"+data.update.status+"</span>");
-                        $("#notifification_message").html(""+data.update.status+"");
+                        $("#notification_title").html("<span>"+data.update.status+"</span>");
+                        $("#notifification_message").html(""+data.update.status+" : <a href='"+home_url+"'>Back</a>");
             
                     })
                     .listen('glorifiedking\BusTravel\Events\TransactionStatusUpdated', function (data){
             
                        console.log(data.update.status);
             
-                        $("#notifification_title").html("<span>"+data.update.status+"</span>");
-                        $("#notifification_message").html(""+data.update.status+"");
+                        $("#notification_title").html("<span>"+data.update.status+"</span>");
+                        $("#notifification_message").html(""+data.update.status+" : <a href='"+home_url+"'>Back</a>");
             
                     });
                     
