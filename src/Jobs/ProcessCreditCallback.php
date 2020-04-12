@@ -47,7 +47,7 @@ class ProcessCreditCallback implements ShouldQueue
         $log = date('Y-m-d H:i:s')." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
         \Storage::disk('local')->append('payment_credit_callback_log.txt',$log);
         
-        $credit_transaction = CreditTransaction::find($this->transaction_id);
+        $credit_transaction = CreditTransaction::where('transaction_id',$this->transaction_id)->first();
         if($credit_transaction)
         {
             if($credit_transaction->status == 'pending')
