@@ -299,7 +299,7 @@ class FrontendController extends Controller
                         "payment_operator" => 1001,
                         "transaction_account" => $payee_reference,
                         "transaction_reference_number" => $payment_transaction->id,
-                        "merchant_account" => $default_payment_method->sp_phone_number,
+                        "merchant_account" => "RW002",
                         "transaction_source" => "web",
                         "transaction_destination" => "web",
                         "transaction_reason" => "Bus Ticket payment",
