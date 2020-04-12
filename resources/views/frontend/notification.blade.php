@@ -30,6 +30,7 @@
                   
             
                 <script type="text/javascript">
+                $(document).ready(function(){
             
                     var trans_id = '{!! $transactionId !!}';
             
@@ -51,6 +52,6 @@
             
                     });
                     
-            
+                        });
                 </script>
                 @endsection
