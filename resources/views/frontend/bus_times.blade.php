@@ -36,11 +36,11 @@
                                       @php $stopoverstimes =$route_time->stopovers_times()->orderBy('id','ASC')->get(); @endphp
                                       <td>
                                          @foreach($stopoverstimes as $times)
-                                          {{$times->route_stopover->end_stopover_station->name}} ( {{$times->route_stopover->end_stopover_station->code}} ) - {{$times->arrival_time??""}}<br>
+                                          {{$times->route_stopover->end_stopover_station->name??""}} ( {{$times->route_stopover->end_stopover_station->code??""}} ) - {{$times->arrival_time??""}}<br>
                                           <hr>
                                          @endforeach
                                       </td>
-                                      <td>{{$route_time->route->operator->name}}</td>
+                                      <td>{{$route_time->route->operator->name??""}}</td>
                                       </tr>
 
                                       @endforeach
