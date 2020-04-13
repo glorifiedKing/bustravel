@@ -165,7 +165,7 @@ class ProcessDebitCallback implements ShouldQueue
                         // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
                         $request_uri = $base_api_url."/makecreditrequest";
                         try{
-                            $client = new \GuzzleHttp\Client(['verify' => false]);
+                            $client = new \GuzzleHttp\Client(['decode_content' => false]);
                             $checkstatus = $client->request('POST', $request_uri, [                    
                                     'json'   => [
                                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
