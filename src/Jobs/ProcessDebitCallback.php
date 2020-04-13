@@ -47,7 +47,7 @@ class ProcessDebitCallback implements ShouldQueue
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
         
         $variables_to_string = http_build_query($this->variables);//implode(":",$variables);
-        $log = date('Y-m-d H:i:s')." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
+        $log = date('Y-m-d H:i:s')." transaction_id: ".$this->transaction_id." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
         //log the request 
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
@@ -195,7 +195,7 @@ class ProcessDebitCallback implements ShouldQueue
                             $response_body = json_decode($checkstatus->getBody(),true);
                             // log request
                              $status_variables = var_export($response_body,true);
-                             $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+                             $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
                             //save the request 
                             \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
                             $new_transaction_status = $response_body['transaction_status'];
@@ -212,7 +212,7 @@ class ProcessDebitCallback implements ShouldQueue
                         }
                         catch(\Exception $e)
                         {
-                            $error_log = date('Y-m-d H:i:s')." error:".$e->getMessage()."";
+                            $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
                             \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
                         }
