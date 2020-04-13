@@ -162,6 +162,7 @@ class ProcessDebitCallback implements ShouldQueue
                         $credit_transaction->status = 'pending';
                         $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
                         $credit_transaction->save();
+                        // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
                         $request_uri = $base_api_url."/makecreditrequest";
                         try{
                             $client = new \GuzzleHttp\Client(['verify' => false]);
@@ -169,7 +170,7 @@ class ProcessDebitCallback implements ShouldQueue
                                     'json'   => [
                                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                                         "transaction_account" => $default_payment_method->sp_phone_number,
-                                        "transaction_reference_number" => $transaction->id, 
+                                        "transaction_reference_number" => "1$transaction->id", 
                                         "transaction_amount"=>$merchant_credit,
                                         "account_number" => "100023",
                                         "payment_operator" => 1001,                                        
@@ -197,6 +198,16 @@ class ProcessDebitCallback implements ShouldQueue
                              $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
                             //save the request 
                             \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
+                            $new_transaction_status = $response_body['transaction_status'];
+                            //for failed 
+                            if($new_transaction_status == 'failed')
+                            {
+                             // immediate failure 
+                                $credit_transaction->status = 'failed';
+                                $credit_transaction->payment_gateway_result = $response_body['status_code'];
+                                $credit_transaction->save();                                                               
+
+                            }
                         }
                         }
                         catch(\Exception $e)
