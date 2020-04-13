@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Auth;
 use glorifiedking\BusTravel\Jobs\ProcessDebitCallback;
+use glorifiedking\BusTravel\Jobs\ProcessCreditCallback;
 
 class FrontendController extends Controller
 {
@@ -530,7 +531,7 @@ class FrontendController extends Controller
 
     public function credit_request_callback (Request $request)
     {
-        ProcessDebitCallback::dispatch($request);
+        ProcessCreditCallback::dispatch($request);
         
         return response()->json([
             "status_code" => "200"
