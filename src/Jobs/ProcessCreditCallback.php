@@ -44,7 +44,7 @@ class ProcessCreditCallback implements ShouldQueue
     {
         
         $variables_to_string = http_build_query($this->variables);//implode(":",$variables);
-        $log = date('Y-m-d H:i:s')." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
+        $log = date('Y-m-d H:i:s')." transaction_id: 1".$this->transaction_id." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
         \Storage::disk('local')->append('payment_credit_callback_log.txt',$log);
         
         $credit_transaction = CreditTransaction::where('transaction_id',$this->transaction_id)->first();
