@@ -31,7 +31,7 @@ class ProcessCreditCallback implements ShouldQueue
 
     public function __construct(Request $request)
     {
-        $this->transaction_id = substr($request->'transaction_reference_number',1);
+        $this->transaction_id = substr($request->transaction_reference_number,1);
         $this->transaction_status = $request->get('transaction_status');
         $this->status_code = $request->get('status_code');
         $this->url = $request->fullUrl();
