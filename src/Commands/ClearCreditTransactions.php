@@ -84,7 +84,7 @@ class ClearCreditTransactions extends Command
                     $response_body = json_decode($checkstatus->getBody(),true);
                     // log request
                     $status_variables = var_export($response_body,true);
-                    $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+                    $status_log = date('Y-m-d H:i:s')."transaction_id: 1".$transaction->id." WITH:".$status_variables."";
                     //log the request 
                     \Storage::disk('local')->append('credit_checkstatus_log.txt',$status_log);
                     $new_transaction_status = $response_body['transaction_status'];
@@ -111,7 +111,7 @@ class ClearCreditTransactions extends Command
             }
             catch(\Exception $e)
             {
-                $error_log = date('Y-m-d H:i:s')." error:".$e->getMessage()."";
+                $error_log = date('Y-m-d H:i:s')."transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
                 \Storage::disk('local')->append('payment_errors_log.txt',$error_log);
             }
             // fail transaction if it is still pending at this moment 
