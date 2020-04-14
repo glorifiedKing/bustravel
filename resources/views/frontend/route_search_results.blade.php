@@ -27,8 +27,8 @@
                                                 <li class="list-inline-item">Operator: {{$route->operator->name}}</li>
                                                 <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'main_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
                                             </ul>
-                                            <h3 class="card-title">departure : {{$date_of_travel}} at {{$result->departure_time}} hrs</h3>
-                                            <h3 class="card-title">Arrival : {{$date_of_travel}} at {{$result->arrival_time}} hrs</h3>
+                                            <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
+                                            <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
                                             <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>
@@ -56,8 +56,8 @@
                                                 <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
                                             <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'stop_over_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
                                             </ul>
-                                            <h3 class="card-title">departure : {{$date_of_travel}} at {{$result->departure_time}} hrs</h3>
-                                            <h3 class="card-title">Arrival : {{$date_of_travel}} at {{$result->arrival_time}} hrs</h3>
+                                            <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
+                                            <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
                                             <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>

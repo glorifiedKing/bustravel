@@ -206,7 +206,7 @@ class FrontendController extends Controller
             'email'    => 'email|requiredif:ticketdeliveryemail,email',
             'ticketdeliveryemail'    => 'required_without:ticketdeliverysms',
             'address_1'    => 'required',
-            'phone_number'  => 'requiredif:payment_method,mobile_money|numeric|min:1',
+            'phone_number'  => 'requiredif:payment_method,mobile_money|phone:RW',
             'country' => 'required',
         ]);
 
@@ -247,7 +247,13 @@ class FrontendController extends Controller
         $payee_reference = '';
         if($request->payment_method =="mobile_money")
         {
-            $payee_reference = $request->phone_number;
+            $payee_reference = $request->phone_number ;
+            //add 250 if it is not 
+            if(strlen($payee_reference) < 12)
+            {
+                $payee_reference="250".substr($request->phone_number, -9);
+            }
+            
         }
         //purchasing user 
         $paying_user = 0;
@@ -313,7 +319,7 @@ class FrontendController extends Controller
            $response_body = json_decode($debit_request->getBody(),true);
                 // log request
            $status_variables = var_export($response_body,true);
-           $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
+           $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction-id." WITH:".$status_variables."";
            //log the request 
            \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log); 
             $new_transaction_status = $response_body['transaction_status'];
@@ -325,7 +331,7 @@ class FrontendController extends Controller
                     $payment_transaction->payment_gateway_result = $response_body['status_code'];
                     $payment_transaction->save();
                     //$payment_transaction = $payment_transaction->refresh();
-                    event(new TransactionStatusUpdated($transaction));
+                    event(new TransactionStatusUpdated($payment_transaction));
                     
                 }
         }
