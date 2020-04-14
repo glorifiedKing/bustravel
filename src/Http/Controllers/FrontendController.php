@@ -319,7 +319,7 @@ class FrontendController extends Controller
            $response_body = json_decode($debit_request->getBody(),true);
                 // log request
            $status_variables = var_export($response_body,true);
-           $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction-id." WITH:".$status_variables."";
+           $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction->id." WITH:".$status_variables."";
            //log the request 
            \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log); 
             $new_transaction_status = $response_body['transaction_status'];
