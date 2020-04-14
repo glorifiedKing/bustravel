@@ -41,7 +41,7 @@
             
                        console.log(data.update.status);
             
-                        $("#notification_title").html("<span>"+data.update.status+"</span>");
+                        $("#notification_title").html("<span>"+data.update.status+": "+data.update.payment_gateway_result+"</span>");
                         $("#notification_message").html("process has "+data.update.status+" : <a href='"+home_url+"'>Back</a>");
             
                     })
