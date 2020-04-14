@@ -246,11 +246,13 @@ class ProcessDebitCallback implements ShouldQueue
                    $transaction->status = 'failed';
                    $transaction->payment_gateway_result = $this->status_code; 
                    $transaction->save(); 
+                   wait(5); 
                 }
                 else {
                     $transaction->status = 'failed';
                     $transaction->payment_gateway_result = $new_transaction_status;
                     $transaction->save();
+                    wait(5);
                 }
             }
 
