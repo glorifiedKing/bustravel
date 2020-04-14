@@ -30,7 +30,7 @@
                   
             
                 <script type="text/javascript">
-                $(document).ready(function(){
+             //   $(document).ready(function(){
                 
                      var home_url = "//{{ Request::getHost() }}";  
             
@@ -54,6 +54,6 @@
             
                     });
                     
-                        });
+             //           });
                 </script>
                 @endsection
