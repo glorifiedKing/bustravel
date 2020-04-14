@@ -254,7 +254,7 @@ class ProcessDebitCallback implements ShouldQueue
                 }
             }
 
-            $transaction = $transaction->refresh();
+            //$transaction = $transaction->refresh();
             event(new TransactionStatusUpdated($transaction));
         }
             
