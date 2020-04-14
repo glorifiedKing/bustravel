@@ -7,10 +7,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
 use glorifiedking\BusTravel\PaymentTransaction;
 
-class TransactionStatusUpdated implements ShouldBroadcast
+class TransactionStatusUpdated implements ShouldBroadcastNow
 {
     /**
      * Information about the shipping status update.
