@@ -26,8 +26,8 @@
                             @endphp
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
-                                <h6 class="my-0">Product name</h6>
-                                <small class="text-muted">Brief description</small>
+                                <h6 class="my-0">Bus Tickets</h6>
+                                <small class="text-muted">cost</small>
                             </div>
                             <span class="text-muted">RWF {{$item['amount']}}</span>
                         </li>
@@ -91,7 +91,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="address">Address</label>
-                            <input type="text" name="address_1" class="form-control" id="address" placeholder="1234 Main St" value="{{ old('address_1') }}" required>
+                            <input type="text" name="address_1" class="form-control" id="address" placeholder="1234 Main St" value="{{ old('address_1') }}" >
                             @error('address_1')
                                     <div class="invalid-feedback" role="alert">
                                         {{ $message }}
@@ -109,7 +109,7 @@
                                 <label for="country">Country</label>
                                 <select class="custom-select d-block w-100" name="country" id="country" required>
                                     <option value="">Choose...</option>
-                                    <option>Rwanda</option>
+                                    <option value="RW" selected>Rwanda</option>
                                 </select>
                                 @error('country')
                                     <div class="invalid-feedback" role="alert">
@@ -121,7 +121,7 @@
                                 <label for="state">State</label>
                                 <select class="custom-select d-block w-100" name="state" id="state" required>
                                     <option value="">Choose...</option>
-                                    <option value="Kigali">Kigali</option>
+                                    <option value="Kigali" selected>Kigali</option>
                                     <option value="Eastern">Eastern</option>
                                     <option value="Western">Western</option>
                                 </select>

@@ -21,14 +21,14 @@
                             @php                                
                                 $key = array_search($route->id,array_column($cart,'id'));
                                 $date_of_travel = $cart[$key]['date_of_travel'];
-                                $total_amount += $cart[$key]['amount'];
+                                $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
                                 $duration = $end_time->diffInMinutes($start_time,true);
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
-                                    <li class="ticket-number">Ticket {{$index+1}}/{{$total_tickets}}</li>
+                                <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
                                     
                                 </ul>
                                 <div class="card">
@@ -36,7 +36,7 @@
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
                                         <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
                                         <h3 class="price">
-                                            <span> RWF {{$route->route->price}}</span>
+                                            <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
                                         </h3>
                                         <ul class="list-inline">
@@ -56,14 +56,14 @@
                             @php                                
                                 $key = array_search($route->id,array_column($cart,'id'));
                                 $date_of_travel = $cart[$key]['date_of_travel'];
-                                $total_amount += $cart[$key]['amount'];
+                                $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
                                 $duration = $end_time->diffInMinutes($start_time,true);
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
-                                    <li class="ticket-number">Ticket {{$index+1}}/{{$total_tickets}}</li>
+                                    <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
                                     
                                 </ul>
                                 <div class="card">
@@ -71,7 +71,7 @@
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
                                         <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
                                         <h3 class="price">
-                                            <span> RWF {{$route->route->price}}</span>
+                                            <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
                                         </h3>
                                         <ul class="list-inline">
