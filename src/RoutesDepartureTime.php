@@ -36,12 +36,13 @@ class RoutesDepartureTime extends Model
     }
     
 
-    public function number_of_seats_left()
+    public function number_of_seats_left($date_of_travel)
     {
         $bus_capacity = $this->bus->seating_capacity ?? 61;
        $bookings = Booking::where([
             ['routes_departure_time_id','=',$this->id],
-            ['route_type','=','main_route']
+            ['route_type','=','main_route'],
+            ['date_of_travel','=',$date_of_travel]
             ])->count();
            
         $stops = $this->stopovers_times();
@@ -49,7 +50,8 @@ class RoutesDepartureTime extends Model
         {
             $stop_booking_count = Booking::where([
                 ['routes_departure_time_id','=',$stop->id],
-                ['route_type','=','stop_over_route']
+                ['route_type','=','stop_over_route'],
+                ['date_of_travel','=',$date_of_travel]
                 ])->count();
             $bookings += $stop_booking_count;    
         }
