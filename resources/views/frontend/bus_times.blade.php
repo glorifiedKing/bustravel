@@ -84,7 +84,7 @@ $(document).ready(function(){
             // Apply the search
               table.columns().every(function (index) {
                   $("#route_table thead tr:eq(1) th:eq(" + index + ") input").on("keyup change", function () {
-                     if(index == 1)
+                     if(index == 100)
                      {
                        if(this.value.length < 1){
                          table.column($(this).parent().index() + ":visible")
