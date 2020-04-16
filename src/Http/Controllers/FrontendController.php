@@ -182,7 +182,7 @@ class FrontendController extends Controller
 
     public function bus_times(Request $request)
     {
-        $routes_times =RoutesDepartureTime::paginate(10);
+        $routes_times =RoutesDepartureTime::all();
         return view('bustravel::frontend.bus_times',compact('routes_times'));
     }
     public function stations(Request $request)

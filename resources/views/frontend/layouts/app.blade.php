@@ -31,10 +31,11 @@
         @yield('content')
       </div>
     </main>
-    <svg id="all-svg" width="0" height="0"></svg>
+  <svg id="all-svg" width="0" height="0"></svg>
   <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>  
   <script src="{{ asset('vendor/select2/select2.min.js') }}"></script> 
+  <script src="{{ asset('vendor/DataTables/datatables.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/modnz.js') }}"></script>
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/aos.js') }}"></script>  
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/scripts.js') }}"></script>

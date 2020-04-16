@@ -2,41 +2,60 @@
 @section('title', 'PalmKash Bus Ticketing Homepage')
 @section('page-heading','Bus Ticketing System')
 @section('navigaton-bar')
-
-
 @endsection
+
+
             @section('content')
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="h3-bottom">Bus Times </h3>
+                        <h3 class="h3-bottom">Bus Times  for {{date('D M j Y')}} [<a  href="">Reload Routes</a>]</h3>
                         @php
                             $cart = session()->get('cart.items');
                             $total_amount = 0;
                             $reserve_fee = 0;
                             $booking_fee = 0;
                         @endphp
-
+                </div>
+            </div>
                         <div class="row">
-                            <div class="col-md-12 ticket-card cart">
-                              {!! $routes_times->links() !!}
-                                <table class="table">
-                                    <tbody>
-                                      <tr>
-                                      <th>Route </th>
-                                      <th>Due</th>
-                                      <th>Arrival</th>
-                                      <th>Stop Overs</th>
-                                      <th>Operator</th>
+                            <div class="col-md-12">
+                              
+                                <table style="width:100%" id="route_table" class="table table-striped table-hover table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <tr>
+                                                <th>From </th>
+                                                <th>To</th>
+                                                <th>Due</th>
+                                                <th>Arrival</th>
+                                                <th>Seats Left</th>
+                                                <th>Stop Overs</th>
+                                                <th>Operator</th>
+                                            </tr>
+                                            <tr>
+                                                <th>From </th>
+                                                <th>To</th>
+                                                <th>Due</th>
+                                                <th>Arrival</th>
+                                                <th>Seats Left</th>
+                                                <th>Stop Overs</th>
+                                                <th>Operator</th>
+                                            </tr>
                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                     
                                       @foreach($routes_times as $index => $route_time)
                                       <tr>
-                                      <td>{{$route_time->route->start->name??'None'}} ( {{$route_time->route->start->code??'None'}} ) - {{$route_time->route->end->name??'None'}} ( {{$route_time->route->end->code??'None'}} )</td>
+                                    <td>{{$route_time->route->start->name??'None'}} ( {{$route_time->route->start->code??'None'}} ) </td>
+                                      <td> {{$route_time->route->end->name??'None'}} ( {{$route_time->route->end->code??'None'}} ) <a class="btn" href="{{route('bustravel.add_to_basket',[$route_time->id,date('Y-m-d'),'main_route',1])}}">Book main route</a></td>
                                       <td>{{$route_time->departure_time}}</td>
                                       <td>{{$route_time->arrival_time}}</td>
+                                      <td>{{$route_time->number_of_seats_left() ?? 1}}</td>
                                       @php $stopoverstimes =$route_time->stopovers_times()->orderBy('id','ASC')->get(); @endphp
                                       <td>
                                          @foreach($stopoverstimes as $times)
-                                          {{$times->route_stopover->end_stopover_station->name??""}} ( {{$times->route_stopover->end_stopover_station->code??""}} ) - {{$times->arrival_time??""}}<br>
+                                          {{$times->route_stopover->end_stopover_station->name??""}} ( {{$times->route_stopover->end_stopover_station->code??""}} ) - {{$times->arrival_time??""}} <a class="btn" href="{{route('bustravel.add_to_basket',[$times->id,date('Y-m-d'),'stop_over_route',1])}}">Book</a><br>
                                           <hr>
                                          @endforeach
                                       </td>
@@ -46,9 +65,48 @@
                                       @endforeach
                                     </tbody>
                                 </table>
-                                {!! $routes_times->links() !!}
+                                
                             </div>
                         </div>
-                    </div>
-                </div>
+                 
+@endsection
+@section('js')
+<script>
+$(document).ready(function(){
+    $("#route_table thead tr:eq(1) th").each( function () {
+                    var title = $("#route_table thead tr:eq(0) th").eq( $(this).index() ).text();
+                    $(this).html( '<input size="5" type="text" placeholder="Search.." >' );
+                } );
+                var table =  $("#route_table").DataTable({
+              	});
+
+            
+            // Apply the search
+              table.columns().every(function (index) {
+                  $("#route_table thead tr:eq(1) th:eq(" + index + ") input").on("keyup change", function () {
+                     if(index == 1)
+                     {
+                       if(this.value.length < 1){
+                         table.column($(this).parent().index() + ":visible")
+                             .search("")
+                             .draw();
+                       }
+                       else {
+                         table.column($(this).parent().index() + ":visible")
+                             .search("^" + this.value + "$", true, false, true)
+                             .draw();
+                       }
+
+                     }
+                     else {
+                      table.column($(this).parent().index() + ":visible")
+                          .search(this.value)
+                          .draw();
+                        }
+                  });
+              });
+});
+
+</script>
+
 @endsection
