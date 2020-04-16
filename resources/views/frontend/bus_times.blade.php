@@ -51,7 +51,7 @@
                                       <td> {{$route_time->route->end->name??'None'}} ( {{$route_time->route->end->code??'None'}} ) <a class="btn" href="{{route('bustravel.add_to_basket',[$route_time->id,date('Y-m-d'),'main_route',1])}}">Book main route</a></td>
                                       <td>{{$route_time->departure_time}}</td>
                                       <td>{{$route_time->arrival_time}}</td>
-                                      <td>{{$route_time->number_of_seats_left() ?? 1}}</td>
+                                      <td>{{$route_time->number_of_seats_left(date('Y-m-d')) ?? 0}}</td>
                                       @php $stopoverstimes =$route_time->stopovers_times()->orderBy('id','ASC')->get(); @endphp
                                       <td>
                                          @foreach($stopoverstimes as $times)
