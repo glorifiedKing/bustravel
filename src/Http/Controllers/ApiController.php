@@ -102,7 +102,7 @@ class ApiController extends Controller
     public function get_station_by_name($station_name)
     {
         $stations = Station::where([
-            ['name','like',$station_name]
+            ['name','like',"%$station_name%"]
         ])->take(8)->get()->pluck('name','id');
         return $stations;
     }
@@ -122,9 +122,11 @@ class ApiController extends Controller
                     'result' => 'departure_station missing'
                 ]);
             }
+            $result = $this->get_station_by_name($station);
+            $status = $result->isEmpty() ? 'failed' : 'success';
             return response()->json([
-                'status' => 'success',
-                'result' => $this->get_station_by_name($station)
+                'status' => $status,
+                'result' => $result
             ]);
             
         }
@@ -139,9 +141,11 @@ class ApiController extends Controller
                     'result' => 'destination_station missing'
                 ]);
             }
+            $result = $this->get_station_by_name($station);
+            $status = $result->isEmpty() ? 'failed' : 'success';
             return response()->json([
-                'status' => 'success',
-                'result' => $this->get_station_by_name($station)
+                'status' => $status,
+                'result' => $result
             ]);
         }
 
