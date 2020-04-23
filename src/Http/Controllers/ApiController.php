@@ -5,6 +5,9 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\StopoverStation;
+use glorifiedking\BusTravel\Route;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -107,6 +110,35 @@ class ApiController extends Controller
         return $stations;
     }
 
+    public function get_route_times($from,$to,$time)
+    {
+        $travel_day_of_week = Carbon::parse($time)->format('l');
+        $travel_time = Carbon::parse("09:00")->format('G:i');
+        $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
+            $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
+        }])->where([
+            ['start_station', '=', $from],
+            ['end_station', '=', $to],            
+        ])->get()->pluck('price','departure_time');
+
+        $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
+            
+            $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
+                $query->where('days_of_week', 'like', "%$travel_day_of_week%");
+            });
+            $query->whereTime('arrival_time','>',$travel_time);
+        },
+        
+        ])->where([
+            ['start_station', '=', $from],
+            ['end_station', '=', $to],            
+        ])->get()->pluck('price','departure_time');
+
+        // combine the two 
+        $results = $route_results->merge($stop_over_routes);
+        return $results;
+    }
+
     public function ussd(Request $request)
     {
         $method = $request->request_method;
@@ -133,6 +165,7 @@ class ApiController extends Controller
         else if($method == 'GetEndStationsByName')
         {
             $station = $request->destination_station;
+            $from_station_id = $request->from_station_id ?? 0;
             //validate 
             if(!$station)
             {
@@ -142,11 +175,34 @@ class ApiController extends Controller
                 ]);
             }
             $result = $this->get_station_by_name($station);
+            // remove duplicate from station id 
+           
+            foreach($result as $key=> $r)
+            {
+                
+                if($key == $from_station_id)
+                {
+                    $result->forget($key);
+                }
+            }
             $status = $result->isEmpty() ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
                 'result' => $result
             ]);
+        }
+        else if($method == 'GetRouteTimes')
+        {
+            $from_station_id = $request->from_station_id;
+            $to_station_id = $request->to_station_id;
+            $time_range = date('Y-m-d');
+            //get routes 
+            $result = $this->get_route_times($from_station_id,$to_station_id,$time_range);
+            return response()->json([
+                'status' => $status,
+                'result' => $result
+            ]);
+
         }
 
         return response()->json([
