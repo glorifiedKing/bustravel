@@ -114,6 +114,14 @@ class ApiController extends Controller
         if($method == 'GetStartStationsByName')
         {
             $station = $request->departure_station;
+            //validate 
+            if(!$station)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'departure_station missing'
+                ]);
+            }
             return response()->json([
                 'status' => 'success',
                 'result' => $this->get_station_by_name($station)
@@ -123,6 +131,14 @@ class ApiController extends Controller
         else if($method == 'GetEndStationsByName')
         {
             $station = $request->destination_station;
+            //validate 
+            if(!$station)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'destination_station missing'
+                ]);
+            }
             return response()->json([
                 'status' => 'success',
                 'result' => $this->get_station_by_name($station)
@@ -130,7 +146,8 @@ class ApiController extends Controller
         }
 
         return response()->json([
-            'status' => 'unidentified method requested'
+            'status' => 'invalid data',
+            'result' => 'unknown method or method not specified'
         ]);
     }
 
