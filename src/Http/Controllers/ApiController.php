@@ -112,6 +112,7 @@ class ApiController extends Controller
 
     public function get_route_times($from,$to,$time)
     {
+        $results = array();
         $travel_day_of_week = Carbon::parse($time)->format('l');
         $travel_time = Carbon::parse("09:00")->format('G:i');
         $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
@@ -119,7 +120,19 @@ class ApiController extends Controller
         }])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get()->pluck('price','departure_time');
+        ])->get();
+       
+        foreach($route_results as $key=> $route)
+        {
+            foreach($route->departure_times as $d_time)
+            {
+                // check if route is full 
+                $results[] = $d_time->id;
+                $results[] = $route->price;
+                $results[] = $d_time->departure_time;
+                $results[] = 'main_route';
+            }
+        }
 
         $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
             
@@ -132,10 +145,18 @@ class ApiController extends Controller
         ])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get()->pluck('price','departure_time');
-
-        // combine the two 
-        $results = $route_results->merge($stop_over_routes);
+        ])->get();
+        foreach($stop_over_routes as $key=> $route)
+        {
+            foreach($route->departure_times as $d_time)
+            {
+                $routes[] = $d_time->id;
+                $routes[] = $route->price;
+                $routes[] = $d_time->departure_time;
+                $routes[] = 'stop_over_route';
+            }
+        }    
+        
         return $results;
     }
 
@@ -198,7 +219,7 @@ class ApiController extends Controller
             $time_range = date('Y-m-d');
             //get routes 
             $result = $this->get_route_times($from_station_id,$to_station_id,$time_range);
-            $status = $result->isEmpty() ? 'failed' : 'success';
+            $status = empty($result) ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
                 'result' => $result
