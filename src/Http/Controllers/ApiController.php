@@ -102,7 +102,7 @@ class ApiController extends Controller
     public function get_station_by_name($station_name)
     {
         $stations = Station::where([
-            ['name','like',"%$station_name%"]
+            ['name','like',"$station_name%"]
         ])->take(8)->get()->pluck('name','id');
         return $stations;
     }
