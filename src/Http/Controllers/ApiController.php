@@ -133,6 +133,7 @@ class ApiController extends Controller
         else if($method == 'GetEndStationsByName')
         {
             $station = $request->destination_station;
+            $from_station_id = $request->from_station_id ?? 0;
             //validate 
             if(!$station)
             {
@@ -142,6 +143,16 @@ class ApiController extends Controller
                 ]);
             }
             $result = $this->get_station_by_name($station);
+            // remove duplicate from station id 
+           
+            foreach($result as $key=> $r)
+            {
+                
+                if($key == $from_station_id)
+                {
+                    $result->forget($key);
+                }
+            }
             $status = $result->isEmpty() ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
