@@ -198,6 +198,7 @@ class ApiController extends Controller
             $time_range = date('Y-m-d');
             //get routes 
             $result = $this->get_route_times($from_station_id,$to_station_id,$time_range);
+            $status = $result->isEmpty() ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
                 'result' => $result
