@@ -4,6 +4,7 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\Station;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -96,6 +97,41 @@ class ApiController extends Controller
     public function index()
     {
        return 'ok';
+    }
+
+    public function get_station_by_name($station_name)
+    {
+        $stations = Station::where([
+            ['name','like',$station_name]
+        ])->take(8)->get()->pluck('id','name');
+        return $stations;
+    }
+
+    public function ussd(Request $request)
+    {
+        $method = $request->method;
+
+        if($method == 'GetStartStationsByName')
+        {
+            $station = $request->departure_station;
+            return response()->json([
+                'status' => 'success',
+                'result' => $this->get_station_by_name($station)
+            ]);
+            
+        }
+        else if($method == 'GetEndStationsByName')
+        {
+            $station = $request->destination_station;
+            return response()->json([
+                'status' => 'success',
+                'result' => $this->get_station_by_name($station)
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'unidentified method requested'
+        ]);
     }
 
     
