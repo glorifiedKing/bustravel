@@ -104,10 +104,19 @@ class ApiController extends Controller
 
     public function get_station_by_name($station_name)
     {
+        $results = array();
         $stations = Station::where([
             ['name','like',"$station_name%"]
-        ])->take(8)->get()->pluck('name','id');
-        return $stations;
+        ])->take(8)->get();
+        foreach($stations as $station)
+        {
+            $result_array = array(
+                'id' => $station->id,
+                'station' => $station->name
+            );
+            $results[] = $result_array;
+        }
+        return $results;
     }
 
     public function get_route_times($from,$to,$time)
@@ -182,7 +191,7 @@ class ApiController extends Controller
                 ]);
             }
             $result = $this->get_station_by_name($station);
-            $status = $result->isEmpty() ? 'failed' : 'success';
+            $status = empty($result) ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
                 'result' => $result
@@ -207,12 +216,13 @@ class ApiController extends Controller
             foreach($result as $key=> $r)
             {
                 
-                if($key == $from_station_id)
+                if($r['id'] == $from_station_id)
                 {
-                    $result->forget($key);
+                    
+                    unset($result[$key]);
                 }
             }
-            $status = $result->isEmpty() ? 'failed' : 'success';
+            $status = empty($result) ? 'failed' : 'success';
             return response()->json([
                 'status' => $status,
                 'result' => $result
