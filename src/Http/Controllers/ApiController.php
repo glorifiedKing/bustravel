@@ -126,11 +126,14 @@ class ApiController extends Controller
         {
             foreach($route->departure_times as $d_time)
             {
-                // check if route is full 
-                $results[] = $d_time->id;
-                $results[] = $route->price;
-                $results[] = $d_time->departure_time;
-                $results[] = 'main_route';
+                // check if route is full
+                $result_array = array(
+                    'id' => $d_time->id,
+                    'price' => $route->price,
+                    'time' => $d_time->departure_time,
+                    'route_type' => 'main_route'
+                ); 
+                $results[] = $result_array;
             }
         }
 
@@ -150,10 +153,13 @@ class ApiController extends Controller
         {
             foreach($route->departure_times as $d_time)
             {
-                $routes[] = $d_time->id;
-                $routes[] = $route->price;
-                $routes[] = $d_time->departure_time;
-                $routes[] = 'stop_over_route';
+                $result_array = array(
+                    'id' => $d_time->id,
+                    'price' => $route->price,
+                    'time' => $d_time->departure_time,
+                    'route_type' => 'stop_over_route'
+                ); 
+                $results[] = $result_array;
             }
         }    
         
@@ -217,6 +223,21 @@ class ApiController extends Controller
             $from_station_id = $request->from_station_id;
             $to_station_id = $request->to_station_id;
             $time_range = date('Y-m-d');
+            // validate
+            if(!$from_station_id)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'from_station_id missing'
+                ]); 
+            }
+            if(!$to_station_id)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'to_station_id missing'
+                ]); 
+            }
             //get routes 
             $result = $this->get_route_times($from_station_id,$to_station_id,$time_range);
             $status = empty($result) ? 'failed' : 'success';
@@ -225,6 +246,36 @@ class ApiController extends Controller
                 'result' => $result
             ]);
 
+        }
+        else if($method == 'MakeBooking')
+        {
+            $route_id = $request->route_id;
+            $route_type = $request->route_type;
+            $amount = $request->amount;
+            // validate
+            if(!$route_id)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'route_id missing'
+                ]); 
+            }
+            if(!$route_type)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'route_type missing'
+                ]); 
+            }
+            if(!$amount)
+            {
+                return response()->json([
+                    'status' => 'invalid data',
+                    'result' => 'amount missing'
+                ]); 
+            }
+
+            // make booking 
         }
 
         return response()->json([
