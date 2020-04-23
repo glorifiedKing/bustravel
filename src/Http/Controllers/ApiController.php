@@ -103,13 +103,13 @@ class ApiController extends Controller
     {
         $stations = Station::where([
             ['name','like',$station_name]
-        ])->take(8)->get()->pluck('id','name');
+        ])->take(8)->get()->pluck('name','id');
         return $stations;
     }
 
     public function ussd(Request $request)
     {
-        $method = $request->method;
+        $method = $request->request_method;
 
         if($method == 'GetStartStationsByName')
         {
