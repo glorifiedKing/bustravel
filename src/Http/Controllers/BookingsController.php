@@ -342,5 +342,4 @@ class BookingsController extends Controller
      return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with($alerts);
 
   }
-
 }

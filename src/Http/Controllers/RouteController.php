@@ -90,7 +90,7 @@ class RouteController extends Controller
         'bustravel-flash-message' => 'Route has successfully been saved',
     ];
 
-        return redirect()->route('bustravel.routes')->with($alerts);
+        return redirect()->route('bustravel.routes.departures.create',$route->id)->with($alerts);
     }
 
     //Bus Edit form route('bustravel.buses.edit')

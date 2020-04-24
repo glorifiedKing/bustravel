@@ -44,7 +44,17 @@ class RoutesDepartureTimesController extends Controller
     public function store(Request $request)
     {
         //validation
-        $validation = request()->validate(RoutesDepartureTime::$rules);
+        $validation = request()->validate([
+          'route_id'       => 'required',
+          'departure_time' => 'required',
+          'arrival_time' => 'required',
+          "stopover_arrival_time"    => "required|array",
+          'stopover_arrival_time.*' => 'required',
+          "stopover_departure_time"    => "required|array",
+          'stopover_departure_time.*' => 'required',
+          "days_of_week"    => "required|array",
+          'days_of_week.*' => 'required',
+        ]);
         //saving to the database
         $route = new RoutesDepartureTime();
         $route->route_id = request()->input('route_id');
@@ -97,7 +107,17 @@ class RoutesDepartureTimesController extends Controller
     public function update($id, Request $request)
     {
         //validation
-        $validation = request()->validate(RoutesDepartureTime::$rules);
+        $validation = request()->validate([
+          'route_id'       => 'required',
+          'departure_time' => 'required',
+          'arrival_time' => 'required',
+          "stopover_arrival_time"    => "required|array",
+          'stopover_arrival_time.*' => 'required',
+          "stopover_departure_time"    => "required|array",
+          'stopover_departure_time.*' => 'required',
+          "days_of_week"    => "required|array",
+          'days_of_week.*' => 'required',
+        ]);
         //saving to the database
         $route = RoutesDepartureTime::find($id);
         $route->route_id = request()->input('route_id');

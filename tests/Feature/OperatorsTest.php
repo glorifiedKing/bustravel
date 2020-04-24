@@ -33,7 +33,7 @@ class OperatorsTest extends TestCase
         'logo'                => 'logo.png',
         'email'               => 'info@link.com',
         'contact_person_name' => 'Man',
-        'phone_number'        => '0751933985',
+        'phone_number'        => '0751833985',
         'status'              => 1,
 
       ];
