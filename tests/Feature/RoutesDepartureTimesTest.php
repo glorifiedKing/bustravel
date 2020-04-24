@@ -18,6 +18,8 @@ class RoutesDepartureTimesTest extends TestCase
     //testing getting Routes Departure Times list
     public function testGetRoutesDepartureTimes()
     {
+
+
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
@@ -48,6 +50,7 @@ class RoutesDepartureTimesTest extends TestCase
     //testing create Route Departure Time
     public function testCreateRouteDepartureTimes()
     {
+
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
@@ -64,10 +67,15 @@ class RoutesDepartureTimesTest extends TestCase
         $data = [
         'route_id'                           => $route->id,
         'departure_time'                     => '09:30:00',
+        'arrival_time'                     => '12:30:00',
         'bus_id'                             => $bus->id,
         'driver_id'                          => $driver->id,
         'restricted_by_bus_seating_capacity' => 1,
         'status'                             => 1,
+        'stopover_arrival_time'=> ['0'=>'9:00'] ,
+        'stopover_departure_time'=>['0'=>'12:00'] ,
+        'days_of_week'=>['Monday','Tuesday'] ,
+
       ];
         //When user submits Route Departure Time request to create endpoint
       $this->actingAs($user)->post('/transit/routes/departures', $data); // your route to create Route Departure Time
@@ -98,7 +106,16 @@ class RoutesDepartureTimesTest extends TestCase
         'driver_id' => $driver->id,
       ]);
         $route_departure_time->departure_time = '09:45:00';
-        $this->actingAs($user)->patch('/transit/routes/departures/'.$route_departure_time->id.'/update', $route_departure_time->toArray()); // your route to update Route Departure Time
+
+        $route_array = $route_departure_time->toArray();
+        $field_array = [
+          'arrival_time'=>'10:56:00',
+          'stopover_arrival_time'=> ['0'=>'9:00'] ,
+          'stopover_departure_time'=>['0'=>'12:00'] ,
+          'days_of_week'=>['Monday','Tuesday'] ,
+      ];
+      $data = array_merge($route_array, $field_array);
+        $this->actingAs($user)->patch('/transit/routes/departures/'.$route_departure_time->id.'/update', $data); // your route to update Route Departure Time
         //The Departure Time should be updated in the database.
         $this->assertDatabaseHas('routes_departure_times', ['id'=> $route_departure_time->id, 'departure_time' => '09:45:00']);
     }

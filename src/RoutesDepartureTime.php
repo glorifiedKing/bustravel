@@ -11,6 +11,7 @@ class RoutesDepartureTime extends Model
     public static $rules = [
     'route_id'       => 'required',
     'departure_time' => 'required',
+    'arrival_time' => 'required',
   ];
     protected $casts = [
         'days_of_week' => 'array'

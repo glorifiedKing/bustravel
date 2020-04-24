@@ -60,6 +60,7 @@ Route::any('bookings/boarded/{id}', 'BookingsController@boarded')->name('bustrav
 Route::get('bookings/{id}/edit', 'BookingsController@edit')->name('bustravel.bookings.edit');
 Route::any('bookings/{id}/update', 'BookingsController@update')->name('bustravel.bookings.update');
 Route::any('bookings/{id}/delete', 'BookingsController@delete')->name('bustravel.bookings.delete');
+
 Route::get('route/tracking/{id}', 'BookingsController@route_tracking')->name('bustravel.bookings.route.tracking');
 Route::get('route/tracking/start/{id}', 'BookingsController@route_tracking_start')->name('bustravel.bookings.route.tracking.start');
 Route::get('route/tracking/end/{id}', 'BookingsController@route_tracking_end')->name('bustravel.bookings.route.tracking.end');
@@ -101,6 +102,8 @@ Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.repo
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
+Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');
+Route::post('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report.search');
 
 Route::get('faqs', 'FaqsController@faqs')->name('bustravel.faqs');
 Route::post('faqs', 'FaqsController@storefaqs')->name('bustravel.faqs.store');

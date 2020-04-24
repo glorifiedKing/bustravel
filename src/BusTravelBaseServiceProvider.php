@@ -147,6 +147,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'icon' => 'fa fa-money-check',
 
                     ],
+                    [
+                        'text' => 'Cashier Report',
+                        'url'  => route('bustravel.bookings.cashier.report'),
+                        'icon' => 'fa fa-money-check',
+
+                    ],
+
 
                 ],
 

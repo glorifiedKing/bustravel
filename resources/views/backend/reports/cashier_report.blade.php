@@ -26,7 +26,7 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-12">
-                <form action="{{route('bustravel.reports.bookings.search')}}" method="post" >
+                <form action="{{route('bustravel.bookings.cashier.report.search')}}" method="post" >
                   {{ csrf_field() }}
                   <div class="row">
                   <div class="form-group col-md-3">
@@ -82,12 +82,11 @@
                                 <td>{{number_format($booking->amount,2)}} </td>
                                 <td>{{Carbon\Carbon::parse($booking->date_paid)->format('d-m-Y')}}</td>
                                 <td>{{Carbon\Carbon::parse($booking->date_of_travel)->format('d-m-Y')}}</td>
-                                <td>{{Carbon\Carbon::parse($booking->created_at)->format('d-m-Y')}}</td>
+                                <td>{{Carbon\Carbon::parse($booking->created_at)->format('Y-m-d')}}</td>
                             </tr>
 
                         @endforeach
                     </tbody>
-
                     <tfoot>
                           <tr>
                            <th colspan="6">Total Amount</th>
@@ -118,61 +117,61 @@
     @parent
     <script>
         $(function () {
-          var table = $('#example1').DataTable({
-                responsive: false,
-                dom: 'Blfrtip',
-                buttons: [
-                  {
-                    extend: 'excelHtml5',
-                    exportOptions: {
-                      columns: ':visible'
-                    },
-                    footer: true
-                  },
-                  {
-                    extend: 'pdfHtml5',
-                    exportOptions: {
-                      columns: ':visible'
-                    },
-                    footer: true
-                  },
-                'colvis',
-                  //'selectAll',
-                    //	'selectNone'
-                ],
-                "footerCallback": function ( row, data, start, end, display ) {
-                        var api = this.api(), data;
+var table = $('#example1').DataTable({
+      responsive: false,
+      dom: 'Blfrtip',
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          exportOptions: {
+            columns: ':visible'
+          },
+          footer: true
+        },
+        {
+          extend: 'pdfHtml5',
+          exportOptions: {
+            columns: ':visible'
+          },
+          footer: true
+        },
+      'colvis',
+        //'selectAll',
+          //	'selectNone'
+      ],
+      "footerCallback": function ( row, data, start, end, display ) {
+              var api = this.api(), data;
 
-                        // Remove the formatting to get integer data for summation
-                        var intVal = function ( i ) {
-                            return typeof i === 'string' ?
-                                i.replace(/[\$,]/g, '')*1 :
-                                typeof i === 'number' ?
-                                    i : 0;
-                        };
+              // Remove the formatting to get integer data for summation
+              var intVal = function ( i ) {
+                  return typeof i === 'string' ?
+                      i.replace(/[\$,]/g, '')*1 :
+                      typeof i === 'number' ?
+                          i : 0;
+              };
 
-                        // Total over all pages
-                        total = api
-                            .column( 4 )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0 );
+              // Total over all pages
+              total = api
+                  .column( 4 )
+                  .data()
+                  .reduce( function (a, b) {
+                      return intVal(a) + intVal(b);
+                  }, 0 );
 
-                        // Total over this page
-                        pageTotal = api
-                            .column( 4, { page: 'current'} )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0 );
+              // Total over this page
+              pageTotal = api
+                  .column( 4, { page: 'current'} )
+                  .data()
+                  .reduce( function (a, b) {
+                      return intVal(a) + intVal(b);
+                  }, 0 );
 
-                        // Update footer
-                        $('#total_order').html(
-                            + pageTotal +' ( '+ total +' total)'
-                        );
-                    }
-                      });
+              // Update footer
+              $('#total_order').html(
+                  + pageTotal +' ( '+ total +' total)'
+              );
+          }
+            });
   $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
 })
 </script>

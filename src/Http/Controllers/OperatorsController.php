@@ -84,7 +84,13 @@ class OperatorsController extends Controller
     public function update($id, Request $request)
     {
         //validation
-        $validation = request()->validate(Operator::$rules);
+        $validation = request()->validate([
+        'name'                => 'required',
+        'phone_number'        => 'required',
+        'contact_person_name' => 'required',
+        'address'             => 'required',
+        'code'       => 'required|unique:operators,code,'.$id
+      ]);
         // saving logo to logos folder
         if ($request->hasFile('newlogo')) {
             // creating logos folder if doesnot exit
