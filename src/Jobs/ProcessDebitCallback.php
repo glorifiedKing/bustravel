@@ -90,6 +90,8 @@ class ProcessDebitCallback implements ShouldQueue
                             $booking->ticket_number = $ticket_number;
                             $booking->user_id = $transaction->user_id;
                             $booking->route_type = 'main_route';
+                            $booking->payment_source = $transaction->payment_source;
+                            $booking->payment_transaction_id = $transaction->id;
                             $booking->save();
 
                             $tickets_bought[] = $booking->id;
@@ -112,6 +114,8 @@ class ProcessDebitCallback implements ShouldQueue
                             $booking->ticket_number = $ticket_number;
                             $booking->route_type = 'stop_over_route';
                             $booking->user_id = $transaction->user_id;
+                            $booking->payment_source = $transaction->payment_source;
+                            $booking->payment_transaction_id = $transaction->id;
                             $booking->save();
 
                             $tickets_bought[] = $booking->id;

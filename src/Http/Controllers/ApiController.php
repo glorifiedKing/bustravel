@@ -7,6 +7,11 @@ use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\StopoverStation;
 use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\RoutesDepartureTime;
+use glorifiedking\BusTravel\PaymentTransaction;
+use glorifiedking\BusTravel\OperatorPaymentMethod;
+use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
+use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -177,11 +182,11 @@ class ApiController extends Controller
 
     public function ussd(Request $request)
     {
-        $method = $request->request_method;
+        $method = $request->input('request_method');
 
         if($method == 'GetStartStationsByName')
         {
-            $station = $request->departure_station;
+            $station = $request->input('departure_station');
             //validate 
             if(!$station)
             {
@@ -200,8 +205,8 @@ class ApiController extends Controller
         }
         else if($method == 'GetEndStationsByName')
         {
-            $station = $request->destination_station;
-            $from_station_id = $request->from_station_id ?? 0;
+            $station = $request->input('destination_station');
+            $from_station_id = $request->input('from_station_id') ?? 0;
             //validate 
             if(!$station)
             {
@@ -230,8 +235,8 @@ class ApiController extends Controller
         }
         else if($method == 'GetRouteTimes')
         {
-            $from_station_id = $request->from_station_id;
-            $to_station_id = $request->to_station_id;
+            $from_station_id = $request->input('from_station_id');
+            $to_station_id = $request->input('to_station_id');
             $time_range = date('Y-m-d');
             // validate
             if(!$from_station_id)
@@ -259,9 +264,16 @@ class ApiController extends Controller
         }
         else if($method == 'MakeBooking')
         {
-            $route_id = $request->route_id;
-            $route_type = $request->route_type;
-            $amount = $request->amount;
+            $route_id = $request->input('route_id');
+            $route_type = $request->input('route_type');
+            $sent_amount = $request->input('amount');
+            $no_of_tickets = $request->input('number_of_tickets') ?? 1;
+            $first_name = $request->input('name') ?? 'Guest';
+            $payee_reference = $request->input('msisdn');
+            $date_of_travel = $request->input('date_of_travel') ?? date('Y-m-d');
+
+            
+
             // validate
             if(!$route_id)
             {
@@ -277,7 +289,7 @@ class ApiController extends Controller
                     'result' => 'route_type missing'
                 ]); 
             }
-            if(!$amount)
+            if(!$sent_amount)
             {
                 return response()->json([
                     'status' => 'invalid data',
@@ -285,7 +297,101 @@ class ApiController extends Controller
                 ]); 
             }
 
+            //get route details 
+            $route = ($route_type == 'main_route') ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
+            
+            if(!$route)
+            {
+                return response()->json([
+                    'status' => 'failed',
+                    'result' => 'the route doesnot exist'
+                ]);
+            }
+            $main_routes = ($route_type == 'main_route') ? [$route_id] : [];
+            $stop_over_routes = ($route_type == 'stop_over_route') ? [$route_id] : [];
+            $amount = $route->route->price;
+            $sms_cost = 10;  // must get it from config later 
+            $amount += $sms_cost;
+            $paying_user = 0;
+
+            $operator_id = $route->route->operator->id ?? $route->route->route->operator->id;
+            
+             //get default payment method of operator 
+            $default_payment_method = OperatorPaymentMethod::where([
+                ['operator_id','=', $operator_id],
+                ['is_default','=', '1'],
+            ])->first();
+
+            //abort if operator has no payment method 
+
+            // start transaction in trasaction table 
+            $payment_transaction = new PaymentTransaction;
+            $payment_transaction->payee_reference = $payee_reference;
+            $payment_transaction->amount = $amount;
+            $payment_transaction->main_routes = $main_routes;
+            $payment_transaction->stop_over_routes = $stop_over_routes;
+            $payment_transaction->user_id = $paying_user;
+            $payment_transaction->first_name = $first_name;           
+            $payment_transaction->phone_number = $payee_reference;           
+            $payment_transaction->country = 'RW';
+            $payment_transaction->send_sms = 1;
+            $payment_transaction->send_email = 0;
+            $payment_transaction->date_of_travel = $date_of_travel;
+            $payment_transaction->transport_operator_id = $operator_id;
+            $payment_transaction->no_of_tickets = $no_of_tickets;
+            $payment_transaction->payment_source = 'ussd';
+            $payment_transaction->save();
+
+            // dd($payment_transaction);   
+            // send request if payment method is mtn mobile money 
+            $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');    
+            // send json request 
+            $request_uri = $base_api_url."/makedebitrequest";
+            $client = new \GuzzleHttp\Client(['decode_content' => false]);
+            $debit_request = $client->request('POST', $request_uri, [ 
+                                
+                        'json'   => [
+                            "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
+                            "transaction_amount" => $amount,
+                            "account_number" => "100023",
+                            "payment_operator" => 1001,
+                            "transaction_account" => $payee_reference,
+                            "transaction_reference_number" => $payment_transaction->id,
+                            "merchant_account" => "RW002",
+                            "transaction_source" => "web",
+                            "transaction_destination" => "web",
+                            "transaction_reason" => "Bus Ticket payment",
+                            "currency" => "RWF",
+                        ]
+                        ]);
+            $code = $debit_request->getStatusCode(); 
+            if($code == 200) 
+            { 
+            $response_body = json_decode($debit_request->getBody(),true);
+                    // log request
+            $status_variables = var_export($response_body,true);
+            $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction->id." WITH:".$status_variables."";
+            //log the request 
+            \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log); 
+                $new_transaction_status = $response_body['transaction_status'];
+                    //for success create ticket add to email and sms queue
+                    if($new_transaction_status == 'failed')
+                    {
+                    // immediate failure 
+                        $payment_transaction->status = 'failed';
+                        $payment_transaction->payment_gateway_result = $response_body['status_code'];
+                        $payment_transaction->save();
+                        //$payment_transaction = $payment_transaction->refresh();
+                        event(new TransactionStatusUpdated($payment_transaction));
+                        
+                    }
+            }
+
             // make booking 
+            return response()->json([
+                'status' => 'sucess',
+                'result' => 'Waiting for Payment'
+            ]);
         }
 
         return response()->json([
