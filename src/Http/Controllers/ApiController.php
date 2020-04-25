@@ -182,6 +182,11 @@ class ApiController extends Controller
 
     public function ussd(Request $request)
     {
+        $variables_to_string = http_build_query($request->all());
+        $log = date('Y-m-d H:i:s')." FROM:".$request->client_ip()." BY:".$request->method()." WITH:".$variables_to_string."";
+        //log the request 
+        
+        \Storage::disk('local')->append('ussd_log.txt',$log);
         $method = $request->input('request_method');
 
         if($method == 'GetStartStationsByName')
