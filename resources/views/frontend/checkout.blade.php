@@ -61,8 +61,8 @@
                     @csrf   
                     <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="firstName">First name</label>
-                                <input type="text" name="first_name" class="form-control" id="firstName"  value="{{ old('first_name') }}" required>
+                                <label for="firstName">Passenger's Name</label>
+                                <input type="text" name="first_name" class="form-control" id="firstName"  value="{{ old('first_name') ?? Auth::user()->name }}" required>
                                 @error('first_name')
                                     <div class="invalid-feedback" role="alert">
                                         {{ $message }}
@@ -71,39 +71,32 @@
                                 
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName">Last name</label>
-                                <input name="last_name" type="text" class="form-control" id="lastName" value="{{ old('last_name') }}"  required>
-                                @error('last_name')
-                                    <div class="invalid-feedback" role="alert">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                                <label for="email">Email [for ticket delivery]</label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="you@example.com" value="{{  old('email') ?? Auth::user()->email}}">
+                            @error('email')
+                                <div class="invalid-feedback" role="alert">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                             </div>
+                            
                         </div>
-                        <div class="mb-3">
-                            <label for="email">Email</label>
-                        <input type="email" name="email" class="form-control" id="email" placeholder="you@example.com" value="{{ old('email')}}">
-                        @error('email')
-                            <div class="invalid-feedback" role="alert">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                        </div>
+                        
                         <div class="mb-3">
                             <label for="address">Address</label>
-                            <input type="text" name="address_1" class="form-control" id="address" placeholder="1234 Main St" value="{{ old('address_1') }}" >
+                            <input type="text" name="address_1" class="form-control" id="address" placeholder="1234 Main St" value="{{ old('address_1') ?? 'kigali' }}" >
                             @error('address_1')
                                     <div class="invalid-feedback" role="alert">
                                         {{ $message }}
                                     </div>
                                 @enderror
                         </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="address2">
                                 Address 2 <span class="text-muted">(Optional)</span>
                             </label>
                             <input type="text" name="address_2" class="form-control" id="address2" placeholder="Apartment or suite" value="{{ old('address_2') }}">
-                        </div>
+                        </div> -->
                         <div class="row">
                             <div class="col-md-5 mb-3">
                                 <label for="country">Country</label>
@@ -145,7 +138,7 @@
                                     </div>
                                 @enderror
                                 <input  name="ticketdeliverysms" type="checkbox" value="sms"  >
-                                <label >Sms [additional cost of: {{$sms_cost ?? 5}} RWF applies]</label>
+                                <label >Sms [additional cost of: {{$sms_cost ?? 10}} RWF applies]</label>
                                 @error('ticketdeliverysms')
                                     <div class="invalid-feedback" role="alert">
                                         {{ $message }}

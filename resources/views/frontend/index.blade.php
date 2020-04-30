@@ -62,7 +62,7 @@
                                                 </div>
                                                 <div class="form-group col-md-6">
                                                     <label for="inputPassword4">Time</label>
-                                                    <input required="required" type="time" class="form-control @error('time_of_travel') is-invalid @enderror" name="time_of_travel" >
+                                                    <input id="time_of_travel" required="required" type="text" class="form-control @error('time_of_travel') is-invalid @enderror" name="time_of_travel" >
                                                     @error('time_of_travel')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -106,6 +106,9 @@
                 $(document).ready(function(){
                     $('.select_search').select2({
                         width: 'resolve' // need to override the changed default
+                    });
+                    $('#time_of_travel').datetimepicker({
+                        format: 'HH:mm'
                     });
                 });
             </script>     

@@ -182,7 +182,10 @@ class FrontendController extends Controller
 
     public function bus_times(Request $request)
     {
-        $routes_times =RoutesDepartureTime::all();
+        $now = date('H:i');  
+        $travel_day_of_week = date('l');      
+        $routes_times =RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$now)->get();
+        
         return view('bustravel::frontend.bus_times',compact('routes_times'));
     }
     public function stations(Request $request)
@@ -202,7 +205,6 @@ class FrontendController extends Controller
         //validate 
         $validated_data = $request->validate([
             'first_name'        => 'required|',
-            'last_name' => 'required|',
             'email'    => 'email|requiredif:ticketdeliveryemail,email',
             'ticketdeliveryemail'    => 'required_without:ticketdeliverysms',
             'address_1'    => 'required',
@@ -215,6 +217,12 @@ class FrontendController extends Controller
         $main_routes = array();
         $stop_over_routes = array();
         $cart = session()->get('cart.items');
+
+        //check for empty cart 
+        if(!$cart)
+        {
+            return redirect()->route('bustravel.cart');
+        }
         foreach($cart as $item)
         {
             // for now use the first operator but in future every operator to have his own request
