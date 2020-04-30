@@ -55,7 +55,7 @@
                                       @php $stopoverstimes =$route_time->stopovers_times()->orderBy('id','ASC')->get(); @endphp
                                       <td>
                                          @foreach($stopoverstimes as $times)
-                                          {{$times->route_stopover->end_stopover_station->name??""}} ( {{$times->route_stopover->end_stopover_station->code??""}} ) - {{$times->arrival_time??""}} <a class="btn" href="{{route('bustravel.add_to_basket',[$times->id,date('Y-m-d'),'stop_over_route',1])}}">Book</a><br>
+                                         {{$times->route_stopover->start_stopover_station->name??""}} to {{$times->route_stopover->end_stopover_station->name??""}}  - {{$times->departure_time??""}} <a class="btn" href="{{route('bustravel.add_to_basket',[$times->id,date('Y-m-d'),'stop_over_route',1])}}">Book</a><br>
                                           <hr>
                                          @endforeach
                                       </td>

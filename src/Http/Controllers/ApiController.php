@@ -127,8 +127,8 @@ class ApiController extends Controller
     public function get_route_times($from,$to,$time)
     {
         $results = array();
-        $travel_day_of_week = Carbon::parse($time)->format('l');
-        $travel_time = Carbon::parse("09:00")->format('G:i');
+        $travel_day_of_week = date('l');
+        $travel_time = date('H:i');
         $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
             $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
         }])->where([
@@ -141,13 +141,17 @@ class ApiController extends Controller
             foreach($route->departure_times as $d_time)
             {
                 // check if route is full
-                $result_array = array(
-                    'id' => $d_time->id,
-                    'price' => $route->price,
-                    'time' => $d_time->departure_time,
-                    'route_type' => 'main_route'
-                ); 
-                $results[] = $result_array;
+                $seats_left = $d_time->number_of_seats_left(date('Y-m-d'));
+                if($seats_left > 0)
+                { 
+                    $result_array = array(
+                        'id' => $d_time->id,
+                        'price' => $route->price,
+                        'time' => $d_time->departure_time,
+                        'route_type' => 'main_route'
+                    ); 
+                    $results[] = $result_array;
+                }
             }
         }
 
@@ -167,13 +171,17 @@ class ApiController extends Controller
         {
             foreach($route->departure_times as $d_time)
             {
-                $result_array = array(
-                    'id' => $d_time->id,
-                    'price' => $route->price,
-                    'time' => $d_time->departure_time,
-                    'route_type' => 'stop_over_route'
-                ); 
-                $results[] = $result_array;
+                $seats_left =$d_time->main_route_departure_time->number_of_seats_left(date('Y-m-d'));
+                if($seats_left > 0)
+                {
+                    $result_array = array(
+                        'id' => $d_time->id,
+                        'price' => $route->price,
+                        'time' => $d_time->departure_time,
+                        'route_type' => 'stop_over_route'
+                    ); 
+                    $results[] = $result_array;
+                }
             }
         }    
         

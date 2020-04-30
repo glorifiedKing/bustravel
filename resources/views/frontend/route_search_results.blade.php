@@ -15,7 +15,9 @@
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
                             $duration = $end_time->diffInMinutes($start_time,true);
+                            $seats_left = $result->number_of_seats_left($date_of_travel);
                         @endphp
+                           @if($seats_left > 0)
                             <div class="row">
                                 <div class="col-md-12 ticket-card">
                                     <div class="card">
@@ -25,7 +27,7 @@
                                                 <li class="list-inline-item">From: {{$route->start->name}}</li>
                                                 <li class="list-inline-item">To: {{$route->end->name}}</li>
                                                 <li class="list-inline-item">Operator: {{$route->operator->name}}</li>
-                                                <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'main_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
+                                                <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'main_route',$no_of_tickets])}}">Book[{{$no_of_tickets}}]</a></li>
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
@@ -35,6 +37,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         @endforeach
                         @endforeach
                         <!-- stop over routes -->
@@ -44,7 +47,9 @@
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
                             $duration = $end_time->diffInMinutes($start_time,true);
+                            $seats_left = $result->main_route_departure_time->number_of_seats_left($date_of_travel);
                         @endphp
+                            @if($seats_left > 0)
                             <div class="row">
                                 <div class="col-md-12 ticket-card">
                                     <div class="card">
@@ -54,7 +59,7 @@
                                                 <li class="list-inline-item">From: {{$route->start_stopover_station->name}}</li>
                                                 <li class="list-inline-item">To: {{$route->end_stopover_station->name}}</li>
                                                 <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
-                                            <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'stop_over_route',$no_of_tickets])}}">Add[{{$no_of_tickets}}]</a></li>
+                                            <li class="list-inline-item add-btn"><a href="{{route('bustravel.add_to_basket',[$result->id,$date_of_travel,'stop_over_route',$no_of_tickets])}}">Book[{{$no_of_tickets}}]</a></li>
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
@@ -64,6 +69,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         @endforeach
                         @endforeach
                     </div>

@@ -17,6 +17,7 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/base.css')}}">
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/styles.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/queries.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('vendor/glorifiedking/css/bootstrap-datetimepicker.css') }}">
   <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
 
   
@@ -37,8 +38,10 @@
   <script src="{{ asset('vendor/select2/select2.min.js') }}"></script> 
   <script src="{{ asset('vendor/DataTables/datatables.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/modnz.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/moment.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/aos.js') }}"></script>  
   <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/scripts.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('vendor/glorifiedking/js/bootstrap-datetimepicker.min.js') }}"></script>
   @yield('js')
 </body>
 </html>
