@@ -24,21 +24,28 @@
         <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-              <div class="col-md-6">
-              </div>
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <form action="{{route('bustravel.reports.traffic.period')}}" method="post" >
                   {{ csrf_field() }}
+                  <div class="row">
+                  <div class="form-group col-md-3">
+                  <select  name="period" class="form-control select2"  >
+                  <option value="1" @php echo $period == 1 ? 'selected' :  "" @endphp>This Week </option>
+                  <option value="2" @php echo $period == 2 ? 'selected' :  "" @endphp>This Month </option>
+                  <option value="3" @php echo $period == 3 ? 'selected' :  "" @endphp>Last Month</option>
+                  <option value="4" @php echo $period == 4 ? 'selected' :  "" @endphp>Last 3 Months </option>
+                  <option value="5" @php echo $period == 5 ? 'selected' :  "" @endphp>Last 6 Months </option>
+                  <option value="6" @php echo $period == 6 ? 'selected' :  "" @endphp>This Year </option>
+                  </select>
+                </div>
                 <div class="form-group col-md-6">
-                <select  name="period" class="form-control"  onchange="this.form.submit()">
-                <option value="1" @php echo $period == 1 ? 'selected' :  "" @endphp>This Week </option>
-                <option value="2" @php echo $period == 2 ? 'selected' :  "" @endphp>This Month </option>
-                <option value="3" @php echo $period == 3 ? 'selected' :  "" @endphp>Last Month</option>
-                <option value="4" @php echo $period == 4 ? 'selected' :  "" @endphp>Last 3 Months </option>
-                <option value="5" @php echo $period == 5 ? 'selected' :  "" @endphp>Last 6 Months </option>
-                <option value="6" @php echo $period == 6 ? 'selected' :  "" @endphp>This Year </option>
+                <select  name="route" class="form-control select2"  onchange="this.form.submit()">
+                @foreach ($routes as $main_route)
+                <option value="{{$main_route->id}}" @php echo $main_route->id == $route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] </option>
+                @endforeach
                 </select>
               </div>
+            </div>
                 </form>
               </div>
 
@@ -61,11 +68,15 @@
     @parent
     <script>
         $(function () {
+            $('.select2').select2();
             var myChart = echarts.init(document.getElementById('sales'));
             option = {
                 title: {
                     text: 'Traffic Report'
                 },
+                legend: {
+          data: ['{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]',]
+      },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -78,7 +89,7 @@
                 toolbox: {
                     show: true,
                     feature: {
-                      saveAsImage: {},
+                      saveAsImage: {show:false},
                         downloadTable: {
                             //show: true,
                             // Show the title when mouse focus
@@ -91,7 +102,7 @@
                   },
                 xAxis: {
                     type: 'category',
-                    boundaryGap: false,
+                    boundaryGap: true,
                     data: [
                       @foreach($x_axis as $axis)
                          '{{$axis}}',
@@ -103,9 +114,10 @@
                 },
                 series: [
                     {
-                        name:'Traffic',
-                        type:'line',
+                          name:'{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]',
+                        type:'bar',
                         stack: 'Traffic',
+                        barGap: 0,
                         data:[
                           @foreach($y_axis as $axis)
                         {{$axis}},

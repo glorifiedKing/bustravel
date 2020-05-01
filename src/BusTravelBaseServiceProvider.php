@@ -124,7 +124,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     ],
 
                     [
-                        'text' => 'Profitable Routes',
+                        'text' => 'Performance Routes',
                         'url'  => route('bustravel.reports.profitroute'),
                         'icon' => 'fa fa-route',
 
@@ -133,12 +133,6 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'text' => 'Passenger Traffic',
                         'url'  => route('bustravel.reports.traffic'),
                         'icon' => 'fa fa-traffic-light',
-
-                    ],
-                    [
-                        'text' => 'Locations',
-                      //  'url'  => route('bustravel.reports.locations'),
-                        'icon'=> 'fa fa-search-location',
 
                     ],
                     [

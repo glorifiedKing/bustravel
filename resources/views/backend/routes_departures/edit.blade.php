@@ -237,6 +237,7 @@
                   </div>
                 </div>
               </div>
+              <input type="hidden" name="has_stover" value="{{$stopovers->count()}}">
               <!-- /.box-body -->
               <div class="box-footer">
                 <div class="form-group col-md-12">
@@ -271,7 +272,7 @@
           $('.select2').select2();
           //Timepicker
           $('.timepicker').datetimepicker({
-                     format: 'LT'
+                     format: 'HH:mm'
                  });
         })
     </script>

@@ -30,7 +30,7 @@
                 <form action="{{route('bustravel.reports.profitroute.period')}}" method="post" >
                   {{ csrf_field() }}
                 <div class="row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-3">
                 <select  name="period" class="form-control select2" >
                 <option value="1" @php echo $period == 1 ? 'selected' :  "" @endphp>This Week </option>
                 <option value="2" @php echo $period == 2 ? 'selected' :  "" @endphp>This Month </option>
@@ -52,6 +52,7 @@
               </div>
 
                   <div id="sales" style="width:100%; min-height:400px;padding:5px"></div>
+
             </div>
           </div>
         </div>
@@ -72,78 +73,73 @@
 
         $(function () {
             $('.select2').select2();
-            var myChart = echarts.init(document.getElementById('sales'));
-            option = {
-                title: {
-                    text: 'Performance Route Report'
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                      data:[
-                        @foreach($route_departures as $route_time)
-                          '{{$route_time->departure_time}} - {{$route_time->arrival_time}}',
-                        @endforeach
-
-                      ]
-                    },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                      saveAsImage: {},
-                        downloadTable: {
-                            //show: true,
-                            // Show the title when mouse focus
-                            //title: 'Save As picture',
-                            // Icon path
-                            //icon: '/static/img/download-icon.png',
-                            option: {}
-                        }
-                    }
-                  },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: [
-                      @foreach($x_axis as $axis)
-                         '{{$axis}}',
-                      @endforeach
-                                          ]
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-
-                  @foreach($route_departures as $route_time)
-                  {
-                      name:' {{$route_time->departure_time}} - {{$route_time->arrival_time}}',
-                      type:'line',
-                      stack: '{{$route_time->departure_time}} - {{$route_time->arrival_time}}',
-                      data:[
-                        @foreach($weekarray as $arrayd)
-
-                          {{$arrayd[$route_time->id]}},
-                        @endforeach
-          //dd($empty);
-
-                          ]
-                  },
-                  @endforeach
+              var myChart = echarts.init(document.getElementById('sales'));
 
 
+option = {
 
-                ]
-            };
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        data: [
+          @foreach($route_departures as $route_time)
+          '{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+        @endforeach
+      ]
+    },
+    toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+        feature: {
+            mark: {show: false},
+            dataView: {show: false, readOnly: false},
+            magicType: {show: false, type: ['line', 'bar', 'stack', 'tiled']},
+            restore: {show: false},
+            saveAsImage: {show: false}
+        }
+    },
+    xAxis: [
+        {
+            type: 'category',
+            axisTick: {show: false},
+            data: [
+              @foreach($x_axis as $axis)
+                 '{{$axis}}',
+              @endforeach
+            ]
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value'
+        }
+    ],
+    series: [
 
+      @foreach($route_departures as $route_time)
+     {
+         name:'{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+         type:'bar',
+         barGap: 0,
+         data:[
+           @foreach($weekarray as $arrayd)
 
+             {{$arrayd[$route_time->id]}},
+           @endforeach
+//dd($empty);
+
+             ]
+     },
+     @endforeach
+
+    ]
+};
              myChart.setOption(option);
 })
 </script>

@@ -75,6 +75,7 @@ class RoutesDepartureTimesTest extends TestCase
         'stopover_arrival_time'=> ['0'=>'9:00'] ,
         'stopover_departure_time'=>['0'=>'12:00'] ,
         'days_of_week'=>['Monday','Tuesday'] ,
+        'has_stover'=>0,
 
       ];
         //When user submits Route Departure Time request to create endpoint
@@ -113,6 +114,7 @@ class RoutesDepartureTimesTest extends TestCase
           'stopover_arrival_time'=> ['0'=>'9:00'] ,
           'stopover_departure_time'=>['0'=>'12:00'] ,
           'days_of_week'=>['Monday','Tuesday'] ,
+          'has_stover'=>0,
       ];
       $data = array_merge($route_array, $field_array);
         $this->actingAs($user)->patch('/transit/routes/departures/'.$route_departure_time->id.'/update', $data); // your route to update Route Departure Time
