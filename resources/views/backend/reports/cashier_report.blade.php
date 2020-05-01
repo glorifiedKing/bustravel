@@ -1,12 +1,12 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Bookings')
+@section('title', 'Cashier Report')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Bookings</h1>
+        <h1 class="m-0 text-dark">Cashier Report</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -33,6 +33,15 @@
                     <label>Ticket No</label>
                     <input type="text"  name="ticket" value="{{$ticket??""}}" class="form-control " id="exampleInputEmail1" placeholder="Ticket No" >
                   </div>
+                  <div class="form-group col-md-3 ">
+                    <label>Start Station</label>
+                    <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station">
+                      <option value="">Select Station</option>
+                      @foreach($stations as $station)
+                          <option value="{{$station->id}}" @php echo $start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
+                      @endforeach
+                    </select>
+                  </div>
                   <div class="form-group col-md-3">
                     <label>From</label>
                     <input type="date"  name="from" value="{{$from??""}}" class="form-control " id="exampleInputEmail1" >
@@ -41,7 +50,7 @@
                     <label>To</label>
                     <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
                   </div>
-                  <div class="form-group col-md-2"><label>.</label><br>
+                  <div class="form-group col-md-2">
                     <button type="submit" class="btn btn-primary">Search</button>
                   </div>
                 </div>
@@ -117,6 +126,7 @@
     @parent
     <script>
         $(function () {
+            $('.select2').select2();
 var table = $('#example1').DataTable({
       responsive: false,
       dom: 'Blfrtip',

@@ -3,8 +3,10 @@
 namespace glorifiedking\BusTravel\Http\Controllers;
 
 use Carbon\CarbonPeriod;
+use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\Station;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -22,6 +24,9 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
+        $route_id=request()->input('route') ?? 1;
+        $route =Route::find($route_id);
+        $route_times=$route->departure_times()->pluck('id');
 
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
@@ -36,9 +41,12 @@ class ReportsController extends Controller
                 $x_axis[] = $weekdate->format('D');
             }
             $y_axis = [];
+            $y_axis1 = [];
             foreach ($weekdates as $wdates) {
-                $daysales = Booking::whereBetween('created_at', [$wdates.' 00:00:00', $wdates.' 23:59:59'])->where('status', 1)->sum('amount');
+                $daysales = Booking::whereBetween('created_at', [$wdates.' 00:00:00', $wdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $daysalescount = Booking::whereBetween('created_at', [$wdates.' 00:00:00', $wdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
+                $y_axis1[] = $daysalescount;
             }
         } elseif ($period == 2) {
             $now = \Carbon\Carbon::now();
@@ -54,9 +62,12 @@ class ReportsController extends Controller
             }
 
             $y_axis = [];
+            $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->where('status', 1)->sum('amount');
+                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $daysalescount = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
+                $y_axis1[] = $daysalescount;
             }
         } elseif ($period == 3) {
             $now = \Carbon\Carbon::now();
@@ -72,13 +83,17 @@ class ReportsController extends Controller
                 $x_axis[] = $monthdate->format('d');
             }
             $y_axis = [];
+            $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->where('status', 1)->sum('amount');
+                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $daysalescount = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
+                $y_axis1[] = $daysalescount;
             }
         } elseif ($period == 4) {
             $x_axis = [];
             $y_axis = [];
+            $y_axis1 = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
             $startperiod = \Carbon\Carbon::now()->endOfMonth();
@@ -89,12 +104,15 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->sum('amount');
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $monthsalescount = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
+                $y_axis1[] = $monthsalescount;
             }
         } elseif ($period == 5) {
             $x_axis = [];
             $y_axis = [];
+            $y_axis1 = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
             $startperiod = \Carbon\Carbon::now()->endOfMonth();
@@ -105,12 +123,15 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->sum('amount');
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $monthsalescount = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
+                $y_axis1[] = $monthsalescount;
             }
         } elseif ($period == 6) {
             $x_axis = [];
             $y_axis = [];
+            $y_axis1 = [];
             $yearStartDate = \Carbon\Carbon::parse('first day of January');
             $yearEndDate = \Carbon\Carbon::parse('last day of December');
             $daterange = CarbonPeriod::create($yearStartDate, '1 month', $yearEndDate);
@@ -120,12 +141,15 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->sum('amount');
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->sum('amount');
+                $monthsalescount = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
+                $y_axis1[] = $monthsalescount;
             }
         }
+        $routes =Route::all();
 
-        return view('bustravel::backend.reports.sales', compact('x_axis', 'y_axis', 'period'));
+        return view('bustravel::backend.reports.sales', compact('x_axis', 'y_axis','y_axis1', 'period','routes','route_id','route'));
     }
 
     //Profitable Route Report
@@ -265,7 +289,7 @@ class ReportsController extends Controller
         }
         $routes =Route::all();
 
-        return view('bustravel::backend.reports.profitableroutes', compact('x_axis', 'y_axis1', 'y_axis2', 'y_axis3', 'period', 'first', 'second', 'third','routes','route_id','weekarray','route_departures'));
+        return view('bustravel::backend.reports.profitableroutes', compact('x_axis', 'y_axis1', 'y_axis2', 'y_axis3', 'period', 'first', 'second', 'third','routes','route_id','weekarray','route_departures','route'));
     }
 
     //Traffic Report
@@ -274,6 +298,9 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
+        $route_id=request()->input('route') ?? 1;
+        $route =Route::find($route_id);
+        $route_times=$route->departure_times()->pluck('id');
 
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
@@ -289,7 +316,7 @@ class ReportsController extends Controller
             }
             $y_axis = [];
             foreach ($weekdates as $wdates) {
-                $daysales = Booking::whereBetween('created_at', [$wdates.' 00:00:00', $wdates.' 23:59:59'])->where('status', 1)->count();
+                $daysales = Booking::whereBetween('created_at', [$wdates.' 00:00:00', $wdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 2) {
@@ -307,7 +334,7 @@ class ReportsController extends Controller
 
             $y_axis = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->where('status', 1)->count();
+                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 3) {
@@ -325,7 +352,7 @@ class ReportsController extends Controller
             }
             $y_axis = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->where('status', 1)->count();
+                $daysales = Booking::whereBetween('created_at', [$mdates.' 00:00:00', $mdates.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 4) {
@@ -341,7 +368,7 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->count();
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
             }
         } elseif ($period == 5) {
@@ -357,7 +384,7 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->count();
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
             }
         } elseif ($period == 6) {
@@ -372,12 +399,12 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->where('status', 1)->count();
+                $monthsales = Booking::whereBetween('created_at', [$monthStartDate.' 00:00:00', $monthEndDate.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->where('status', 1)->count();
                 $y_axis[] = $monthsales;
             }
         }
-
-        return view('bustravel::backend.reports.traffic', compact('x_axis', 'y_axis', 'period'));
+       $routes =Route::all();
+        return view('bustravel::backend.reports.traffic', compact('x_axis', 'y_axis', 'period','route','route_id','routes'));
     }
 
     public function booking()
@@ -387,13 +414,24 @@ class ReportsController extends Controller
         $from = request()->input('from') ?? date('Y-m-d');
         $to = request()->input('to') ?? date('Y-m-d');
         $ticket = request()->input('ticket') ?? null;
+        $start_station = request()->input('start_station') ?? null;
         if (!is_null($ticket)) {
             $bookings = Booking::where('ticket_number', $ticket)->orderBY('id', 'DESC')->get();
         } else {
-            $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
-        }
+           if(!is_null($start_station))
+           {
+             $routes =Route::where('start_station',$start_station)->pluck('id');
+             $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
 
-        return view('bustravel::backend.reports.bookings', compact('bookings', 'ticket', 'from', 'to'));
+              $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+           }else{
+               $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+           }
+
+        }
+        $stations =Station::all();
+
+        return view('bustravel::backend.reports.bookings', compact('bookings', 'ticket', 'from', 'to','stations','start_station'));
     }
 
     public function cashier_report()
@@ -404,13 +442,25 @@ class ReportsController extends Controller
       $from = request()->input('from') ?? date('Y-m-d');
       $to = request()->input('to') ?? date('Y-m-d');
       $ticket = request()->input('ticket') ?? null;
+      $start_station = request()->input('start_station') ?? null;
 
       if(auth()->user()->hasAnyRole('BT Cashier'))
         {
           if (!is_null($ticket)) {
+
               $bookings = Booking::where('ticket_number', $ticket)->where('user_id',auth()->user()->id)->orderBY('id', 'DESC')->get();
           } else {
-              $bookings = Booking::where('user_id',auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+
+            if(!is_null($start_station))
+            {
+              $routes =Route::where('start_station',$start_station)->pluck('id');
+              $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+
+               $bookings = Booking::where('user_id',auth()->user()->id)-whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+            }else{
+                $bookings = Booking::where('user_id',auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+            }
+
           }
 
      }
@@ -421,10 +471,20 @@ class ReportsController extends Controller
           if (!is_null($ticket)) {
               $bookings = Booking::where('ticket_number', $ticket)->orderBY('id', 'DESC')->get();
           } else {
-              $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+
+            if(!is_null($start_station))
+            {
+              $routes =Route::where('start_station',$start_station)->pluck('id');
+              $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+
+               $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+            }else{
+                $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+            }
           }
         }
-        return view('bustravel::backend.reports.cashier_report', compact('bookings', 'ticket', 'from', 'to'));
+        $stations =Station::all();
+        return view('bustravel::backend.reports.cashier_report', compact('bookings', 'ticket', 'from', 'to','stations','start_station'));
     }
 
 }

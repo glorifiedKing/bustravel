@@ -201,6 +201,7 @@
                   </div>
               </div>
               <!-- /.box-body -->
+              <input type="hidden" name="has_stover" value="{{$stopovers->count()}}">
               <div class="box-footer">
               <div class="form-group col-md-12">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -233,7 +234,7 @@
          $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
          $('.select2').select2();
          $('.timepicker').datetimepicker({
-                    format: 'LT'
+                    format: 'HH:mm'
                 });
        })
 </script>

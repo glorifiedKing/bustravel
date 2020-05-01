@@ -19,6 +19,7 @@ class Permissions_Roles_UsersSeederTest extends TestCase
      */
     public function testPermissions()
     {
+      $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $response = $this->actingAs($user, 'web')->get('/transit/users/permissions');

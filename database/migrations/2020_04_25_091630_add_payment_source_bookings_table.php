@@ -15,7 +15,7 @@ class AddPaymentSourceBookingsTable extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             if (!Schema::hasColumn('bookings', 'payment_source')) {
-                $table->string('payment_source')->default('web');
+            //    $table->string('payment_source')->default('web');
                 $table->unsignedBigInteger('payment_transaction_id')->nullable();
             }
         });
@@ -29,7 +29,7 @@ class AddPaymentSourceBookingsTable extends Migration
     public function down()
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn('payment_source');
+          //  $table->dropColumn('payment_source');
             $table->dropColumn('payment_transaction_id');
         });
     }
