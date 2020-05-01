@@ -24,8 +24,15 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? 1;
-        $route =Route::find($route_id);
+        $route_id=request()->input('route') ?? null;
+        if(is_null($route_id))
+        {
+          $route =Route::first();
+          $route_id=$route->id;
+        }else{
+          $route =Route::find($route_id);
+        }
+
         $route_times=$route->departure_times()->pluck('id');
 
         if ($period == 1) {
@@ -158,8 +165,14 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? 1;
-        $route =Route::find($route_id);
+        $route_id=request()->input('route') ?? null;
+        if(is_null($route_id))
+        {
+          $route =Route::first();
+          $route_id=$route->id;
+        }else{
+          $route =Route::find($route_id);
+        }
         $route_times=$route->departure_times()->pluck('id');
         $route_departures=$route->departure_times()->get();
       //  dd($route_time);
@@ -298,8 +311,14 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? 1;
-        $route =Route::find($route_id);
+        $route_id=request()->input('route') ?? null;
+        if(is_null($route_id))
+        {
+          $route =Route::first();
+          $route_id=$route->id;
+        }else{
+          $route =Route::find($route_id);
+        }
         $route_times=$route->departure_times()->pluck('id');
 
         if ($period == 1) {
