@@ -402,7 +402,7 @@ class ApiController extends Controller
 
             // make booking 
             return response()->json([
-                'status' => 'sucess',
+                'status' => 'success',
                 'result' => 'Waiting for Payment'
             ]);
         }
