@@ -31,7 +31,7 @@
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
-                                            <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
+                                            <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
-                                            <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
+                                            <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>
                                     </div>
