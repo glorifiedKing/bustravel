@@ -29,7 +29,7 @@
                   {{ csrf_field() }}
                 <div class="row">
                 <div class="form-group col-md-3">
-                <select  name="period" class="form-control select2"  >
+                <select  name="period" class="form-control select2"  onchange="this.form.submit()" >
                 <option value="1" @php echo $period == 1 ? 'selected' :  "" @endphp>This Week </option>
                 <option value="2" @php echo $period == 2 ? 'selected' :  "" @endphp>This Month </option>
                 <option value="3" @php echo $period == 3 ? 'selected' :  "" @endphp>Last Month</option>

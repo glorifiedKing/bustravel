@@ -236,8 +236,12 @@ class BookingsController extends Controller
       }
     else
       {
-         //$bookings = Booking::orderBy('id', 'DESC')->get();
-         return redirect()->route('bustravel.errors.403');
+        $driver =Driver::where('user_id',auth()->user()->id)->first();
+        $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
+        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
+        $driver_routes= RoutesDepartureTime::get();
+        $bookings = Booking::orderBy('id', 'DESC')->get();
+
       }
 
 
@@ -268,8 +272,24 @@ class BookingsController extends Controller
    }
     else
       {
-         //$bookings = Booking::orderBy('id', 'DESC')->get();
-         return redirect()->route('bustravel.errors.403');
+        $today =date('Y-m-d');
+       if(request()->isMethod('post'))
+      {
+
+        $validation = request()->validate([
+         'ticket' => 'required',
+       ]);
+       $driver =Driver::where('user_id',auth()->user()->id)->first();
+       $ticket = request()->input('ticket');
+       $bookings = Booking::where('ticket_number',$ticket)->get();
+
+     }else{
+
+       $driver =Driver::where('user_id',auth()->user()->id)->first();
+
+       $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
+       $ticket ="";
+      }
       }
       $tracking=RouteTracking::where('routes_times_id',$id)->where('date_of_travel',$today)->first();
       $times_id =RoutesDepartureTime::find($id);

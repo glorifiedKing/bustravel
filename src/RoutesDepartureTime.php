@@ -35,7 +35,11 @@ class RoutesDepartureTime extends Model
     {
         return $this->hasMany(RoutesStopoversDepartureTime::class, 'routes_times_id');
     }
-    
+    public function route_times_tracking()
+    {
+        return $this->hasMany(RouteTracking::class, 'routes_times_id');
+    }
+
 
     public function number_of_seats_left($date_of_travel)
     {
@@ -45,7 +49,7 @@ class RoutesDepartureTime extends Model
             ['route_type','=','main_route'],
             ['date_of_travel','=',$date_of_travel]
             ])->count();
-           
+
         $stops = $this->stopovers_times();
         foreach($stops as $stop)
         {
@@ -54,7 +58,7 @@ class RoutesDepartureTime extends Model
                 ['route_type','=','stop_over_route'],
                 ['date_of_travel','=',$date_of_travel]
                 ])->count();
-            $bookings += $stop_booking_count;    
+            $bookings += $stop_booking_count;
         }
         $seats_left = $bus_capacity - $bookings ?? 0;
         return $seats_left;
