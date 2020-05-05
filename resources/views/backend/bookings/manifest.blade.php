@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">My Routes -  {{$driver->name}}</h1>
+        <h1 class="m-0 text-dark">My Routes -  {{$driver->name??""}}</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -46,11 +46,14 @@
                         <tbody>
 
                         @foreach ($driver_routes as $route_departure_time)
+                        @php
+                        $manage =$route_departure_time->route_times_tracking()->where('date_of_travel',date('Y-m-d'))->count();
+                        @endphp
                             <tr>
                               <td>@if($route_departure_time->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                    <span class="badge badge-success"> <i class="fas fa-check"></i></span>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                  <span class="badge badge-danger"> <i class="fas fa-times"></i></a></span>
 
                                   @endif
                                </td>
@@ -59,8 +62,19 @@
                                 <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
                                 <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
-                                <td><a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td>
+                                  @if($manage==0)
+                                    @if(auth()->user()->hasAnyRole('BT Driver'))
+                                      <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit"></i> Manage</a>
+                                    @else
+                                    <span class="badge badge-warning">No passanger on the bus Yet</span>
+                                     <a title="View" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
+                                    @endif
+                                  @else
+                                    <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit"></i> Manage</a>
+                                  @endif
+
+
                                 </td>
                             </tr>
 

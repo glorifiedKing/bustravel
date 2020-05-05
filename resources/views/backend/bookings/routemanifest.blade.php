@@ -46,6 +46,7 @@
                 </table>
               </div>
               <div class="col-md-3">
+                @if(auth()->user()->hasAnyRole('BT Driver'))
                 @if($tracking->started==0)
                 <a  href="{{route('bustravel.bookings.route.tracking.start',$tracking->id)}}" onclick="return confirm('Are you sure  you want to start this Route')" class="btn btn-app btn-warning">
                <i class="fas fa-play"></i> Start Route
@@ -55,11 +56,13 @@
               <i class="fas fa-play"></i> Start Route
               </a>
                @endif
+               @endif
                 @if($tracking->started==1)
-                 {{$tracking->start_time}}
+                 Started: {{$tracking->start_time}}
                 @endif
               </div>
             <div class="col-md-3">
+              @if(auth()->user()->hasAnyRole('BT Driver'))
               @if($tracking->started==1 && $tracking->ended==0)
               <a  href="{{route('bustravel.bookings.route.tracking.end',$tracking->id)}}" onclick="return confirm('Are you sure  you want to End this Route')" class="btn btn-app btn-warning">
              <i class="fas fa-times"></i> End Route
@@ -69,8 +72,9 @@
            <i class="fas fa-times"></i> End Route
          </a>
             @endif
+            @endif
             @if($tracking->ended==1)
-             {{$tracking->end_time}}
+             Ended:{{$tracking->end_time}}
             @endif
               </div>
             </div>
@@ -142,7 +146,11 @@
                                <td>@if($booking->boarded==1)
                                      <span class="badge badge-success "> <i class="fas fa-check"></i> Yes</span>
                                    @else
+                                   @if(auth()->user()->hasAnyRole('BT Driver'))
                                    <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times"></i> No</span></a>
+                                   @else
+                                    <span class="badge badge-danger "> <i class="fas fa-times"></i> No</span>
+                                   @endif
 
                                    @endif
                                 </td>
@@ -253,6 +261,10 @@ var table = $('#example1').DataTable({
       data: pieData1,
       options: pieOptions1
     })
+
+
+  
+
 })
 </script>
 

@@ -103,7 +103,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     'text' => 'Driver Manifest',
                     'url'  => route('bustravel.bookings.manifest'),
                     'icon' => 'fa fa-money-check',
-                    'can' => 'View BT Bookings',
+                    'can' => 'View BT Driver Manifest',
                 ],
 
             ],
@@ -124,7 +124,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                     ],
 
                     [
-                        'text' => 'Performance Routes',
+                        'text' => 'Route Performance',
                         'url'  => route('bustravel.reports.profitroute'),
                         'icon' => 'fa fa-route',
 
