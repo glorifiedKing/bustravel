@@ -88,7 +88,7 @@
                         @endforeach
                         <div class="row">
                             <div class="col-md-12 ticket-card cart">
-                                <table class="table" summary="Table showing trip details">
+                                <table class="table">
                                     <tbody>
                                         <tr>
                                             <th scope="row">Trip total</th>
