@@ -28,11 +28,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="#modal-default" class="dropdown-item" data-toggle="modal">New Field</a>
@@ -49,13 +49,13 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Operator</th>
-                                <th>Name</th>
-                                <th>Prefix</th>
-                                <th>Required</th>
-                                <th>Order</th>
-                                <th>Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Operator</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Prefix</th>
+                                <th scope="col">Required</th>
+                                <th scope="col">Order</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,9 +63,9 @@
                         @foreach ($fields as $field)
                             <tr>
                               <td>@if($field->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                   @endif
                                </td>
@@ -74,16 +74,16 @@
                                 <td>{{$field->field_prefix}}</td>
                                 <td>
                                   @if($field->is_required==1)
-                                        <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                        <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                       @else
-                                      <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                      <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                       @endif
                                 </td>
                                 <td>{{$field->field_order}}</td>
                                 <td>
-                                    <a title="Edit" href="#" data-id="{{$field->id}}" data-name="{{$field->field_name}}" data-prefix="{{$field->field_prefix}}" data-order="{{$field->field_order}}" data-required="{{$field->is_required}}" data-status="{{$field->status}}" data-operator="{{$field->operator_id}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Feild')" href="{{route('bustravel.company_settings.fields.delete',$field->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                    <a title="Edit" href="#" data-id="{{$field->id}}" data-name="{{$field->field_name}}" data-prefix="{{$field->field_prefix}}" data-order="{{$field->field_order}}" data-required="{{$field->is_required}}" data-status="{{$field->status}}" data-operator="{{$field->operator_id}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Feild')" href="{{route('bustravel.company_settings.fields.delete',$field->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -114,7 +114,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.company_settings.fields.store')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.company_settings.fields.store')}}" method="POST" enctype="multipart/form-data" aria-label="Adding Field Content">
               {{csrf_field() }}
 
               <div class="box-body">
@@ -185,7 +185,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.company_settings.fields.update','hhh')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.company_settings.fields.update','hhh')}}" method="POST" enctype="multipart/form-data" aria-label="Editing Fields">
               {{csrf_field() }}
 
               <div class="box-body">

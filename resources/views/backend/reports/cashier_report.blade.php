@@ -64,14 +64,14 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Ticket</th>
-                                <th>Operator</th>
-                                <th>Route</th>
-                                <th>Amount</th>
-                                <th>Paid Date</th>
-                                <th>Travel Date </th>
-                                <th>Created </th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Ticket</th>
+                                <th scope="col">Operator</th>
+                                <th scope="col">Route</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Paid Date</th>
+                                <th scope="col">Travel Date </th>
+                                <th scope="col">Created </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,9 +79,9 @@
                         @foreach ($bookings as $booking)
                             <tr>
                               <td>@if($booking->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                   @endif
                                </td>

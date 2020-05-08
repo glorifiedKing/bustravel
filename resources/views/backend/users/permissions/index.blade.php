@@ -30,11 +30,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="#modal-default" class="dropdown-item" data-toggle="modal">New Permission</a>
@@ -51,9 +51,9 @@
                     <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Guard Name</th>
-                                <th>Action</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Guard Name</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,8 +62,8 @@
                             <tr>
                                 <td>{{$permission->name}}</td>
                                 <td>{{$permission->guard_name}}</td>
-                                <td><a title="Edit" href="#" data-id="{{$permission->id}}" data-name="{{$permission->name}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Permission')" href="{{route('bustravel.users.permissions.delete',$permission->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td><a title="Edit" href="#" data-id="{{$permission->id}}" data-name="{{$permission->name}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Permission')" href="{{route('bustravel.users.permissions.delete',$permission->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -93,7 +93,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.users.permissions.store')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.users.permissions.store')}}" method="POST" enctype="multipart/form-data" aria-label="Adding Permission">
               {{csrf_field() }}
 
               <div class="box-body">
@@ -137,7 +137,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.users.permissions.update','hhh')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.users.permissions.update','hhh')}}" method="POST" enctype="multipart/form-data" aria-label="Editing Permission">
               {{csrf_field() }}
 
               <div class="box-body">

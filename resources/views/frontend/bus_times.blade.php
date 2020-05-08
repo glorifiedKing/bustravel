@@ -24,22 +24,22 @@
                                     <thead>
                                         <tr>
                                             <tr>
-                                                <th>From </th>
-                                                <th>To</th>
-                                                <th>Due</th>
-                                                <th>Arrival</th>
-                                                <th>Seats Left</th>
-                                                <th>Stop Overs</th>
-                                                <th>Operator</th>
+                                                <th scope="col">From </th>
+                                                <th scope="col">To</th>
+                                                <th scope="col">Due</th>
+                                                <th scope="col">Arrival</th>
+                                                <th scope="col">Seats Left</th>
+                                                <th scope="col">Stop Overs</th>
+                                                <th scope="col">Operator</th>
                                             </tr>
                                             <tr>
-                                                <th>From </th>
-                                                <th>To</th>
-                                                <th>Due</th>
-                                                <th>Arrival</th>
-                                                <th>Seats Left</th>
-                                                <th>Stop Overs</th>
-                                                <th>Operator</th>
+                                                <th scope="col">From </th>
+                                                <th scope="col">To</th>
+                                                <th scope="col">Due</th>
+                                                <th scope="col">Arrival</th>
+                                                <th scope="col">Seats Left</th>
+                                                <th scope="col">Stop Overs</th>
+                                                <th scope="col">Operator</th>
                                             </tr>
                                       </tr>
                                     </thead>

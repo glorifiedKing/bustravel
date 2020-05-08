@@ -40,11 +40,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="#modal-default" class="dropdown-item" data-toggle="modal">New Faq</a>
@@ -61,9 +61,9 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Question</th>
-                                <th>Answer</th>
-                                <th>Action</th>
+                                <th scope="col">Question</th>
+                                <th scope="col">Answer</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,8 +73,8 @@
                                 <td>{{$faq->question}}</td>
                                <td>{{$faq->answer}}</td>
                                 <td>
-                                    <a title="Edit" href="#" data-id="{{$faq->id}}" data-question="{{$faq->question}}" data-answer="{{$faq->answer}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Faqs')" href="{{route('bustravel.faqs.delete',$faq->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                    <a title="Edit" href="#" data-id="{{$faq->id}}" data-question="{{$faq->question}}" data-answer="{{$faq->answer}}" data-toggle="modal"  data-target="#editModal"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Faqs')" href="{{route('bustravel.faqs.delete',$faq->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -105,7 +105,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.faqs.store')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.faqs.store')}}" method="POST" enctype="multipart/form-data" aria-label="FAQs Area">
               {{csrf_field() }}
 
               <div class="box-body">
@@ -158,7 +158,7 @@
             </div>
             <div class="modal-body">
               <div class="col-md-12">
-              <form role="form" action="{{route('bustravel.faqs.update','hhh')}}" method="POST" enctype="multipart/form-data" >
+              <form role="form" action="{{route('bustravel.faqs.update','hhh')}}" method="POST" enctype="multipart/form-data" aria-label="Edit FAQs Form">
               {{csrf_field() }}
 
               <div class="box-body">

@@ -30,11 +30,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.users.create')}}" class="dropdown-item" >New User</a>
@@ -51,12 +51,12 @@
                     <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Role</th>
-                                <th>Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone Number</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,9 +64,9 @@
                         @foreach ($users as $user)
                             <tr>
                                 <td>@if($user->status==1)
-                                      <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                      <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                     @else
-                                    <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                    <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                     @endif
                                  </td>
@@ -74,8 +74,8 @@
                                 <td>{{$user->email}}</td>
                                 <td>{{$user->phone_number}}</td>
                                 <td>{{$user->getRoleNames()}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.users.edit',$user->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this User')" href="{{route('bustravel.users.delete',$user->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td><a title="Edit" href="{{route('bustravel.users.edit',$user->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this User')" href="{{route('bustravel.users.delete',$user->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
