@@ -98,8 +98,8 @@
                     </tbody>
                     <tfoot>
                           <tr>
-                           <th colspan="6">Total Amount</th>
-                           <th  colspan="2" id="total_order"></th>
+                           <th scope="row" colspan="6">Total Amount</th>
+                           <td colspan="2" id="total_order"></td>
                           </tr>
                     </tfoot>
                     </table>

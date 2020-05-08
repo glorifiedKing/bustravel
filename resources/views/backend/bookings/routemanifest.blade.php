@@ -28,20 +28,20 @@
               <div class="col-md-3">
                 <table>
                 <tr>
-                  <td><strong>Route: </strong> </td><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
+                  <th scope="row"><strong>Route: </strong> </th><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
                 <tr>
                   <tr>
-                  <td><strong>Time: </strong></td>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
+                  <th scope="row"><strong>Time: </strong></th>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
                 </table>
               </div>
               <div class="col-md-3">
                 <table>
                 <tr>
-                  <td><strong>Bus : </strong> </td><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
+                  <th scope="row"><strong>Bus : </strong> </th><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
                 <tr>
                   <tr>
-                  <td><strong>Tickets: </strong></td>  <td>{{$bookings->count()}}</td>
+                  <th scope="row"><strong>Tickets: </strong></th>  <td>{{$bookings->count()}}</td>
                   <tr>
                 </table>
               </div>
