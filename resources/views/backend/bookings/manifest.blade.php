@@ -34,13 +34,13 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Operator</th>
-                                <th>Route</th>
-                                <th>Price</th>
-                                <th>Bus </th>
-                                <th>times</th>
-                                <th>Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Operator</th>
+                                <th scope="col">Route</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Bus </th>
+                                <th scope="col">times</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,9 +51,9 @@
                         @endphp
                             <tr>
                               <td>@if($route_departure_time->status==1)
-                                    <span class="badge badge-success"> <i class="fas fa-check"></i></span>
+                                    <span class="badge badge-success"> <i class="fas fa-check" aria-hidden="true"></i></span>
                                   @else
-                                  <span class="badge badge-danger"> <i class="fas fa-times"></i></a></span>
+                                  <span class="badge badge-danger"> <i class="fas fa-times" aria-hidden="true"></i></a></span>
 
                                   @endif
                                </td>
@@ -65,13 +65,13 @@
                                 <td>
                                   @if($manage==0)
                                     @if(auth()->user()->hasAnyRole('BT Driver'))
-                                      <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit"></i> Manage</a>
+                                      <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
                                     @else
                                     <span class="badge badge-warning">No passanger on the bus Yet</span>
-                                     <a title="View" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
+                                     <a title="View" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
                                     @endif
                                   @else
-                                    <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit"></i> Manage</a>
+                                    <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
                                   @endif
 
 
@@ -90,7 +90,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
                     <h5 class="description-header">$35,210.43</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
@@ -99,7 +99,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
                     <h5 class="description-header">$10,390.90</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
@@ -108,7 +108,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
                     <h5 class="description-header">$24,813.53</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
@@ -117,7 +117,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
                     <h5 class="description-header">1200</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>

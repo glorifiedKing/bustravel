@@ -28,11 +28,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.routes.departures.create')}}" class="dropdown-item">New Route Departure Time</a>
@@ -49,14 +49,14 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Operator</th>
-                                <th>Route</th>
-                                <th>Price</th>
-                                <th>Bus </th>
-                                <th>times</th>
-                                <th>Driver</th>
-                                <th>Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Operator</th>
+                                <th scope="col">Route</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Bus </th>
+                                <th scope="col">times</th>
+                                <th scope="col">Driver</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,9 +64,9 @@
                         @foreach ($routes as $route_departure_time)
                             <tr>
                               <td>@if($route_departure_time->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                   @endif
                                </td>
@@ -76,8 +76,8 @@
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
                                 <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
                                 <td>{{$route_departure_time->driver->name??'NONE'}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -93,7 +93,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
                     <h5 class="description-header">$35,210.43</h5>
                     <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
@@ -102,7 +102,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
                     <h5 class="description-header">$10,390.90</h5>
                     <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
@@ -111,7 +111,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
                     <h5 class="description-header">$24,813.53</h5>
                     <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
@@ -120,7 +120,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
                     <h5 class="description-header">1200</h5>
                     <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>

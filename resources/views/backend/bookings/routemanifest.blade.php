@@ -28,20 +28,20 @@
               <div class="col-md-3">
                 <table>
                 <tr>
-                  <td><b>Route: </b> </td><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
+                  <td><strong>Route: </strong> </td><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
                 <tr>
                   <tr>
-                  <td><b>Time: </b></td>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
+                  <td><strong>Time: </strong></td>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
                 </table>
               </div>
               <div class="col-md-3">
                 <table>
                 <tr>
-                  <td><b>Bus : </b> </td><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
+                  <td><strong>Bus : </strong> </td><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
                 <tr>
                   <tr>
-                  <td><b>Tickets: </b></td>  <td>{{$bookings->count()}}</td>
+                  <td><strong>Tickets: </strong></td>  <td>{{$bookings->count()}}</td>
                   <tr>
                 </table>
               </div>
@@ -49,11 +49,11 @@
                 @if(auth()->user()->hasAnyRole('BT Driver'))
                 @if($tracking->started==0)
                 <a  href="{{route('bustravel.bookings.route.tracking.start',$tracking->id)}}" onclick="return confirm('Are you sure  you want to start this Route')" class="btn btn-app btn-warning">
-               <i class="fas fa-play"></i> Start Route
+               <i class="fas fa-play" aria-hidden="true"></i> Start Route
              </a>
                @else
                <a  class="btn btn-app btn-warning">
-              <i class="fas fa-play"></i> Start Route
+              <i class="fas fa-play" aria-hidden="true"></i> Start Route
               </a>
                @endif
                @endif
@@ -65,11 +65,11 @@
               @if(auth()->user()->hasAnyRole('BT Driver'))
               @if($tracking->started==1 && $tracking->ended==0)
               <a  href="{{route('bustravel.bookings.route.tracking.end',$tracking->id)}}" onclick="return confirm('Are you sure  you want to End this Route')" class="btn btn-app btn-warning">
-             <i class="fas fa-times"></i> End Route
+             <i class="fas fa-times" aria-hidden="true"></i> End Route
            </a>
             @else
             <a   class="btn btn-app btn-warning">
-           <i class="fas fa-times"></i> End Route
+           <i class="fas fa-times" aria-hidden="true"></i> End Route
          </a>
             @endif
             @endif
@@ -124,12 +124,12 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>On Board</th>
-                                <th>Ticket</th>
-                                <th>Paid Date</th>
-                                <th>Travel Date </th>
-                                <th>Created </th>
+                                <th scope="col">Status</th>
+                                <th scope="col">On Board</th>
+                                <th scope="col">Ticket</th>
+                                <th scope="col">Paid Date</th>
+                                <th scope="col">Travel Date </th>
+                                <th scope="col">Created </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,19 +137,19 @@
                         @foreach ($bookings as $booking)
                             <tr>
                               <td>@if($booking->status==1)
-                                    <span class="badge badge-success "> <i class="fas fa-check"></i> </span>
+                                    <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> </span>
                                   @else
-                                    <span class="badge badge-danger "> <i class="fas fa-check"></i> </span>
+                                    <span class="badge badge-danger "> <i class="fas fa-check" aria-hidden="true"></i> </span>
 
                                   @endif
                                </td>
                                <td>@if($booking->boarded==1)
-                                     <span class="badge badge-success "> <i class="fas fa-check"></i> Yes</span>
+                                     <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> Yes</span>
                                    @else
                                    @if(auth()->user()->hasAnyRole('BT Driver'))
-                                   <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times"></i> No</span></a>
+                                   <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span></a>
                                    @else
-                                    <span class="badge badge-danger "> <i class="fas fa-times"></i> No</span>
+                                    <span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span>
                                    @endif
 
                                    @endif

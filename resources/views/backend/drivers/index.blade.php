@@ -28,11 +28,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.drivers.create')}}" class="dropdown-item">New Driver</a>
@@ -49,14 +49,14 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Picture</th>
-                                <th>Name</th>
-                                <th>Operator Name</th>
-                                <th>NIN</th>
-                                <th>Permit No</th>
-                                <th> Age</th>
-                                <th>Action</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Picture</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Operator Name</th>
+                                <th scope="col">NIN</th>
+                                <th scope="col">Permit No</th>
+                                <th scope="col"> Age</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,9 +64,9 @@
                         @foreach ($drivers as $driver)
                             <tr>
                               <td>@if($driver->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check"></i></a>
+                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                   @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times"></i></a>
+                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                   @endif
                                </td>
@@ -83,8 +83,8 @@
 																				 {{ Carbon\Carbon::parse($driver->date_of_birth)->age}}
 			                                @endif
                                 </td>
-                                <td><a title="Edit" href="{{route('bustravel.drivers.edit',$driver->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Driver')" href="{{route('bustravel.drivers.delete',$driver->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td><a title="Edit" href="{{route('bustravel.drivers.edit',$driver->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Driver')" href="{{route('bustravel.drivers.delete',$driver->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -100,7 +100,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
                     <h5 class="description-header">$35,210.43</h5>
                     <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>
@@ -109,7 +109,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
                     <h5 class="description-header">$10,390.90</h5>
                     <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>
@@ -118,7 +118,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
                     <h5 class="description-header">$24,813.53</h5>
                     <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>
@@ -127,7 +127,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
                     <h5 class="description-header">1200</h5>
                     <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>

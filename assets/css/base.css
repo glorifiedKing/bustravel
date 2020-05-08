@@ -8,7 +8,7 @@ html {
 }
 
 body {
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
     overflow-x: hidden;
     color: #283E5D;
@@ -36,13 +36,12 @@ hr {
 }
 
 pre {
-    font-family: monospace,monospace;
+    font-family: monospace;
     font-size: 1em
 }
 
 abbr[title] {
     border-bottom: none;
-    text-decoration: underline;
     -webkit-text-decoration: underline dotted;
     text-decoration: underline dotted
 }
@@ -52,7 +51,7 @@ b,strong {
 }
 
 code,kbd,samp {
-    font-family: monospace,monospace;
+    font-family: monospace;
     font-size: 1em
 }
 

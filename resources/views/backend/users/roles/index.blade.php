@@ -30,11 +30,11 @@
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
+                <i class="fas fa-minus" aria-hidden="true"></i>
                 </button>
                 <div class="btn-group">
                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.users.roles.create')}}" class="dropdown-item" >New Role</a>
@@ -51,9 +51,9 @@
                     <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Guard Name</th>
-                                <th>Action</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Guard Name</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,8 +62,8 @@
                             <tr>
                                 <td>{{$role->name}}</td>
                                 <td>{{$role->guard_name}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.users.roles.edit',$role->id)}}"><i class="fas fa-edit"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Role')" href="{{route('bustravel.users.roles.delete',$role->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt"></i></span></a>
+                                <td><a title="Edit" href="{{route('bustravel.users.roles.edit',$role->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Role')" href="{{route('bustravel.users.roles.delete',$role->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 

@@ -66,12 +66,12 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
                         <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>On Board</th>
-                                <th>Ticket</th>
-                                <th>Paid Date</th>
-                                <th>Travel Date </th>
-                                <th>Created </th>
+                                <th scope="col">Status</th>
+                                <th scope="col">On Board</th>
+                                <th scope="col">Ticket</th>
+                                <th scope="col">Paid Date</th>
+                                <th scope="col">Travel Date </th>
+                                <th scope="col">Created </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,16 +79,16 @@
                         @foreach ($bookings as $booking)
                             <tr>
                               <td>@if($booking->status==1)
-                                    <span class="badge badge-success "> <i class="fas fa-check"></i> </span>
+                                    <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> </span>
                                   @else
-                                    <span class="badge badge-danger "> <i class="fas fa-check"></i> </span>
+                                    <span class="badge badge-danger "> <i class="fas fa-check" aria-hidden="true"></i> </span>
 
                                   @endif
                                </td>
                                <td>@if($booking->boarded==1)
-                                     <span class="badge badge-success "> <i class="fas fa-check"></i> Yes</span>
+                                     <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> Yes</span>
                                    @else
-                                   <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times"></i> No</span></a>
+                                   <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span></a>
 
                                    @endif
                                 </td>

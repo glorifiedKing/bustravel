@@ -15,9 +15,9 @@
                                 <table class="table">
                                     <tbody>
                                       <tr>
-                                      <th>Station </th>
-                                      <th>Code</th>
-                                      <th>Address</th>
+                                      <th scope="col">Station </th>
+                                      <th scope="col">Code</th>
+                                      <th scope="col">Address</th>
                                       </tr>
                                       @foreach($stations as $index => $station)
                                       <tr>

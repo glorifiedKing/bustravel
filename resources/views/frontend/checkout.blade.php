@@ -91,12 +91,6 @@
                                     </div>
                                 @enderror
                         </div>
-                        <!-- <div class="mb-3">
-                            <label for="address2">
-                                Address 2 <span class="text-muted">(Optional)</span>
-                            </label>
-                            <input type="text" name="address_2" class="form-control" id="address2" placeholder="Apartment or suite" value="{{ old('address_2') }}">
-                        </div> -->
                         <div class="row">
                             <div class="col-md-5 mb-3">
                                 <label for="country">Country</label>
