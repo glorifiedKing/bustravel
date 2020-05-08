@@ -31,7 +31,7 @@
                   <th scope="row"><strong>Route: </strong> </th><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
                 <tr>
                   <tr>
-                  <td scope="row"><strong>Time: </strong></th>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
+                  <th scope="row"><strong>Time: </strong></th>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
                 </table>
               </div>
