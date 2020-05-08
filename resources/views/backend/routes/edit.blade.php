@@ -6,7 +6,20 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes')}}" class="btn btn-info">Back</a></small> Routes </h1>
+        <h1 class="m-0 text-dark"><small>
+          <a href="{{route('bustravel.routes')}}" class="btn btn-info">Back</a>
+            @if(is_null($route->inverse))
+            @if(!is_null($inverse))
+             <a href="{{route('bustravel.routes.edit',$inverse->id)}}" class="btn btn-info">Inverse</a>
+            @endif
+            @else
+            @if(!is_null($inverse))
+             <a href="{{route('bustravel.routes.edit',$mainroute->id)}}" class="btn btn-info">Main Route</a>
+            @endif
+            @endif
+
+
+        </small> Routes </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -22,6 +35,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+
+          <p>
+          <span class="badge badge-warning ">   Updated {{ $diffs = Carbon\Carbon::parse($route->updated_at)->diffForHumans() }} </span>   &nbsp
+          <span class="badge badge-success ">   Created {{ $diffs = Carbon\Carbon::parse($route->created_at)->diffForHumans() }} </span>    &nbsp
+          </p>
         <div class="card">
             <div class="card-header">
             <h5 class="card-title">Edit {{$route->start->name}} ( {{$route->start->code}} )  - {{$route->end->name}} ( {{$route->end->code}} ) Route</h5>
