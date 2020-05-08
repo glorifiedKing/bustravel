@@ -113,10 +113,10 @@
                       <table id="new-table" class="table table-striped table-hover">
                            <thead>
                              <tr>
-                               <th width="30"></th>
-                               <th > Stop Over</th>
-                               <th >Arrival Time</th>
-                               <th >Departure Time</th>
+                               <th scope="col" style="width: 30px"></th>
+                               <th scope="col"> Stop Over</th>
+                               <th scope="col">Arrival Time</th>
+                               <th scope="col">Departure Time</th>
                              </tr>
                            </thead>
 

@@ -106,11 +106,11 @@
                       <table id="new-table" class="table table-striped table-hover">
                            <thead>
                              <tr>
-                               <th width="30"></th>
-                               <th >Start</th>
-                               <th >End</th>
-                               <th >Price</th>
-                               <th width="100" >Order</th>
+                               <th scope="col" style="width: 30px"></th>
+                               <th scope="col">Start</th>
+                               <th scope="col">End</th>
+                               <th scope="col">Price</th>
+                               <th scope="col" style="width: 100px" >Order</th>
                              </tr>
                            </thead>
 

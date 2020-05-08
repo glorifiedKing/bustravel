@@ -88,22 +88,22 @@
                         @endforeach
                         <div class="row">
                             <div class="col-md-12 ticket-card cart">
-                                <table class="table">
+                                <table class="table" summary="Table showing trip details">
                                     <tbody>
                                         <tr>
-                                            <td>Trip total</td>
+                                            <th scope="row">Trip total</th>
                                         <td>RWF {{$total_amount}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Reserved seat charge</td>
+                                            <th scope="row">Reserved seat charge</th>
                                             <td>RWF {{$reserve_fee}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Booking fee</td>
+                                            <th scope="row">Booking fee</th>
                                             <td>RWF {{$booking_fee}}</td>
                                         </tr>
                                         <tr class="total-area">
-                                            <td>Total to pay</td>
+                                            <th scope="row">Total to pay</th>
                                             <td>RWF {{$total_amount+$reserve_fee+$booking_fee}}</td>
                                         </tr>
                                     </tbody>
