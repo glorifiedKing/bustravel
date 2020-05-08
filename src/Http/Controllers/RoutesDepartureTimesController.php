@@ -11,6 +11,7 @@ use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
 
 class RoutesDepartureTimesController extends Controller
 {
@@ -53,6 +54,10 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
+            if(strtotime(strftime("%F") . ' ' .request()->input('departure_time')) < strtotime(strftime("%F") . ' ' .request()->input('departure_time')))
+            {
+
+            }
 
         }else{
           $validation = request()->validate([
@@ -66,7 +71,37 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
+          if(strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time')))
+          {
+            $alerts = [
+            'bustravel-flash'         => true,
+            'bustravel-flash-type'    => 'error',
+            'bustravel-flash-title'   => 'Route Saving',
+            'bustravel-flash-message' => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
+        ];
+           return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+          }
+          $stopovers = request()->input('stopover_routeid') ?? 0;
+          $arrival = request()->input('stopover_arrival_time');
+          $departure = request()->input('stopover_departure_time');
+
+          foreach ($stopovers as $index => $stopover_routeid) {
+            if((strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .$arrival[$index]) ) && (strtotime(strftime("%F") . ' ' .$arrival[$index]) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time'))))
+            {
+              $alerts = [
+              'bustravel-flash'         => true,
+              'bustravel-flash-type'    => 'error',
+              'bustravel-flash-title'   => 'Route Saving',
+              'bustravel-flash-message' => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+          ];
+             return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+            }
+
+          }
+
         }
+
+         $time_diff = strtotime(strftime("%F") . ' ' .request()->input('departure_time')) - strtotime(strftime("%F") . ' ' .request()->input('arrival_time'));
 
 
         //saving to the database
@@ -121,6 +156,7 @@ class RoutesDepartureTimesController extends Controller
     public function update($id, Request $request)
     {
         //validation
+
         if(request()->input('has_stover')== 0)
         {
           $validation = request()->validate([
@@ -143,7 +179,49 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
+          $main_arrival = Carbon::parse(request()->input('arrival_time'));
+          $main_departure =carbon::parse(request()->input('departure_time'));
+          if($main_departure > $main_arrival)
+          {
+            $alerts = [
+            'bustravel-flash'         => true,
+            'bustravel-flash-type'    => 'error',
+            'bustravel-flash-title'   => 'Route Saving',
+            'bustravel-flash-message' => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
+        ];
+           return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+          }
+          $stopovers = request()->input('stopover_routeid') ?? 0;
+          $arrival = request()->input('stopover_arrival_time');
+          $departure = request()->input('stopover_departure_time');
+
+          foreach ($stopovers as $index => $stopover_routeid) {
+            $s_arrival =Carbon::parse($arrival[$index])->format('Y-m-d H:m:s');
+            $s_departure =Carbon::parse($departure[$index])->format('Y-m-d H:m:s');
+            if(($s_arrival > $main_departure ) && ($s_arrival < $main_arrival))
+            {
+            }else{
+              $alerts = [
+              'bustravel-flash'         => true,
+              'bustravel-flash-type'    => 'error',
+              'bustravel-flash-title'   => 'Route Saving',
+              'bustravel-flash-message' => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+          ];
+             return redirect()->route('bustravel.routes.departures.edit',$id)->withinput()->with($alerts);
+            }
+            if(($s_departure > $main_departure ) && ($s_departure < $main_arrival))
+            {
+            }else{
+              $alerts = [
+              'bustravel-flash'         => true,
+              'bustravel-flash-type'    => 'error',
+              'bustravel-flash-title'   => 'Route Saving',
+              'bustravel-flash-message' => 'StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+          ];
+             return redirect()->route('bustravel.routes.departures.edit',$id)->withinput()->with($alerts);
+            }
         }
+      }
 
         //saving to the database
         $route = RoutesDepartureTime::find($id);

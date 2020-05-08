@@ -83,6 +83,36 @@ class RouteController extends Controller
                 $stopover->save();
             }
         }
+        //Create Route Inverse
+        if(request()->input('inverse')==1)
+        {
+          $inverse = new Route();
+          $inverse->start_station = request()->input('end_station');
+          $inverse->end_station = request()->input('start_station');
+          $inverse->price = str_replace(',', '', request()->input('return_price'));
+          $inverse->return_price = str_replace(',', '', request()->input('price'));
+          $inverse->status = request()->input('status');
+          $inverse->inverse = $route->id;
+          $inverse->save();
+          //Inverse stop over routes
+          $route_stopovers =$route->stopovers()->orderBy('order','DESC')->get();
+          if(!is_null($route_stopovers))
+          {
+            foreach($route_stopovers as $index => $route_stopover)
+            {
+              $inverse_stopover = new StopoverStation();
+              $inverse_stopover->route_id = $inverse->id;
+              $inverse_stopover->start_station = $route_stopover->end_station;
+              $inverse_stopover->end_station = $route_stopover->start_station;
+              $inverse_stopover->price = $route_stopover->price;
+              $inverse_stopover->order = $index;
+              $inverse_stopover->save();
+
+            }
+          }
+        }
+
+
         $alerts = [
         'bustravel-flash'         => true,
         'bustravel-flash-type'    => 'success',
@@ -100,11 +130,20 @@ class RouteController extends Controller
         $stations = Station::orderBy('name', 'ASC')->get();
         $routes = Route::where('status', 1)->get();
         $route = Route::find($id);
+
         if (is_null($route)) {
             return Redirect::route('bustravel.routes');
         }
+        if(is_null($route->inverse))
+        {
+          $inverse=Route::where('inverse',$route->id)->first();
+          $mainroute =null;
+        }else{
+          $mainroute=Route::find($route->inverse);
+          $inverse =null;
+        }
 
-        return view('bustravel::backend.routes.edit', compact('bus_operators', 'route', 'stations', 'routes'));
+        return view('bustravel::backend.routes.edit', compact('bus_operators', 'route', 'stations', 'routes','mainroute','inverse'));
     }
 
     //Update Operator route('bustravel.operators.upadate')

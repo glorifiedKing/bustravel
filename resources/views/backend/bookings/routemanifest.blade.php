@@ -6,7 +6,13 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Bookings - {{date('d-m-Y')}}</h1>
+        <h1 class="m-0 text-dark">Bookings - {{date('d-m-Y')}}
+        @if($tracking->started==1 && $tracking->ended==0)
+        <span class="badge badge-warning ">Bus  Enroute  </span>
+        @elseif($tracking->ended==1)
+        <span class="badge badge-warning "> Bus Arrived </span>
+        @endif
+        </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -33,6 +39,9 @@
                   <tr>
                   <td><b>Time: </b></td>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
+                    <tr>
+                    <td><b>Driver: </b></td>  <td> {{$times_id->driver->name}}</td>
+                    <tr>
                 </table>
               </div>
               <div class="col-md-3">
@@ -59,6 +68,7 @@
                @endif
                 @if($tracking->started==1)
                  Started: {{$tracking->start_time}}
+
                 @endif
               </div>
             <div class="col-md-3">
@@ -105,11 +115,11 @@
                   </form>
               </div>
               <div class="col-md-3">
-               <canvas id="pieChart1" style="min-height: 150px; height: 150px; max-height: 150px; max-width: 100%;"></canvas>
-              </div>
-            <div class="col-md-3">
-                <canvas id="pieChart" style="min-height: 150px; height: 150px; max-height: 150px; max-width: 100%;"></canvas>
-              </div>
+                <div id="pieChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                </div>
+                <div class="col-md-3">
+                  <div id="pieChart3" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></div>
+                  </div>
             </div>
           </div>
         </div>
@@ -209,61 +219,90 @@ var table = $('#example1').DataTable({
             });
   $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
 
-  //var donutData        =
-  //- PIE CHART -
-    //-------------
-    // Get context with jQuery - using jQuery's .get() method.
-    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-    var pieData        = {
-        labels: [
-            'OnBoard',
-            'Not OnBoard',
-        ],
-        datasets: [
-          {
-            data: [{{$onboard_tickets}},{{$notonboard_tickets}}],
-            backgroundColor : ['#00a65a','#f56954' ],
-          }
-        ]
-      };
-    var pieOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var pieChart = new Chart(pieChartCanvas, {
-      type: 'pie',
-      data: pieData,
-      options: pieOptions
-    })
-    var pieChartCanvas1 = $('#pieChart1').get(0).getContext('2d')
-    var pieData1        = {
-        labels: [
-            'Booked Seats',
-            'Not Booked Seats',
-        ],
-        datasets: [
-          {
-            data: [{{$bookings->count()}},{{$not_booked}}],
-            backgroundColor : ['#00a65a','#f56954' ],
-          }
-        ]
-      };
-    var pieOptions1     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var pieChart1 = new Chart(pieChartCanvas1, {
-      type: 'pie',
-      data: pieData1,
-      options: pieOptions1
-    })
+  var myChart = echarts.init(document.getElementById('pieChart2'));
+  option = {
+      tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+      },
+      legend: {
+          type: 'scroll',
+          orient: 'horizontal',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: ['Booked', 'Not Booked',],
 
+          selected:  [
+            {value:{{$bookings->count()}},name:'Booked'},
+            {value:{{$not_booked}},name:'Not Booked'},
+          ],
+      },
+      series: [
+          {
+              name: 'Seats',
+              type: 'pie',
+              radius: '45%',
+              center: ['40%', '50%'],
+              data: [
+               {value: {{$bookings->count()}}, name: 'Booked'},
+               {value: {{$not_booked}}, name: 'Not Booked'},
+           ],
+              emphasis: {
+                  itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+              }
+          }
+      ]
+  };
 
-  
+myChart.setOption(option);
+
+var myChart1 = echarts.init(document.getElementById('pieChart3'));
+option1 = {
+    tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c} ({d}%)'
+    },
+    legend: {
+        type: 'scroll',
+        orient: 'horizontal',
+        right: 10,
+        top: 20,
+        bottom: 50,
+        data: ['OnBoard', 'Not OnBoard',],
+
+        selected:  [
+          {value:{{$onboard_tickets}},name:'OnBoard'},
+          {value:{{$notonboard_tickets}},name:'Not OnBoard'},
+        ],
+    },
+    series: [
+        {
+            name: 'Board',
+            type: 'pie',
+            radius: '45%',
+            center: ['40%', '50%'],
+            data: [
+             {value: {{$onboard_tickets}}, name: 'OnBoard'},
+             {value: {{$notonboard_tickets}}, name: 'Not OnBoard'},
+         ],
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+myChart1.setOption(option1);
+
 
 })
 </script>
