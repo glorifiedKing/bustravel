@@ -38,7 +38,7 @@ class OperatorsController extends Controller
         $validation = request()->validate(Operator::$rules);
         // saving the logo image
         if ($request->hasFile('logo')) {
-            $path = public_path('logos');
+            $path = storage_path('app/public/logos');
             // creating logos folder if doesnot exit
             if (!File::isDirectory($path)) {
                 File::makeDirectory($path, 0777, true, true);
@@ -46,7 +46,7 @@ class OperatorsController extends Controller
             $name = Str::lower(request()->input('name'));
             $resultString = str_replace(' ', '', $name);
             $photoname = $resultString.'_'.time().'.'.request()->logo->getClientOriginalExtension();
-            request()->logo->move(public_path('logos'), $photoname);
+            request()->logo->move(storage_path('app/public/logos'), $photoname);
         }
         //saving to the database
         $operator = new Operator();
