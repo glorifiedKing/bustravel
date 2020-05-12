@@ -15,6 +15,17 @@ use Carbon\Carbon;
 
 class RoutesDepartureTimesController extends Controller
 {
+    public
+    $flash_type ='bustravel-flash-type',
+    $flash_error ='error',
+    $flash_success ='success',
+    $flash_title ='bustravel-flash-title',
+    $flash_title_value ='Route Saving',
+    $flash_message='bustravel-flash-message',
+    $service_create ='bustravel.routes.departures.create',
+    $service_edit ='bustravel.routes.departures.edit',
+    $stopover_route_id='stopover_routeid';
+
     public function __construct()
     {
         $this->middleware('web');
@@ -75,13 +86,13 @@ class RoutesDepartureTimesController extends Controller
           {
             $alerts = [
             'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Route Saving',
-            'bustravel-flash-message' => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
+            $this->flash_type    => $this->flash_error,
+            $this->flash_title    => $this->flash_title_value,
+            $this->flash_message => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
         ];
-           return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
           }
-          $stopovers = request()->input('stopover_routeid') ?? 0;
+          $stopovers = request()->input($this->stopover_route_id) ?? 0;
           $arrival = request()->input('stopover_arrival_time');
           $departure = request()->input('stopover_departure_time');
 
@@ -90,11 +101,11 @@ class RoutesDepartureTimesController extends Controller
             {
               $alerts = [
               'bustravel-flash'         => true,
-              'bustravel-flash-type'    => 'error',
-              'bustravel-flash-title'   => 'Route Saving',
-              'bustravel-flash-message' => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+              $this->flash_type    => $this->flash_error,
+              $this->flash_title    => $this->flash_title_value,
+              $this->flash_message => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
           ];
-             return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+             return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
             }
 
           }
@@ -115,7 +126,7 @@ class RoutesDepartureTimesController extends Controller
         $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');
         $route->status = request()->input('status');
         $route->save();
-        $stopovers = request()->input('stopover_routeid') ?? 0;
+        $stopovers = request()->input($this->stopover_route_id) ?? 0;
         if ($stopovers != 0) {
             $arrival = request()->input('stopover_arrival_time');
             $departure = request()->input('stopover_departure_time');
@@ -130,9 +141,9 @@ class RoutesDepartureTimesController extends Controller
         }
         $alerts = [
         'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Route Saving',
-        'bustravel-flash-message' => 'Route has successfully been saved',
+        $this->flash_type    => $this->flash_success,
+        $this->flash_title    => $this->flash_title_value,
+        $this->flash_message => 'Route has successfully been saved',
     ];
 
         return redirect()->route('bustravel.routes.edit',$route->route_id)->with($alerts);
@@ -185,13 +196,13 @@ class RoutesDepartureTimesController extends Controller
           {
             $alerts = [
             'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Route Saving',
-            'bustravel-flash-message' => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
+            $this->flash_type    => $this->flash_error,
+            $this->flash_title    => $this->flash_title_value,
+            $this->flash_message => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
         ];
-           return redirect()->route('bustravel.routes.departures.create',request()->input('route_id'))->withinput()->with($alerts);
+           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
           }
-          $stopovers = request()->input('stopover_routeid') ?? 0;
+          $stopovers = request()->input($this->stopover_route_id) ?? 0;
           $arrival = request()->input('stopover_arrival_time');
           $departure = request()->input('stopover_departure_time');
 
@@ -203,22 +214,22 @@ class RoutesDepartureTimesController extends Controller
             }else{
               $alerts = [
               'bustravel-flash'         => true,
-              'bustravel-flash-type'    => 'error',
-              'bustravel-flash-title'   => 'Route Saving',
-              'bustravel-flash-message' => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+              $this->flash_type    => $this->flash_error,
+              $this->flash_title    => $this->flash_title_value,
+              $this->flash_message => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
           ];
-             return redirect()->route('bustravel.routes.departures.edit',$id)->withinput()->with($alerts);
+             return redirect()->route($this->service_edit,$id)->withinput()->with($alerts);
             }
             if(($s_departure > $main_departure ) && ($s_departure < $main_arrival))
             {
             }else{
               $alerts = [
               'bustravel-flash'         => true,
-              'bustravel-flash-type'    => 'error',
-              'bustravel-flash-title'   => 'Route Saving',
-              'bustravel-flash-message' => 'StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
+              $this->flash_type    => $this->flash_error,
+              $this->flash_title    => $this->flash_title_value,
+              $this->flash_message => 'StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
           ];
-             return redirect()->route('bustravel.routes.departures.edit',$id)->withinput()->with($alerts);
+             return redirect()->route($this->service_edit,$id)->withinput()->with($alerts);
             }
         }
       }
@@ -235,7 +246,7 @@ class RoutesDepartureTimesController extends Controller
         $route->status = request()->input('status');
         $route->save();
         $overs = $route->stopovers_times()->delete();
-        $stopovers = request()->input('stopover_routeid') ?? 0;
+        $stopovers = request()->input($this->stopover_route_id) ?? 0;
         if ($stopovers != 0) {
             $arrival = request()->input('stopover_arrival_time');
             $departure = request()->input('stopover_departure_time');
@@ -250,12 +261,12 @@ class RoutesDepartureTimesController extends Controller
         }
         $alerts = [
         'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Route Updating',
-        'bustravel-flash-message' => 'Route has successfully been updated',
+        $this->flash_type    => $this->flash_success,
+        $this->flash_title   => 'Route Updating',
+        $this->flash_message => 'Route has successfully been updated',
     ];
 
-        return redirect()->route('bustravel.routes.departures.edit', $id)->with($alerts);
+        return redirect()->route($this->service_edit, $id)->with($alerts);
     }
 
     //Delete Route Departure Times
@@ -266,9 +277,9 @@ class RoutesDepartureTimesController extends Controller
         $routes_departure_time->delete();
         $alerts = [
             'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Route Departure Time Deleting ',
-            'bustravel-flash-message' => 'Route Departure Time '.$name.' has successfully been Deleted',
+            $this->flash_type    => $this->flash_error,
+            $this->flash_title   => 'Route Departure Time Deleting ',
+            $this->flash_message => 'Route Departure Time '.$name.' has successfully been Deleted',
         ];
 
         return Redirect::route('bustravel.routes.departures')->with($alerts);

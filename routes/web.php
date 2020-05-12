@@ -8,7 +8,9 @@ Route::post('stations/create', 'StationsController@store')->name('bustravel.stat
 Route::get('stations/view/{id}', 'StationsController@show')->name('bustravel.stations.edit');
 Route::post('stations/view/{id}', 'StationsController@store')->name('bustravel.stations.update');
 Route::get('stations/delete/{id}', 'StationsController@destroy')->name('bustravel.stations.delete');
-Route::get('general_settings', 'SettingsController@general')->name('bustravel.general_settings');
+Route::get('general_settings', 'SettingsController@general_settings')->name('bustravel.general_settings');
+Route::post('general_settings', 'SettingsController@store_general_settings')->name('bustravel.general_settings.store');
+Route::post('general_settings/update', 'SettingsController@update_general_settings')->name('bustravel.general_settings.update');
 Route::get('company_settings', 'SettingsController@company')->name('bustravel.company_settings');
 Route::get('company_settings/fields', 'SettingsController@fields')->name('bustravel.company_settings.fields');
 Route::post('company_settings/fields', 'SettingsController@storefields')->name('bustravel.company_settings.fields.store');

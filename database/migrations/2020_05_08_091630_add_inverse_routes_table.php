@@ -11,11 +11,13 @@ class AddInverseRoutesTable extends Migration
      *
      * @return void
      */
+    public $tableName='routes';
+    public $columnName='inverse';
     public function up()
     {
-        Schema::table('routes', function (Blueprint $table) {
-            if (!Schema::hasColumn('routes', 'inverse')) {
-                $table->integer('inverse')->nullable();
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->integer($this->columnName)->nullable();
             }
         });
     }
@@ -27,8 +29,8 @@ class AddInverseRoutesTable extends Migration
      */
     public function down()
     {
-        Schema::table('routes', function (Blueprint $table) {
-            $table->dropColumn('inverse');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }
