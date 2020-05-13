@@ -9,11 +9,11 @@
         <h1 class="m-0 text-dark"><small>
           <a href="{{route('bustravel.routes')}}" class="btn btn-info">Back</a>
             @if(is_null($route->inverse))
-            @if(!is_null($inverse))
-             <a href="{{route('bustravel.routes.edit',$inverse->id)}}" class="btn btn-info">Inverse</a>
+            @if(!is_null($inverse_route))
+             <a href="{{route('bustravel.routes.edit',$inverse_route->id)}}" class="btn btn-info">Inverse</a>
             @endif
             @else
-            @if(!is_null($inverse))
+            @if(!is_null($mainroute))
              <a href="{{route('bustravel.routes.edit',$mainroute->id)}}" class="btn btn-info">Main Route</a>
             @endif
             @endif

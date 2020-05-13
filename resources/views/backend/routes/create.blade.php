@@ -123,10 +123,10 @@
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Auto Create Inverse</label>
                         <label class="radio-inline">
-                          <input type="radio"  name="inverse" value="1" checked> Yes</label>
+                          <input type="radio"  name="has_inverse" value="1" checked> Yes</label>
                         </label>
                        <label class="radio-inline">
-                          <input type="radio"  name="inverse" value="0" > No</label>
+                          <input type="radio"  name="has_inverse" value="0" > No</label>
                        </label>
                     </div>
                     <div class=" col-md-3 form-group">

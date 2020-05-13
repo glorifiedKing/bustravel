@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class RouteController extends Controller
 {
+   public $route_price='price';
+   public $route_return_price='return_price';
     public function __construct()
     {
         $this->middleware('web');
@@ -63,8 +65,8 @@ class RouteController extends Controller
         $route = new Route();
         $route->start_station = request()->input('start_station');
         $route->end_station = request()->input('end_station');
-        $route->price = str_replace(',', '', request()->input('price'));
-        $route->return_price = str_replace(',', '', request()->input('return_price'));
+        $route->price = str_replace(',', '', request()->input($this->route_price));
+        $route->return_price = str_replace(',', '', request()->input($this->route_return_price));
         $route->status = request()->input('status');
         $route->save();
         //stop over routes
@@ -84,13 +86,13 @@ class RouteController extends Controller
             }
         }
         //Create Route Inverse
-        if(request()->input('inverse')==1)
+        if(request()->input('has_inverse')==1)
         {
           $inverse = new Route();
           $inverse->start_station = request()->input('end_station');
           $inverse->end_station = request()->input('start_station');
-          $inverse->price = str_replace(',', '', request()->input('return_price'));
-          $inverse->return_price = str_replace(',', '', request()->input('price'));
+          $inverse->price = str_replace(',', '', request()->input($this->route_return_price));
+          $inverse->return_price = str_replace(',', '', request()->input($this->route_price));
           $inverse->status = request()->input('status');
           $inverse->inverse = $route->id;
           $inverse->save();
@@ -136,14 +138,14 @@ class RouteController extends Controller
         }
         if(is_null($route->inverse))
         {
-          $inverse=Route::where('inverse',$route->id)->first();
+          $inverse_route=Route::where('inverse',$route->id)->first();
           $mainroute =null;
         }else{
           $mainroute=Route::find($route->inverse);
-          $inverse =null;
+          $inverse_route =null;
         }
 
-        return view('bustravel::backend.routes.edit', compact('bus_operators', 'route', 'stations', 'routes','mainroute','inverse'));
+        return view('bustravel::backend.routes.edit', compact('bus_operators', 'route', 'stations', 'routes','mainroute','inverse_route'));
     }
 
     //Update Operator route('bustravel.operators.upadate')
@@ -165,8 +167,8 @@ class RouteController extends Controller
         $route = Route::find($id);
         $route->start_station = request()->input('start_station');
         $route->end_station = request()->input('end_station');
-        $route->price = str_replace(',', '', request()->input('price'));
-        $route->return_price = str_replace(',', '', request()->input('return_price'));
+        $route->price = str_replace(',', '', request()->input($this->route_price));
+        $route->return_price = str_replace(',', '', request()->input($this->route_return_price));
         $route->status = request()->input('status');
         $route->save();
 
