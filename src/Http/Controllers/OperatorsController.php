@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use glorifiedking\BusTravel\ToastNotification;
 
 class OperatorsController extends Controller
 {
@@ -59,14 +60,9 @@ class OperatorsController extends Controller
         $operator->phone_number = request()->input('phone_number');
         $operator->status = request()->input('status');
         $operator->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Operator Saving',
-        'bustravel-flash-message' => 'Operator has successfully been saved',
-    ];
+    
 
-        return redirect()->route('bustravel.operators')->with($alerts);
+        return redirect()->route('bustravel.operators')->with(ToastNotification::toast('Operator has successfully been saved'));
     }
 
     //operator Edit form route('bustravel.operators.edit')
@@ -114,14 +110,9 @@ class OperatorsController extends Controller
         $operator->phone_number = request()->input('phone_number');
         $operator->status = request()->input('status');
         $operator->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Operator Updating',
-        'bustravel-flash-message' => 'Operator has successfully been updated',
-    ];
+       
 
-        return redirect()->route('bustravel.operators.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.operators.edit', $id)->with(ToastNotification::toast('Operator has successfully been updated','Operator Updating'));
     }
 
     //Delete Operator
@@ -130,13 +121,8 @@ class OperatorsController extends Controller
         $operator = Operator::find($id);
         $name = $operator->name;
         $operator->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Operator Deleted',
-            'bustravel-flash-message' => "Operator $name has successfully been deleted",
-        ];
+        
 
-        return Redirect::route('bustravel.operators')->with($alerts);
+        return Redirect::route('bustravel.operators')->with(ToastNotification::toast("Operator $name has successfully been deleted",'Operator Deleted','error'));
     }
 }
