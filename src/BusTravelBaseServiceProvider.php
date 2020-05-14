@@ -44,7 +44,17 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                               [
                                   'text' => 'Booking Custom Fields',
                                   'url'  => route('bustravel.company_settings.fields'),
-                                  'icon' => 'clipboard',
+                                  'icon' => 'fa fa-bell',
+                              ],
+                              [
+                                'text' => 'Email Templates',
+                                'url'  => route('bustravel.email.templates'),
+                                'icon' => 'fa fa-bell',
+                              ],
+                              [
+                                'text' => 'Sms Templates',
+                                'url'  => route('bustravel.sms.templates'),
+                                'icon' => 'fa fa-bell',
                               ],
                             ],
 
@@ -145,6 +155,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'text' => 'Cashier Report',
                         'url'  => route('bustravel.bookings.cashier.report'),
                         'icon' => 'fa fa-money-check',
+
+                    ],
+                    [
+                        'text' => 'Payments Report',
+                        'url'  => route('bustravel.reports.payments'),
+                        'icon' => 'fa fa-money-check',
+                        'can' => 'View BT Payment Reports'
 
                     ],
 

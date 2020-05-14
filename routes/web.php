@@ -111,3 +111,23 @@ Route::get('faqs', 'FaqsController@faqs')->name('bustravel.faqs');
 Route::post('faqs', 'FaqsController@storefaqs')->name('bustravel.faqs.store');
 Route::any('faqs/{id}/update', 'FaqsController@updatefaqs')->name('bustravel.faqs.update');
 Route::any('faqs/{id}/delete', 'FaqsController@deletefaqs')->name('bustravel.faqs.delete');
+
+// email templates
+Route::get('email_template','TicketTemplateController@view_email_templates')->name('bustravel.email.templates');
+Route::get('email_template/new','TicketTemplateController@create_email_template')->name('bustravel.email.templates.create');
+Route::post('email_template/new','TicketTemplateController@save_email_template')->name('bustravel.email.templates.save');
+Route::get('email_template/{id}/edit','TicketTemplateController@edit_email_template')->name('bustravel.email.templates.edit');
+Route::post('email_template/{id}/edit','TicketTemplateController@update_email_template')->name('bustravel.email.templates.update');
+Route::get('email_template/{id}/delete','TicketTemplateController@delete_email_template')->name('bustravel.email.templates.delete');
+
+
+// sms templates 
+Route::get('sms_template','TicketTemplateController@view_sms_templates')->name('bustravel.sms.templates');
+Route::get('sms_template/new','TicketTemplateController@create_sms_template')->name('bustravel.sms.templates.create');
+Route::post('sms_template/new','TicketTemplateController@save_sms_template')->name('bustravel.sms.templates.save');
+Route::get('sms_template/{id}/edit','TicketTemplateController@edit_sms_template')->name('bustravel.sms.templates.edit');
+Route::post('sms_template/{id}/edit','TicketTemplateController@update_sms_template')->name('bustravel.sms.templates.update');
+Route::get('sms_template/{id}/delete','TicketTemplateController@delete_sms_template')->name('bustravel.sms.templates.delete');
+
+// payment reports 
+Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');
