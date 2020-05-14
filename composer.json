@@ -13,7 +13,8 @@
         "spatie/laravel-permission": "3.0",
         "doctrine/dbal": "^2.10",
         "guzzlehttp/guzzle": "^6.5",
-        "propaganistas/laravel-phone": "^4.2"
+        "propaganistas/laravel-phone": "^4.2",
+        "te7a-houdini/laravel-trix": "^2.0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.3",
