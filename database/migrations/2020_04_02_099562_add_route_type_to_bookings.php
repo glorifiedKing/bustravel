@@ -11,12 +11,14 @@ class AddRouteTypeToBookings extends Migration
      *
      * @return void
      */
+    public $tableName='bookings';
+    public $columnName='route_type';
     public function up()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-          if (!Schema::hasColumn('investment_deposits', 'investor_bank_id')) {
-              $table->string('route_type')->default('main_route');
-              
+        Schema::table($this->tableName, function (Blueprint $table) {
+          if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+              $table->string($this->columnName)->default('main_route');
+
           }
         });
     }
@@ -28,8 +30,8 @@ class AddRouteTypeToBookings extends Migration
      */
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            //
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

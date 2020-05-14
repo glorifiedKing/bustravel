@@ -11,11 +11,13 @@ class AddBoardedBookingsTable extends Migration
      *
      * @return void
      */
+     public $tableName='bookings';
+     public $columnName='boarded';
     public function up()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'boarded')) {
-                $table->tinyInteger('boarded')->default(0);
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->tinyInteger($this->columnName)->default(0);
             }
         });
     }
@@ -27,8 +29,8 @@ class AddBoardedBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn('boarded');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

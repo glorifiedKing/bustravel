@@ -11,9 +11,11 @@ class CreateOperatorsTable extends Migration
      *
      * @return void
      */
+     public $tableName='operators';
+
     public function up()
     {
-        Schema::create('operators', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('address');
@@ -34,6 +36,6 @@ class CreateOperatorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stations');
+        Schema::dropIfExists($this->tableName);
     }
 }

@@ -11,11 +11,13 @@ class AddUserIdDriversTable extends Migration
      *
      * @return void
      */
+     public $tableName='drivers';
+     public $columnName='user_id';
     public function up()
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            if (!Schema::hasColumn('drivers', 'user_id')) {
-                $table->integer('user_id')->default(0);
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->integer($this->columnName)->default(0);
             }
         });
     }
@@ -27,8 +29,8 @@ class AddUserIdDriversTable extends Migration
      */
     public function down()
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

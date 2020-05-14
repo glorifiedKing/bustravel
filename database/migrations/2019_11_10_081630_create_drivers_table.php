@@ -11,9 +11,10 @@ class CreateDriversTable extends Migration
      *
      * @return void
      */
+     public $tableName='drivers';
     public function up()
     {
-        Schema::create('drivers', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('operator_id');
             $table->string('name');
@@ -36,6 +37,6 @@ class CreateDriversTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('drivers');
+        Schema::dropIfExists($this->tableName);
     }
 }

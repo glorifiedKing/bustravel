@@ -11,9 +11,10 @@ class CreateRouteTrackingsTable extends Migration
      *
      * @return void
      */
+     public $tableName='route_trackings';
     public function up()
     {
-        Schema::create('route_trackings', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('routes_times_id');
             $table->integer('driver_id');
@@ -35,6 +36,6 @@ class CreateRouteTrackingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('route_trackings');
+        Schema::dropIfExists($this->tableName);
     }
 }

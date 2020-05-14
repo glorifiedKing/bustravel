@@ -11,9 +11,10 @@ class CreateOperatorPaymentMethodsTable extends Migration
      *
      * @return void
      */
+     public $tableName='operator_payment_methods';
     public function up()
     {
-        Schema::create('operator_payment_methods', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('operator_id');
             $table->string('payment_method');
@@ -23,7 +24,7 @@ class CreateOperatorPaymentMethodsTable extends Migration
             $table->string('bank_account_number')->nullable();
             $table->string('bank_account_name')->nullable();
             $table->string('bank_name')->nullable();
-            $table->boolean('is_default')->default(0);            
+            $table->boolean('is_default')->default(0);
             $table->timestamps();
         });
     }
@@ -35,6 +36,6 @@ class CreateOperatorPaymentMethodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('operator_payment_methods');
+        Schema::dropIfExists($this->tableName);
     }
 }

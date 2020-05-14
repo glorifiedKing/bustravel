@@ -11,9 +11,10 @@ class CreateStopoverRoutesTable extends Migration
      *
      * @return void
      */
+     public $tableName='stopover_routes';
     public function up()
     {
-        Schema::create('stopover_routes', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('route_id');
             $table->string('stopover_id');
@@ -30,6 +31,6 @@ class CreateStopoverRoutesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bookings_fields');
+        Schema::dropIfExists($this->tableName);
     }
 }

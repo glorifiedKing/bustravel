@@ -11,11 +11,13 @@ class AddNoOfTicketsColumnPaymentTransactionsTable extends Migration
      *
      * @return void
      */
+     public $tableName='payment_transactions';
+     public $columnName='no_of_tickets';
     public function up()
     {
-        Schema::table('payment_transactions', function (Blueprint $table) {
-            if (!Schema::hasColumn('payment_transactions', 'no_of_tickets')) {
-                $table->integer('no_of_tickets')->default(1);
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->integer($this->columnName)->default(1);
             }
         });
     }
@@ -27,8 +29,8 @@ class AddNoOfTicketsColumnPaymentTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('payment_transactions', function (Blueprint $table) {
-            $table->dropColumn('no_of_tickets');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }
