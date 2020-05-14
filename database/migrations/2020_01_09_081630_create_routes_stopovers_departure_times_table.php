@@ -11,9 +11,11 @@ class CreateRoutesStopoversDepartureTimesTable extends Migration
      *
      * @return void
      */
+
+    public $tableName='routes_stopovers_departure_times';
     public function up()
     {
-        Schema::create('routes_stopovers_departure_times', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('routes_times_id');
             $table->integer('route_stopover_id');
@@ -31,6 +33,6 @@ class CreateRoutesStopoversDepartureTimesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('routes_stopovers_departure_times');
+        Schema::dropIfExists($this->tableName);
     }
 }

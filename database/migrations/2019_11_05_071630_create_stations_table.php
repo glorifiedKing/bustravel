@@ -11,9 +11,10 @@ class CreateStationsTable extends Migration
      *
      * @return void
      */
+    public $tableName='stations';
     public function up()
     {
-        Schema::create('stations', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('code', 3);
@@ -33,6 +34,6 @@ class CreateStationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stations');
+        Schema::dropIfExists($this->tableName);
     }
 }

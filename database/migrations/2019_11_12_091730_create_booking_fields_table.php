@@ -11,9 +11,10 @@ class CreateBookingFieldsTable extends Migration
      *
      * @return void
      */
+    public $tableName='bookings_fields';
     public function up()
     {
-        Schema::create('bookings_fields', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('booking_id');
             $table->string('field_id');
@@ -30,6 +31,6 @@ class CreateBookingFieldsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bookings_fields');
+        Schema::dropIfExists($this->tableName);
     }
 }

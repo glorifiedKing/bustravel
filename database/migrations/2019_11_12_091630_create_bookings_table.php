@@ -11,9 +11,10 @@ class CreateBookingsTable extends Migration
      *
      * @return void
      */
+     public $tableName='bookings';
     public function up()
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('routes_departure_time_id');
             $table->decimal('amount', 12, 2)->default(0.00);
@@ -24,7 +25,7 @@ class CreateBookingsTable extends Migration
             $table->integer('user_id')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
-            
+
         });
     }
 
@@ -35,6 +36,6 @@ class CreateBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists($this->tableName);
     }
 }

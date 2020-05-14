@@ -11,11 +11,13 @@ class AddPaymentSourceColumnPaymentTransactionsTable extends Migration
      *
      * @return void
      */
+     public $tableName='payment_transactions';
+     public $columnName='payment_source';
     public function up()
     {
-        Schema::table('payment_transactions', function (Blueprint $table) {
-            if (!Schema::hasColumn('payment_transactions', 'payment_source')) {
-                $table->string('payment_source')->default('web');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->string($this->columnName)->default('web');
             }
         });
     }
@@ -27,8 +29,8 @@ class AddPaymentSourceColumnPaymentTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('payment_transactions', function (Blueprint $table) {
-            $table->dropColumn('payment_source');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

@@ -11,12 +11,13 @@ class AddPaymentSourceBookingsTable extends Migration
      *
      * @return void
      */
+     public $tableName='bookings';
+     public $columnName='payment_transaction_id';
     public function up()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'payment_source')) {
-            //    $table->string('payment_source')->default('web');
-                $table->unsignedBigInteger('payment_transaction_id')->nullable();
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->unsignedBigInteger($this->columnName)->nullable();
             }
         });
     }
@@ -28,9 +29,8 @@ class AddPaymentSourceBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
-          //  $table->dropColumn('payment_source');
-            $table->dropColumn('payment_transaction_id');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

@@ -11,9 +11,10 @@ class CreateFaqsTable extends Migration
      *
      * @return void
      */
+     public $tableName='faqs';
     public function up()
     {
-        Schema::create('faqs', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('question')->nullable();
             $table->text('answer')->nullable();
@@ -28,6 +29,6 @@ class CreateFaqsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('faqs');
+        Schema::dropIfExists($this->tableName);
     }
 }

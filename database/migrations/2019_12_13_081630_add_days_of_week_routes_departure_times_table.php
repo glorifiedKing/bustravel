@@ -11,11 +11,13 @@ class AddDaysOfWeekRoutesDepartureTimesTable extends Migration
      *
      * @return void
      */
+     public $tableName='routes_departure_times';
+     public $columnName='days_of_week';
     public function up()
     {
-        Schema::table('routes_departure_times', function (Blueprint $table) {
-            if (!Schema::hasColumn('routes_departure_times', 'days_of_week')) {
-                $table->json('days_of_week')->nullable();
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->json($this->columnName)->nullable();
             }
         });
     }
@@ -27,8 +29,8 @@ class AddDaysOfWeekRoutesDepartureTimesTable extends Migration
      */
     public function down()
     {
-        Schema::table('routes_departure_times', function (Blueprint $table) {
-            $table->dropColumn('days_of_week');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

@@ -11,11 +11,13 @@ class AddArrivalTimeColumnRoutesDepartureTimesTable extends Migration
      *
      * @return void
      */
+     public $tableName='routes_departure_times';
+     public $columnName='arrival_time';
     public function up()
     {
-        Schema::table('routes_departure_times', function (Blueprint $table) {
-            if (!Schema::hasColumn('routes_departure_times', 'arrival_time')) {
-                $table->string('arrival_time')->nullable();
+        Schema::table($this->tableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->string($this->columnName)->nullable();
             }
         });
     }
@@ -27,8 +29,8 @@ class AddArrivalTimeColumnRoutesDepartureTimesTable extends Migration
      */
     public function down()
     {
-        Schema::table('routes_departure_times', function (Blueprint $table) {
-            $table->dropColumn('arrival_time');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

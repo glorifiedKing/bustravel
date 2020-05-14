@@ -11,17 +11,18 @@ class CreateSmsTemplatesTable extends Migration
      *
      * @return void
      */
+    public $tableName='sms_templates';
     public function up()
     {
-        Schema::create('sms_templates', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('operator_id');
             $table->string('purpose')->default('TICKET');
             $table->string('language')->default('english');
             $table->text('message');
-            $table->boolean('is_default')->default(0);                       
+            $table->boolean('is_default')->default(0);
             $table->timestamps();
-            $table->unique(['operator_id','purpose','language']); 
+            $table->unique(['operator_id','purpose','language']);
         });
     }
 
@@ -32,6 +33,6 @@ class CreateSmsTemplatesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_templates');
+        Schema::dropIfExists($this->tableName);
     }
 }

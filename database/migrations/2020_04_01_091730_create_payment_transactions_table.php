@@ -11,9 +11,10 @@ class CreatePaymentTransactionsTable extends Migration
      *
      * @return void
      */
+     public $tableName='payment_transactions';
     public function up()
     {
-        Schema::create('payment_transactions', function (Blueprint $table) {
+        Schema::create($this->tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->decimal('amount',12,2);
             $table->string('payment_method')->default('mobile_money');
@@ -22,7 +23,7 @@ class CreatePaymentTransactionsTable extends Migration
             $table->string('payment_gateway_result')->nullable();
             $table->string('payee_reference');
             $table->string('payee_reference_2')->nullable();
-            $table->string('payee_reference_3')->nullable();            
+            $table->string('payee_reference_3')->nullable();
             $table->string('status')->default('pending');
             $table->string('status_reference')->nullable();
             $table->bigInteger('user_id');
@@ -50,6 +51,6 @@ class CreatePaymentTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_transactions');
+        Schema::dropIfExists($this->tableName);
     }
 }
