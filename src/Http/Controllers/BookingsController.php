@@ -149,7 +149,7 @@ class BookingsController extends Controller
         $printer->cut();
         //dd(base64_encode($connector->getData()));
         return redirect()->away('rawbt:base64,'.base64_encode($connector->getData()));
-        return redirect()->route('bustravel.bookings')->with($alerts);
+       // return redirect()->route('bustravel.bookings')->with($alerts);
     }
 
     //Bus Edit form route('bustravel.buses.edit')
@@ -248,49 +248,25 @@ class BookingsController extends Controller
       return view('bustravel::backend.bookings.manifest', compact('bookings','driver_routes','driver'));
   }
   public function route_manifest($id)
-  {
-    if(auth()->user()->hasAnyRole('BT Driver'))
-      {
-       $today =date('Y-m-d');
+  {   
+      $today =date('Y-m-d');
       if(request()->isMethod('post'))
-     {
+      { 
+          $validation = request()->validate([
+            'ticket' => 'required',
+          ]);
+          $driver =Driver::where('user_id',auth()->user()->id)->first();
+          $ticket = request()->input('ticket');
+          $bookings = Booking::where('ticket_number',$ticket)->get();
 
-       $validation = request()->validate([
-        'ticket' => 'required',
-      ]);
-      $driver =Driver::where('user_id',auth()->user()->id)->first();
-      $ticket = request()->input('ticket');
-      $bookings = Booking::where('ticket_number',$ticket)->get();
-
-    }else{
-
-      $driver =Driver::where('user_id',auth()->user()->id)->first();
-
-      $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
-      $ticket ="";
-     }
-   }
-    else
-      {
-        $today =date('Y-m-d');
-       if(request()->isMethod('post'))
-      {
-
-        $validation = request()->validate([
-         'ticket' => 'required',
-       ]);
-       $driver =Driver::where('user_id',auth()->user()->id)->first();
-       $ticket = request()->input('ticket');
-       $bookings = Booking::where('ticket_number',$ticket)->get();
-
-     }else{
-
-       $driver =Driver::where('user_id',auth()->user()->id)->first();
-
-       $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
-       $ticket ="";
       }
+      else
+      {
+          $driver =Driver::where('user_id',auth()->user()->id)->first();
+          $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
+          $ticket ="";
       }
+      
       $tracking=RouteTracking::where('routes_times_id',$id)->where('date_of_travel',$today)->first();
       $times_id =RoutesDepartureTime::find($id);
       $not_booked =$times_id->bus->seating_capacity -$bookings->count();
