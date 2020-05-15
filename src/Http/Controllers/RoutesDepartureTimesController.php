@@ -65,10 +65,7 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
-            if(strtotime(strftime("%F") . ' ' .request()->input('departure_time')) < strtotime(strftime("%F") . ' ' .request()->input('departure_time')))
-            {
-
-            }
+           
 
         }else{
           $validation = request()->validate([
