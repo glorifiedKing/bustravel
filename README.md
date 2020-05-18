@@ -7,5 +7,5 @@ composer require glorifiedking/bustravel
 ## other packages used/required
 spatie/laravel-permission
 jeroennoten/laravel-adminlte
-php artisan db:seed --class="glorifiedking\\BusTravel\\Seeds\\PermissionSeeder"
+php artisan db:seed --class="glorifiedking\BusTravel\Seeds\PermissionSeeder"
 php artisan vendor:publish --provider="Te7aHoudini\LaravelTrix\LaravelTrixServiceProvider"
