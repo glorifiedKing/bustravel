@@ -186,7 +186,7 @@ class BookingsController extends Controller
                 }
                 catch(\Exception $e)
                 {
-                    $error = "Booking saved but printing failed, check printer or printing options";
+                    $error = "Booking saved but printing failed, check printer or printing options: ".$e->getMessage()."";
                     return redirect()->route('bustravel.bookings.create')->with(ToastNotification::toast("Error Printing: $error",'Error Printing','error'));
                 }
             }
