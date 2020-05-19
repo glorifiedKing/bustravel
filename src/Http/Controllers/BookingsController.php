@@ -173,7 +173,7 @@ class BookingsController extends Controller
                     $printer->text("\n");
                     $printer->text("\n");
                     $printer->text("\n");
-                    $printer->barcode($booking->ticket_number,Printer::BARCODE_UPCA);
+                    $printer->barcode($booking->ticket_number,Printer::BARCODE_CODE39);
                 //$printer->qrcode($booking->ticket_number/*,Printer::QR_ECLEVEL_M,10,Printer::QR_MODEL_2*/);
                     $printer->text("\n");
                     $printer->text("Powered by PalmKash \n");
