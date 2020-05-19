@@ -24,7 +24,7 @@
         <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">Add Booking </h5>
+            <h5 class="card-title">Add Booking on {{\Carbon\Carbon::now()->toDateString()}} </h5>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -34,86 +34,83 @@
               {{csrf_field() }}
 
               <div class="box-body">
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                         <label> Routes</label>
-                         <select class="form-control select2 {{ $errors->has('routes_departure_time_id') ? ' is-invalid' : '' }}" name="routes_departure_time_id"  placeholder="Select Operator">
-                           <option value="">Select Route</option>
-                           @foreach($routes_times as $route_course)
-                               <option value="{{$route_course->id}}" @php echo old('routes_departure_time_id') == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->route->start->name}} ( {{$route_course->route->start->code}} ) - {{$route_course->route->end->name}} ( {{$route_course->route->end->code}} ) / {{$route_course->departure_time}}</option>
-                           @endforeach
-                         </select>
-                         @if ($errors->has('routes_departure_time_id'))
-                             <span class="invalid-feedback">
-                                 <strong>{{ $errors->first('routes_departure_time_id') }}</strong>
-                             </span>
-                         @endif
-                    </div>
-                    <div class="form-group col-md-6 ">
-                      <label>Start Bus</label>
-                      <select class="form-control select2 {{ $errors->has('user_id') ? ' is-invalid' : '' }}" name="user_id"  placeholder="Select Users">
-                        <option value="">Select User</option>
-                        @foreach($users as $user)
-                            <option value="{{$user->id}}" @php echo old('user_id') == $user->id ? 'selected' :  "" @endphp>{{$user->name}}</option>
-                        @endforeach
+                <div class="form-row">
+                  <div class="form-group col-xs-6 ">
+                      <label for="inputEmail4">From</label>
+                      <input id="route_id" type="number" hidden name="route_id" >
+                      <input id="route_type" type="text" hidden name="route_type" >
+                      <select id="from_station_id"  name="from_station_id" class="form-control {{ $errors->has('printer_name') ? 'is-invalid' : '' }}" >
+                        <option value="{{$workstation->id}}">{{$workstation->name}}</option>
                       </select>
-                      @if ($errors->has('user_id'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('user_id') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Amount</label>
-                      <input type="text"  name="amount" value="{{old('amount')}}" class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Amount" >
-                      @if ($errors->has('amount'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('amount') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Date Paid</label>
-                      <input type="date"  name="date_paid" value="{{old('date_paid')}}" class="form-control {{ $errors->has('date_paid') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Date Paid" >
-                      @if ($errors->has('date_paid'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('date_paid') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Travel Date</label>
-                      <input type="date"  name="date_of_travel" value="{{old('date_of_travel')}}" class="form-control {{ $errors->has('date_of_travel') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Travel Date" >
-                      @if ($errors->has('date_of_travel'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('date_of_travel') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class=" col-md-12 form-group">
-                      <h4>Custom Fields</h4>
-                    </div>
-                    @foreach($custom_fields as $fields)
-                       <div class="form-group col-md-3 ">
+                       @error('printer_name')
+                          <small class="form-text invalid-feedback" >
+                              {{ $message }}
+                          </small>
+                      @enderror
+                  </div>
+                  <div class="form-group col-xs-6">
+                      <label for="inputPassword4">To </label>
+                      <select id="to_station_id"  name="to_station_id" class="form-control {{ $errors->has('printer_url') ? 'is-invalid' : '' }}" >
+                       <option value="0">To Station</option>
+                       @foreach ($stations as $station)
+                           <option value="{{$station->id}}">{{$station->name}}</option>
+                       @endforeach
+                      </select> 
+                       @error('printer_url')
+                          <small class="form-text invalid-feedback" >
+                              {{ $message }}
+                          </small>
+                      @enderror
+                  </div>
+                </div>
+                  <div class="form-group col-xs-12">
+                    <table id="table_results" class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Time</th>
+                            <th>seats left</th>
+                            <th>amount</th>
+                            <th>book</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                  </div>
+                  <hr>
+                  <div class="form-group col-xs-12 ">
+                    <label>Amount</label>
+                    <input readonly class="form-control" name="amount" id="amount">
+                  </div>
+                  <div class="form-row">                    
+                  @foreach($custom_fields as $fields)
+                       <div class="form-group col-xs-6 ">
                          <label>{{$fields->field_name}}</label>
                          <input type=hidden name="field_id[]" value="{{$fields->id}}">
-                         <input type="text"  name="field_value[]" value="" class="form-control {{ $errors->has('date_paid') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="{{$fields->field_name}}" @php echo $fields->is_required == 1? 'required' :  "" @endphp >
+                         <input type="text" size="6"  name="field_value[]" class="form-control {{ $errors->has('date_paid') ? ' is-invalid' : '' }}" id="exampleInputEmail1"  {{ ($fields->is_required == 1 ) ? 'required' :  "" }} >
                        </div>
                     @endforeach
-                    <div class=" col-md-12 form-group">
+                  </div>
+                  <hr>
+                  <div class="form-row">                    
+                    <div class="form-group col-xs-6">
+                      <label>Pay by</label>
+                      <select name="payment_method" class="form-control">
+                        <option value="cash">CASH</option>
+                        <option value="palm_kash">Palm</option>
+                      </select>
                     </div>
-                    <div class=" col-md-12 form-group">
-                    </div>
-                    <div class=" col-md-3 form-group">
-                        <label for="signed" class=" col-md-12 control-label">Status</label>
-                        <label class="radio-inline">
-                          <input type="radio" id="Active" name="status" value="1" >  Paid </label>
-                        </label>
-                       <label class="radio-inline">
-                          <input type="radio" id="Deactive" name="status" value="0" checked>  Not Paid</label>
-                       </label>
+                    <div class="form-group col-xs-6">
+                      <label>Printer</label>
+                      <select name="printer" class="form-control">
+                        @foreach ($printers as $printer)
+                          <option value="{{$printer->id}}" {{($printer->is_default)? 'selected' : ''}}>{{$printer->printer_name}}</option>
+                        @endforeach
+                      </select>
                     </div>
                   </div>
+                
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
@@ -145,7 +142,47 @@
    @parent
    <script>
        $(function () {
-         $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+         var operators_url = "{{route('bustravel.api.get.route.times',auth()->user()->operator_id)}}"
+         $('#to_station_id').change(function(){
+           var to_station = $(this).val();
+           var from_station = $('#from_station_id').val();
+           var table_body = "";
+           $('#amount').val('');
+           $('#route_id').val('');
+          $('#route_type').val('');
+           
+            $.post(operators_url,
+            {
+              _token: "{{ csrf_token() }}",
+              to_station_id: to_station,
+              from_station_id: from_station
+            },
+            function(data, status){
+              if(status == 'success')
+              {
+                var table_row = "";
+                data.forEach(function(item) {
+
+                   table_row = "<tr data-route='"+item['id']+"' data-amount='"+item['price']+"' data-type='"+item['route_type']+"'> <td>"+item['time']+"</td><td>"+item['seats_left']+"</td><td>"+item['price']+"</td><td><button type='button' class='btn btn-xs btn-success bus_service_select'>select</button></td></tr>";
+                    table_body = table_body + table_row;
+                  });
+
+                  $("#table_results tbody").html(table_body);
+              }
+              
+            });
+         });
+         $('#table_results').on('click','tbody tr',function(){
+           
+          var route_id = $(this).data('route');
+          var route_type = $(this).data('type');
+          var route_price = $(this).data('amount');
+          $('#route_id').val(route_id);
+          $('#route_type').val(route_type);
+          $('#amount').val(route_price);
+
+          
+         });
          $('.select2').select2();
        })
 </script>

@@ -58,7 +58,7 @@
                              </span>
                          @endif
                     </div>
-                    <div class="form-group col-md-4 ">
+                    <div class="form-group col-md-3 ">
                         <label for="exampleInputEmail1">E-Mail Address</label>
                         <input type="text"  name="email" value="{{old('email')}}" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Email"  >
                         @if ($errors->has('email'))
@@ -67,7 +67,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="form-group col-md-4  ">
+                    <div class="form-group col-md-3  ">
                         <label for="exampleInputEmail1">Phone Number</label>
                         <input type="text"  name="phone_number" value="{{old('phone_number')}}" class="form-control {{ $errors->has('phone_number') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Phone Number"  >
                         @if ($errors->has('phone_number'))
@@ -76,7 +76,7 @@
                             </span>
                         @endif
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                          <label>Select Operator</label>
                          <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator" >
                            <option value="">Select Operator</option>
@@ -90,6 +90,20 @@
                              </span>
                          @endif
                     </div>
+                    <div class="form-group col-md-3">
+                        <label>Workstation[for cashiers]</label>
+                        <select class="form-control select2 {{ $errors->has('workstation') ? ' is-invalid' : '' }}" name="workstation"  placeholder="Select Operator" >
+                          <option value="">Select Station</option>
+                          @foreach($stations as $station)
+                              <option value="{{$station->id}}">{{$station->name}} ( {{$station->code}} )</option>
+                          @endforeach
+                        </select>
+                        @if ($errors->has('workstation'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('workstation') }}</strong>
+                            </span>
+                        @endif
+                   </div>
                     <div class="form-group col-md-12  ">
                     </div>
                     <div class="form-group col-md-3  ">
