@@ -65,12 +65,13 @@
                 </div>
                   <div class="form-group col-xs-12">
                     <table id="table_results" class="table table-striped">
+                        <caption>Available Bus services</caption>
                         <thead>
                           <tr>
-                            <th>Time</th>
-                            <th>seats left</th>
-                            <th>amount</th>
-                            <th>book</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">seats left</th>
+                            <th scope="col">amount</th>
+                            <th scope="col">book</th>
                           </tr>
                         </thead>
                         <tbody>
