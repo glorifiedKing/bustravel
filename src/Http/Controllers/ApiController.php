@@ -78,7 +78,8 @@ class ApiController extends Controller
                         'id' => $d_time->id,
                         'price' => $route->price,
                         'time' => $d_time->departure_time,
-                        'route_type' => 'main_route'
+                        'route_type' => 'main_route',
+                        'operator' => $route->operator->name
                     ); 
                     $results[] = $result_array;
                 }
@@ -108,7 +109,8 @@ class ApiController extends Controller
                         'id' => $d_time->id,
                         'price' => $route->price,
                         'time' => $d_time->departure_time,
-                        'route_type' => 'stop_over_route'
+                        'route_type' => 'stop_over_route',
+                        'operator' => $route->route->operator->name
                     ); 
                     $results[] = $result_array;
                 }

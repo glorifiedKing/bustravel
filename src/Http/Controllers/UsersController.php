@@ -3,6 +3,7 @@
 namespace glorifiedking\BusTravel\Http\Controllers;
 
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -186,8 +187,9 @@ class UsersController extends Controller
     {
         $roles = Role::all(); //Get all permissions
         $operators = Operator::where('status', 1)->get();
+        $stations = Station::all();
 
-        return view('bustravel::backend.users.users.create', compact('roles', 'operators'));
+        return view('bustravel::backend.users.users.create', compact('roles', 'operators','stations'));
     }
 
     // save Role
@@ -209,6 +211,7 @@ class UsersController extends Controller
         $user->phone_number = request()->input('phone_number');
         $user->status = request()->input('status');
         $user->operator_id = request()->input('operator_id') ?? 0;
+        $user->workstation = request()->input('workstation');
         $user->save();
         $user->assignRole(request()->input('role'));
 
@@ -226,12 +229,13 @@ class UsersController extends Controller
     {
         $roles = Role::all(); //Get all permissions
         $operators = Operator::where('status', 1)->get();
+        $stations = Station::all();
         $user = config('bustravel.user_model', User::class)::find($id);
         if (is_null($user)) {
             return Redirect::route('bustravel.users');
         }
 
-        return view('bustravel::backend.users.users.edit', compact('roles', 'operators', 'user'));
+        return view('bustravel::backend.users.users.edit', compact('roles', 'operators', 'user','stations'));
     }
 
     //Upadte Role
@@ -251,6 +255,7 @@ class UsersController extends Controller
             $user->phone_number = request()->input('phone_number');
             $user->status = request()->input('status');
             $user->operator_id = request()->input('operator_id') ?? 0;
+            $user->workstation = request()->input('workstation');
             $user->save();
             $user->syncRoles(request()->input('role'));
         } else {
