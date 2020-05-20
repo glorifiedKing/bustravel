@@ -10,6 +10,7 @@ use glorifiedking\BusTravel\StopoverStation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use glorifiedking\BusTravel\ToastNotification;
 
 class RouteController extends Controller
 {
@@ -53,14 +54,7 @@ class RouteController extends Controller
         $validation = request()->validate(Route::$rules);
         //saving to the database
         if (request()->input('start_station') == request()->input('end_station')) {
-            $alerts = [
-          'bustravel-flash'         => true,
-          'bustravel-flash-type'    => 'error',
-          'bustravel-flash-title'   => 'Route Error',
-          'bustravel-flash-message' => 'Start Station cannot be the same as End Station',
-      ];
-
-            return redirect()->route('bustravel.routes.create')->with($alerts);
+            return redirect()->route('bustravel.routes.create')->withinput()->with(ToastNotification::toast('Start Station cannot be the same as End Station','Route Error','error'));
         }
         $route = new Route();
         $route->start_station = request()->input('start_station');
@@ -113,16 +107,7 @@ class RouteController extends Controller
             }
           }
         }
-
-
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Route Saving',
-        'bustravel-flash-message' => 'Route has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.routes.departures.create',$route->id)->with($alerts);
+        return redirect()->route('bustravel.routes.departures.create',$route->id)->withinput()->with(ToastNotification::toast('Route has successfully been saved','Routing Saving'));
     }
 
     //Bus Edit form route('bustravel.buses.edit')
@@ -154,14 +139,7 @@ class RouteController extends Controller
         //validation
         $validation = request()->validate(Route::$rules);
         if (request()->input('start_station') == request()->input('end_station')) {
-            $alerts = [
-          'bustravel-flash'         => true,
-          'bustravel-flash-type'    => 'error',
-          'bustravel-flash-title'   => 'Route Error',
-          'bustravel-flash-message' => 'Start Station cannot be the same as End Station',
-      ];
-
-            return redirect()->route('bustravel.routes.edit', $id)->with($alerts);
+            return redirect()->route('bustravel.routes.edit', $id)->withinput()->with(ToastNotification::toast('Start Station cannot be the same as End Station','Route Error','error'));
         }
         //saving to the database
         $route = Route::find($id);
@@ -191,14 +169,7 @@ class RouteController extends Controller
           }
         }
 
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Route Updating',
-        'bustravel-flash-message' => 'Route has successfully been updated',
-    ];
-
-        return redirect()->route('bustravel.routes.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.routes.edit', $id)->with(ToastNotification::toast('Route has successfully been Updated','Route Updating'));
     }
 
     //Delete Route
@@ -206,14 +177,9 @@ class RouteController extends Controller
     {
         $route = Route::find($id);
         $name = $route->start->name.' - '.$route->end->name;
+        $route->departure_times()->delete();
+        $route->stopovers()->delete();
         $route->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Route Deleting ',
-            'bustravel-flash-message' => 'Route '.$name.' has successfully been Deleted',
-        ];
-
-        return Redirect::route('bustravel.routes')->with($alerts);
+        return Redirect::route('bustravel.routes')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting','error'));
     }
 }

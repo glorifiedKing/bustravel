@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use glorifiedking\BusTravel\ToastNotification;
 
 
 class DriversController extends Controller
@@ -83,14 +84,7 @@ class DriversController extends Controller
         $driver->address = request()->input('address');
         $driver->status = request()->input('status');
         $driver->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Driver Saving',
-        'bustravel-flash-message' => 'Driver '.$driver->name.' has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.drivers')->with($alerts);
+        return redirect()->route('bustravel.drivers')->with(ToastNotification::toast('Driver '.$driver->name.' has successfully been saved','Driver Saving'));
     }
 
     //Bus Edit form route('bustravel.buses.edit')
@@ -102,7 +96,6 @@ class DriversController extends Controller
         if (is_null($driver)) {
             return Redirect::route('bustravel.drivers');
         }
-
         return view('bustravel::backend.drivers.edit', compact('bus_operators', 'driver','user'));
     }
 
@@ -170,14 +163,7 @@ class DriversController extends Controller
         $driver->address = request()->input('address');
         $driver->status = request()->input('status');
         $driver->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Driver Updating',
-        'bustravel-flash-message' => 'Driver has successfully been updated',
-    ];
-
-        return redirect()->route('bustravel.drivers.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.drivers.edit', $id)->with(ToastNotification::toast('Driver has successfully been updated','Driver Updating'));
     }
 
     //Delete Driver
@@ -193,6 +179,6 @@ class DriversController extends Controller
             'bustravel-flash-message' => 'Driver '.$name.' has successfully been Deleted',
         ];
 
-        return Redirect::route('bustravel.drivers')->with($alerts);
+        return Redirect::route('bustravel.drivers')->with(ToastNotification::toast($name. ' has successfully been Deleted','Driver Deleting','error'));
     }
 }

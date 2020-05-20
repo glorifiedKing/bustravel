@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use glorifiedking\BusTravel\ToastNotification;
 
 class UsersController extends Controller
 {
@@ -35,14 +36,8 @@ class UsersController extends Controller
         $permission->name = request()->input('name');
         $permission->guard_name = request()->input('guard_name') ?? 'web';
         $permission->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Permission Saving',
-        'bustravel-flash-message' => 'Permission '.$permission->name.' has successfully been saved',
-    ];
 
-        return redirect()->route('bustravel.users.permissions')->with($alerts);
+        return redirect()->route('bustravel.users.permissions')->with(ToastNotification::toast($permission->name.' has successfully been saved','Permission Saving'));
     }
 
     //Upadte Permission
@@ -53,14 +48,8 @@ class UsersController extends Controller
         $permission->name = request()->input('name');
         $permission->guard_name = request()->input('guard_name') ?? 'web';
         $permission->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Permission Updating',
-        'bustravel-flash-message' => 'Permission '.$permission->name.' has successfully been Updated',
-    ];
 
-        return redirect()->route('bustravel.users.permissions')->with($alerts);
+        return redirect()->route('bustravel.users.permissions')->with(ToastNotification::toast($permission->name.' has successfully been Updated','Permission Updating'));
     }
 
     //Delete Permission
@@ -69,14 +58,7 @@ class UsersController extends Controller
         $permission = Permission::find($id);
         $name = $permission->name;
         $permission->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Permission Deleted',
-            'bustravel-flash-message' => "Permission '.$name.' has successfully been deleted",
-        ];
-
-        return Redirect::route('bustravel.users.permissions')->with($alerts);
+        return Redirect::route('bustravel.users.permissions')->with(ToastNotification::toast($name.' has successfully been deleted','Permission Deleted','error'));
     }
 
     //fetching Roles
@@ -110,15 +92,7 @@ class UsersController extends Controller
                 $role->givePermissionTo($permission_role);
             }
         }
-
-        $alerts = [
-         'bustravel-flash'         => true,
-         'bustravel-flash-type'    => 'success',
-         'bustravel-flash-title'   => 'Role Saving',
-         'bustravel-flash-message' => 'Role '.$role->name.' has successfully been saved',
-     ];
-
-        return redirect()->route('bustravel.users.roles')->with($alerts);
+        return redirect()->route('bustravel.users.roles')->with(ToastNotification::toast($role->name.' has successfully been saved','Role Saving'));
     }
 
     public function editroles($id)
@@ -148,14 +122,7 @@ class UsersController extends Controller
                 $role->givePermissionTo($permission_role);
             }
         }
-        $alerts = [
-         'bustravel-flash'         => true,
-         'bustravel-flash-type'    => 'success',
-         'bustravel-flash-title'   => 'Role Updating',
-         'bustravel-flash-message' => 'Role '.$role->name.' has successfully been Updated',
-     ];
-
-        return redirect()->route('bustravel.users.roles.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.users.roles.edit', $id)->with(ToastNotification::toast($role->name.' has successfully been Updated','Role Updating'));
     }
 
     //Delete Role
@@ -164,14 +131,7 @@ class UsersController extends Controller
         $role = Role::find($id);
         $name = $role->name;
         $role->delete();
-        $alerts = [
-             'bustravel-flash'         => true,
-             'bustravel-flash-type'    => 'error',
-             'bustravel-flash-title'   => 'Role Deleted',
-             'bustravel-flash-message' => 'Role '.$name.' has successfully been deleted',
-         ];
-
-        return Redirect::route('bustravel.users.roles')->with($alerts);
+        return Redirect::route('bustravel.users.roles')->with(ToastNotification::toast($name.' has successfully been deleted','Role Deleted','error'));
     }
 
     //fetching Roles
@@ -212,14 +172,7 @@ class UsersController extends Controller
         $user->save();
         $user->assignRole(request()->input('role'));
 
-        $alerts = [
-          'bustravel-flash'         => true,
-          'bustravel-flash-type'    => 'success',
-          'bustravel-flash-title'   => 'User Saving',
-          'bustravel-flash-message' => 'User '.$user->name.' has successfully been saved',
-      ];
-
-        return redirect()->route('bustravel.users')->with($alerts);
+        return redirect()->route('bustravel.users')->with(ToastNotification::toast($user->name.' has successfully been saved','User Saving'));
     }
 
     public function editusers($id)
@@ -271,14 +224,7 @@ class UsersController extends Controller
             $user->syncRoles(request()->input('role'));
         }
 
-        $alerts = [
-          'bustravel-flash'         => true,
-          'bustravel-flash-type'    => 'success',
-          'bustravel-flash-title'   => 'User Updating',
-          'bustravel-flash-message' => 'User '.$user->name.' has successfully been Updated',
-      ];
-
-        return redirect()->route('bustravel.users.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.users.edit', $id)->with(ToastNotification::toast($user->name.' has successfully been Updated','User Updating'));
     }
 
     //Delete Role
@@ -312,14 +258,6 @@ class UsersController extends Controller
       $user = config('bustravel.user_model', User::class)::find($id);
       $user->password = bcrypt(request()->input('password'));
       $user->save();
-
-      $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Change Password',
-        'bustravel-flash-message' => 'User Password  has successfully been Changed',
-    ];
-
-         return redirect()->route('bustravel.users.changepassword')->with($alerts);
+         return redirect()->route('bustravel.users.changepassword')->with(ToastNotification::toast($name.' has successfully been deleted','User Deleted','error'));
     }
 }

@@ -8,16 +8,11 @@ use glorifiedking\BusTravel\GeneralSetting;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use glorifiedking\BusTravel\ToastNotification;
 
 class SettingsController extends Controller
 {
-  public
-  $flash_type ='bustravel-flash-type',
-  $flash_error ='error',
-  $flash_success ='success',
-  $flash_title ='bustravel-flash-title',
-  $flash_title_value ='Settings Saving',
-  $flash_message='bustravel-flash-message';
+
     public function __construct()
     {
         $this->middleware('web');
@@ -50,14 +45,7 @@ class SettingsController extends Controller
         $fields->is_required = request()->input('is_required');
         $fields->status = request()->input('status');
         $fields->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title  => 'Field Saving',
-        $this->flash_message  => 'Field has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.company_settings.fields')->with($alerts);
+        return redirect()->route('bustravel.company_settings.fields')->with(ToastNotification::toast($fields->field_name.'  has successfully been saved','Field Saving'));
     }
 
     public function updatefields($id, Request $request)
@@ -74,14 +62,8 @@ class SettingsController extends Controller
         $fields->is_required = request()->input('is_required');
         $fields->status = request()->input('status');
         $fields->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title    => 'Field Updating',
-        $this->flash_message  => 'Field has successfully been Updated',
-    ];
 
-        return redirect()->route('bustravel.company_settings.fields')->with($alerts);
+        return redirect()->route('bustravel.company_settings.fields')->with(ToastNotification::toast('Field has successfully been Updated','Field Updating'));
     }
 
     //Delete Field
@@ -90,14 +72,7 @@ class SettingsController extends Controller
         $field = BookingCustomField::find($id);
         $name = $field->field_name;
         $field->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            $this->flash_type    => $this->flash_error,
-            $this->flash_title   => 'Field Deleted',
-            $this->flash_message  => "Field '.$name.' has successfully been deleted",
-        ];
-
-        return Redirect::route('bustravel.company_settings.fields')->with($alerts);
+        return Redirect::route('bustravel.company_settings.fields')->with(ToastNotification::toast($name. ' has successfully been Deleted','Field Deleted','error'));
     }
 
     public function general_settings()
@@ -117,14 +92,7 @@ class SettingsController extends Controller
         $setting->setting_description = request()->input('setting_description');
         $setting->setting_value = request()->input('setting_value');
         $setting->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title    => 'General Settings Saving',
-        $this->flash_message  => 'General Settings has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.general_settings')->with($alerts);
+        return redirect()->route('bustravel.general_settings')->with(ToastNotification::toast('General Settings has successfully been saved','General Settings Saving'));
     }
 
     public function update_general_settings( Request $request)
@@ -144,14 +112,7 @@ class SettingsController extends Controller
           $setting->save();
         }
 
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title    => 'Setting Updating',
-        $this->flash_message => 'Field has successfully been Updated',
-    ];
-
-        return redirect()->route('bustravel.general_settings')->with($alerts);
+        return redirect()->route('bustravel.general_settings')->with(ToastNotification::toast('Successfully  Updated','Setting Updating'));
     }
 
     //Delete Field
