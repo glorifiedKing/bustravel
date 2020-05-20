@@ -7,6 +7,7 @@ use glorifiedking\BusTravel\Operator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use glorifiedking\BusTravel\ToastNotification;
 
 class BusesController extends Controller
 {
@@ -49,19 +50,12 @@ class BusesController extends Controller
         $validation = request()->validate(Bus::$rules);
         //saving to the database
         $bus = new Bus();
-        $bus->number_plate = request()->input('number_plate');
+        $bus->number_plate = strtoupper(str_replace(' ', '', request()->input('number_plate')));
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');
         $bus->status = request()->input('status');
         $bus->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Bus Saving',
-        'bustravel-flash-message' => 'Bus has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.buses')->with($alerts);
+        return redirect()->route('bustravel.buses')->with(ToastNotification::toast('Bus has successfully been saved','Bus Saving'));
     }
 
     //Bus Edit form route('bustravel.buses.edit')
@@ -86,34 +80,21 @@ class BusesController extends Controller
       ]);
         //saving to the database
         $bus = Bus::find($id);
-        $bus->number_plate = request()->input('number_plate');
+        $bus->number_plate = strtoupper(str_replace(' ', '', request()->input('number_plate')));
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');
         $bus->status = request()->input('status');
         $bus->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Bus Updating',
-        'bustravel-flash-message' => 'Bus has successfully been updated',
-    ];
 
-        return redirect()->route('bustravel.buses.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.buses.edit', $id)->with(ToastNotification::toast('Bus has successfully been updated','Bus Updating'));
     }
 
     //Delete Bus
     public function delete($id)
     {
         $bus = Bus::find($id);
-        
+        $name =$bus->number_plate;
         $bus->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Bus Deleting ',
-            'bustravel-flash-message' => 'Bus has successfully been Deleted',
-        ];
-
-        return Redirect::route('bustravel.buses')->with($alerts);
+        return Redirect::route('bustravel.buses')->with(ToastNotification::toast($name. ' has successfully been Deleted','Bus Deleting','error'));
     }
 }

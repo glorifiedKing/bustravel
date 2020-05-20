@@ -12,16 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
+use glorifiedking\BusTravel\ToastNotification;
 
 class RoutesDepartureTimesController extends Controller
 {
     public
-    $flash_type ='bustravel-flash-type',
-    $flash_error ='error',
-    $flash_success ='success',
-    $flash_title ='bustravel-flash-title',
-    $flash_title_value ='Route Saving',
-    $flash_message='bustravel-flash-message',
     $service_create ='bustravel.routes.departures.create',
     $service_edit ='bustravel.routes.departures.edit',
     $stopover_route_id='stopover_routeid';
@@ -65,7 +60,7 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
-           
+
 
         }else{
           $validation = request()->validate([
@@ -81,13 +76,7 @@ class RoutesDepartureTimesController extends Controller
           ]);
           if(strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time')))
           {
-            $alerts = [
-            'bustravel-flash'         => true,
-            $this->flash_type    => $this->flash_error,
-            $this->flash_title    => $this->flash_title_value,
-            $this->flash_message => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
-        ];
-           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
+           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Saving','error'));
           }
           $stopovers = request()->input($this->stopover_route_id) ?? 0;
           $arrival = request()->input('stopover_arrival_time');
@@ -96,13 +85,7 @@ class RoutesDepartureTimesController extends Controller
           foreach ($stopovers as $index => $stopover_routeid) {
             if((strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .$arrival[$index]) ) && (strtotime(strftime("%F") . ' ' .$arrival[$index]) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time'))))
             {
-              $alerts = [
-              'bustravel-flash'         => true,
-              $this->flash_type    => $this->flash_error,
-              $this->flash_title    => $this->flash_title_value,
-              $this->flash_message => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
-          ];
-             return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
+             return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
             }
 
           }
@@ -143,7 +126,7 @@ class RoutesDepartureTimesController extends Controller
         $this->flash_message => 'Route has successfully been saved',
     ];
 
-        return redirect()->route('bustravel.routes.edit',$route->route_id)->with($alerts);
+        return redirect()->route('bustravel.routes.edit',$route->route_id)->with(ToastNotification::toast(' Route has successfully been saved','Route Saving'));
     }
 
     //Bus Edit form route('bustravel.buses.edit')
@@ -191,13 +174,7 @@ class RoutesDepartureTimesController extends Controller
           $main_departure =carbon::parse(request()->input('departure_time'));
           if($main_departure > $main_arrival)
           {
-            $alerts = [
-            'bustravel-flash'         => true,
-            $this->flash_type    => $this->flash_error,
-            $this->flash_title    => $this->flash_title_value,
-            $this->flash_message => 'Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),
-        ];
-           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with($alerts);
+           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Updating','error'));
           }
           $stopovers = request()->input($this->stopover_route_id) ?? 0;
           $arrival = request()->input('stopover_arrival_time');
@@ -209,24 +186,12 @@ class RoutesDepartureTimesController extends Controller
             if(($s_arrival > $main_departure ) && ($s_arrival < $main_arrival))
             {
             }else{
-              $alerts = [
-              'bustravel-flash'         => true,
-              $this->flash_type    => $this->flash_error,
-              $this->flash_title    => $this->flash_title_value,
-              $this->flash_message => 'StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
-          ];
-             return redirect()->route($this->service_edit,$id)->withinput()->with($alerts);
+             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
             }
             if(($s_departure > $main_departure ) && ($s_departure < $main_arrival))
             {
             }else{
-              $alerts = [
-              'bustravel-flash'         => true,
-              $this->flash_type    => $this->flash_error,
-              $this->flash_title    => $this->flash_title_value,
-              $this->flash_message => 'StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),
-          ];
-             return redirect()->route($this->service_edit,$id)->withinput()->with($alerts);
+             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
             }
         }
       }
@@ -256,14 +221,7 @@ class RoutesDepartureTimesController extends Controller
                 $stopover->save();
             }
         }
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title   => 'Route Updating',
-        $this->flash_message => 'Route has successfully been updated',
-    ];
-
-        return redirect()->route($this->service_edit, $id)->with($alerts);
+        return redirect()->route($this->service_edit, $id)->with(ToastNotification::toast('Route has successfully been updated','Route Updating'));
     }
 
     //Delete Route Departure Times
@@ -272,13 +230,7 @@ class RoutesDepartureTimesController extends Controller
         $routes_departure_time = RoutesDepartureTime::find($id);
         $name = $routes_departure_time->route->start->name.' - '.$routes_departure_time->route->end->name.' at '.$routes_departure_time->departure_time;
         $routes_departure_time->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            $this->flash_type    => $this->flash_error,
-            $this->flash_title   => 'Route Departure Time Deleting ',
-            $this->flash_message => 'Route Departure Time '.$name.' has successfully been Deleted',
-        ];
 
-        return Redirect::route('bustravel.routes.departures')->with($alerts);
+        return Redirect::route('bustravel.routes.departures')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting','error'));
     }
 }
