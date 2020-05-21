@@ -154,7 +154,14 @@ class ReportsController extends Controller
                 $y_axis1[] = $monthsalescount;
             }
         }
-        $routes =Route::all();
+        if(auth()->user()->hasAnyRole('BT Administrator'))
+          {
+            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
+          }
+        else
+          {
+          $routes =Route::all();
+          }
 
         return view('bustravel::backend.reports.sales', compact('x_axis', 'y_axis','y_axis1', 'period','routes','route_id','route'));
     }
@@ -300,7 +307,15 @@ class ReportsController extends Controller
                   }
             }
         }
-        $routes =Route::all();
+        if(auth()->user()->hasAnyRole('BT Administrator'))
+          {
+            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
+          }
+        else
+          {
+          $routes =Route::all();
+          }
+
 
         return view('bustravel::backend.reports.profitableroutes', compact('x_axis', 'y_axis1', 'y_axis2', 'y_axis3', 'period', 'first', 'second', 'third','routes','route_id','weekarray','route_departures','route'));
     }
@@ -422,7 +437,15 @@ class ReportsController extends Controller
                 $y_axis[] = $monthsales;
             }
         }
-       $routes =Route::all();
+        if(auth()->user()->hasAnyRole('BT Administrator'))
+          {
+            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
+          }
+        else
+          {
+          $routes =Route::all();
+          }
+
         return view('bustravel::backend.reports.traffic', compact('x_axis', 'y_axis', 'period','route','route_id','routes'));
     }
 

@@ -63,7 +63,7 @@ class BookingsTest extends TestCase
 
     //testing create Route Departure Time
     public function testCreateBookings()
-    {
+    { $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         //  create operator
         $operator = factory(Operator::class)->create();
@@ -98,6 +98,10 @@ class BookingsTest extends TestCase
         'field_value'              => ['Bagonza Edward'],
         'user_id'                  => 1,
         'status'                   => 1,
+        'printer'                  => 1,
+        'route_type'               =>  'main_route',
+        'route_id'                 => $route->id,
+        'payment_method'           => 'cash',
       ];
         //When user submits Route Departure Time request to create endpoint
       $this->actingAs($user)->post('/transit/bookings', $data); // your route to create Route Departure Time
