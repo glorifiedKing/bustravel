@@ -46,7 +46,7 @@
             <div class="card-body">
             <div class="row">
                <div class="col-md-12">
-                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
+                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="List of Drivers">
                         <thead>
                             <tr>
                                 <th scope="col">Status</th>
@@ -71,7 +71,7 @@
                                   @endif
                                </td>
                                <td>@if($driver->picture)
-                                     <img src="{{url('/drivers/'.$driver->picture) }}" width="50px"/>
+                                     <img src="{{url('/drivers/'.$driver->picture) }}" width="50px" alt="{{$driver->name}}"/>
                                    @endif
                                 </td>
                                <td>{{$driver->name}}</td>

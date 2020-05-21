@@ -4,7 +4,7 @@
     }
 </style>
 <!-- logo -->
-<img src="" >
+<img src="" alt="Bus Travel Ticket" >
 <h4>Bus Travel Ticket</h4>
 <!-- route details -->
 <p>Ticket no:{{$booking->ticket_number}} </p>

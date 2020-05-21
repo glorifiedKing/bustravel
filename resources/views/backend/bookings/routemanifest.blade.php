@@ -32,7 +32,7 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-3">
-                <table>
+                <table summary="Route Details">
                 <tr>
                   <th scope="row"><strong>Route: </strong> </th><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
                 <tr>
@@ -40,7 +40,7 @@
                   <th scope="row"><strong>Time: </strong></th>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
                     <tr>
-                    <td><b>Driver: </b></td>  <td> {{$times_id->driver->name}}</td>
+                    <td><strong>Driver: </strong></td>  <td> {{$times_id->driver->name}}</td>
                     <tr>
                 </table>
               </div>
@@ -131,7 +131,7 @@
             <div class="card-body">
             <div class="row">
                <div class="col-md-12">
-                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
+                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="Bus Tickets">
                         <thead>
                             <tr>
                                 <th scope="col">Status</th>

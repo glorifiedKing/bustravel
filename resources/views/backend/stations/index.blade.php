@@ -37,28 +37,28 @@
                 @can('Manage BT Stations')
                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                     <a href="{{route('bustravel.stations.create')}}" class="dropdown-item">New Station</a>
-                    <a href="#" class="dropdown-item">delete selected</a>                    
+                    <a href="#" class="dropdown-item">delete selected</a>
                 </div>
                 @endcan
                 </div>
-                
+
             </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
             <div class="row">
                <div class="col-md-12">
-                    <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">
+                    <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="List of all Stations">
                         <thead>
                             <tr>
                                 <th scope="col">Station Name</th>
                                 <th scope="col">Station Code</th>
-                                <th scope="col">Station Address</th> 
+                                <th scope="col">Station Address</th>
                                 <th scope="col">Station Cordinates</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        <tbody>                        
+                        <tbody>
                         @foreach ($bus_stations as $bus_station)
                             <tr>
                                 <td>{{$bus_station->name}}</td>
@@ -131,15 +131,15 @@
 @stop
 
 @section('css')
-    
+
 @stop
 
 @section('js')
 @parent
     <script>
         $(function () {
-            $("#example1").DataTable();        
-    
+            $("#example1").DataTable();
+
         });
     </script>
 @stop

@@ -10,10 +10,10 @@
 <div class="card uper">
   <div class="card-header">
     Add Shows
-    <img src="{{asset('vendor/glorifiedking/images/test_logo.png')}}" >
+    <img src="{{asset('vendor/glorifiedking/images/test_logo.png')}}"  alt="PalmKash">
   </div>
   <div class="card-body">
-    
+
       <form method="post" >
           <div class="form-group">
               @csrf
