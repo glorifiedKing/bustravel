@@ -245,7 +245,7 @@ class UsersController extends Controller
               'bustravel-flash-message' => 'User '.$name.' has successfully been deleted',
           ];
 
-        return Redirect::route('bustravel.users')->with($alerts);
+        return Redirect::route('bustravel.users')->with(ToastNotification::toast($name.' has successfully been deleted','User Deleted','error'));
     }
 
     public function changepassword()
@@ -263,6 +263,6 @@ class UsersController extends Controller
       $user = config('bustravel.user_model', User::class)::find($id);
       $user->password = bcrypt(request()->input('password'));
       $user->save();
-         return redirect()->route('bustravel.users.changepassword')->with(ToastNotification::toast($name.' has successfully been deleted','User Deleted','error'));
+         return redirect()->route('bustravel.users.changepassword')->with(ToastNotification::toast(' Password successfully changed','Password Changed'));
     }
 }
