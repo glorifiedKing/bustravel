@@ -45,7 +45,7 @@
                 </table>
               </div>
               <div class="col-md-3">
-                <table>
+                <table summary="Bus Details">
                 <tr>
                   <th scope="row"><strong>Bus : </strong> </th><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
                 <tr>
