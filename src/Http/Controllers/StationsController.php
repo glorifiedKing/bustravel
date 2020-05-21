@@ -27,30 +27,30 @@ class StationsController extends Controller
     }
 
     /**
-     * Suggest stations
+     * Suggest stations.
      *
-     * @param  \Illuminate\HttpRequest       $request
+     * @param  \Illuminate\HttpRequest $request
      * 
      * @return \Illuminate\Http\JsonResponse
      */
     public function suggest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'nullable|integer',
+            'id'      => 'nullable|integer',
             'station' => 'sometimes|min:2',
-            'limit' => 'sometimes|integer|min:1|max:100',
+            'limit'   => 'sometimes|integer|min:1|max:100',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'The given data is invalid.',
-                'errors' => $validator->errors(),
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $query = Station::select(['id', 'code', 'name']);
 
-        if($request->filled('id')) {
+        if ($request->filled('id')) {
             return response()->json($query->findOrFail($request->id));
         }
 
