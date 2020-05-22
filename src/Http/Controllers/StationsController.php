@@ -6,6 +6,7 @@ use glorifiedking\BusTravel\Station;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use glorifiedking\BusTravel\ToastNotification;
 
 class StationsController extends Controller
@@ -24,6 +25,40 @@ class StationsController extends Controller
         $bus_stations = Station::all();
 
         return view('bustravel::backend.stations.index', compact('bus_stations'));
+    }
+
+    /**
+     * Suggest stations.
+     *
+     * @param  \Illuminate\HttpRequest $request
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function suggest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id'      => 'nullable|integer',
+            'station' => 'sometimes|min:2',
+            'limit'   => 'sometimes|integer|min:1|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'The given data is invalid.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $query = Station::select(['id', 'code', 'name']);
+
+        if ($request->filled('id')) {
+            return response()->json($query->findOrFail($request->id));
+        }
+
+        $query->where('name', 'like', "%{$request->station}%");
+        $query->orWhere('code', 'like', "%{$request->station}%");
+
+        return response()->json(['stations' => $query->get()]);
     }
 
     public function show($id = null)

@@ -3,6 +3,7 @@
 Route::get('test-backend', 'TestController@index')->name('bustravel.testdefault');
 Route::get('test-frontend', 'TestController@front')->name('bustravel.testfront');
 Route::get('stations', 'StationsController@index')->name('bustravel.stations');
+Route::get('stations/suggest', 'StationsController@suggest')->name('bustravel.stations.suggest');
 Route::get('stations/create', 'StationsController@show')->name('bustravel.stations.create');
 Route::post('stations/create', 'StationsController@store')->name('bustravel.stations.store');
 Route::get('stations/view/{id}', 'StationsController@show')->name('bustravel.stations.edit');
