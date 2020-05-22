@@ -15,6 +15,7 @@ class BusesController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Buses');
     }
 
     //fetching buses route('bustravel.buses')

@@ -59,8 +59,8 @@ class BookingsController extends Controller
     public function create()
     {
         $operator_id = Auth::user()->operator_id ?? 0;
-        
-        
+
+
         $my_workstation_id = Auth::user()->workstation ?? 0;
         $workstation = Station::find($my_workstation_id);
         $printers = BusTravelPrinter::where('operator_id',$operator_id)->get();
@@ -86,22 +86,22 @@ class BookingsController extends Controller
         $payment_method = $request->payment_method;
 
         $departure_time = ($route_type == 'main_route') ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
-        
-        $operator = $departure_time->route->operator ?? $departure_time->route->route->operator;        
-        
+
+        $operator = $departure_time->route->operator ?? $departure_time->route->route->operator;
+
         if($payment_method == 'cash')
-        {        
+        {
             $pad_length = 6;
             $pad_char = 0;
             $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
-            $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"            
+            $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
             $booking = new Booking();
             $booking->routes_departure_time_id = $departure_time->id;
             $booking->amount = $departure_time->route->price;
             $booking->date_paid = date('Y-m-d');
             $booking->date_of_travel = date('Y-m-d');
             $booking->time_of_travel = $departure_time->departure_time;
-            $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());                            
+            $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
             $booking->ticket_number = $ticket_number;
             $booking->user_id = Auth::user()->id;
             $booking->status = '1';
@@ -120,10 +120,10 @@ class BookingsController extends Controller
                     $custom_fields->field_value = $fields_values[$index];
                     $custom_fields->save();
                 }
-            }        
+            }
 
 
-            // try printing 
+            // try printing
             $bus_reg_no = $departure_time->bus->number_plate ?? $departure_time->main_route_departure_time->bus->number_plate ?? "NONE";  //GET
             $departure_station = $booking->route_departure_time->route->start->name ?? $booking->stop_over_route_departure_time->route->start->name;
             $arrival_station = $booking->route_departure_time->route->end->name ?? $booking->stop_over_route_departure_time->route->end->name;
@@ -134,7 +134,7 @@ class BookingsController extends Controller
             {
                 try
                 {
-                    
+
                     $connector = new DummyPrintConnector();
                     $profile = CapabilityProfile::load("simple");
                     $printer = new Printer($connector);
@@ -223,8 +223,8 @@ class BookingsController extends Controller
                     $print_output .= "\n";
                     $print_output .= "\n";
                     $print_output .= "Powered by PalmKash \n";
-                    $print_output .= "www.transport.palmkash.com \n"; 
-                //network printer 
+                    $print_output .= "www.transport.palmkash.com \n";
+                //network printer
                 try
                 {
                     $fp = pfsockopen($selected_printer->printer_url,$selected_printer->printer_port);
@@ -237,12 +237,12 @@ class BookingsController extends Controller
                     return redirect()->route('bustravel.bookings.create')->with(ToastNotification::toast($error,'Error Printing','error'));
                 }
             }
-            
+
 
         }
         else if($payment_method == 'palm_kash')
         {
-            // connect to api 
+            // connect to api
             return redirect()->route('bustravel.bookings.create')->with(ToastNotification::toast('Payment with Palm Kash successful'));
         }
 
@@ -345,10 +345,10 @@ class BookingsController extends Controller
       return view('bustravel::backend.bookings.manifest', compact('bookings','driver_routes','driver'));
   }
   public function route_manifest($id)
-  {   
+  {
       $today =date('Y-m-d');
       if(request()->isMethod('post'))
-      { 
+      {
           $validation = request()->validate([
             'ticket' => 'required',
           ]);
@@ -363,7 +363,7 @@ class BookingsController extends Controller
           $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
           $ticket ="";
       }
-      
+
       $tracking=RouteTracking::where('routes_times_id',$id)->where('date_of_travel',$today)->first();
       $times_id =RoutesDepartureTime::find($id);
       $not_booked =$times_id->bus->seating_capacity -$bookings->count();
@@ -453,9 +453,9 @@ class BookingsController extends Controller
         }])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],
-            ['operator_id','=',$operator_id],            
+            ['operator_id','=',$operator_id],
         ])->get();
-       
+
         foreach($route_results as $key=> $route)
         {
             foreach($route->departure_times as $d_time)
@@ -463,7 +463,7 @@ class BookingsController extends Controller
                 // check if route is full
                 $seats_left = $d_time->number_of_seats_left(date('Y-m-d'));
                 if($seats_left > 0)
-                { 
+                {
                     $result_array = array(
                         'id' => $d_time->id,
                         'price' => $route->price,
@@ -471,23 +471,23 @@ class BookingsController extends Controller
                         'route_type' => 'main_route',
                         'operator' => $route->operator->name,
                         'seats_left' => $seats_left
-                    ); 
+                    );
                     $results[] = $result_array;
                 }
             }
         }
 
         $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
-            
+
             $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
                 $query->where('days_of_week', 'like', "%$travel_day_of_week%");
             });
             $query->whereTime('arrival_time','>',$travel_time);
         },
-        
+
         ])->where([
             ['start_station', '=', $from],
-            ['end_station', '=', $to],            
+            ['end_station', '=', $to],
         ])->get();
         foreach($stop_over_routes as $key=> $route)
         {
@@ -505,13 +505,13 @@ class BookingsController extends Controller
                             'route_type' => 'stop_over_route',
                             'operator' => $route->route->operator->name,
                             'seats_left' => $seats_left
-                        ); 
+                        );
                         $results[] = $result_array;
                     }
                 }
             }
-        }    
-        
+        }
+
         return $results;
     }
 }

@@ -11,8 +11,7 @@ class AddUserIdDriversTable extends Migration
      *
      * @return void
      */
-     public $tableName='drivers';
-     public $columnName='user_id';
+     public $tableName='drivers', $columnName='user_id';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

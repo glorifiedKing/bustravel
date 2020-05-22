@@ -16,6 +16,7 @@ class OperatorsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Operators');
     }
 
     //fetching operators route('bustravel.operators')
@@ -60,7 +61,7 @@ class OperatorsController extends Controller
         $operator->phone_number = request()->input('phone_number');
         $operator->status = request()->input('status');
         $operator->save();
-    
+
 
         return redirect()->route('bustravel.operators')->with(ToastNotification::toast('Operator has successfully been saved'));
     }
@@ -110,7 +111,7 @@ class OperatorsController extends Controller
         $operator->phone_number = request()->input('phone_number');
         $operator->status = request()->input('status');
         $operator->save();
-       
+
 
         return redirect()->route('bustravel.operators.edit', $id)->with(ToastNotification::toast('Operator has successfully been updated','Operator Updating'));
     }
@@ -121,7 +122,7 @@ class OperatorsController extends Controller
         $operator = Operator::find($id);
         $name = $operator->name;
         $operator->delete();
-        
+
 
         return Redirect::route('bustravel.operators')->with(ToastNotification::toast("Operator $name has successfully been deleted",'Operator Deleted','error'));
     }

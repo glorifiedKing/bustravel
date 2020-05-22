@@ -11,11 +11,12 @@ class AlterUsersPhonenumberTable extends Migration
      *
      * @return void
      */
+     public $tableName='users',$columnName='workstation';
     public function up()
     {
-        Schema::table('users', function ($table) {
-            if (!Schema::hasColumn('users', 'phone_number')) {
-                $table->string('phone_number')->nullable();
+        Schema::table($this->tableName, function ($table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->string($this->columnName)->nullable();
             }
         });
     }
@@ -27,8 +28,8 @@ class AlterUsersPhonenumberTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('phone_number');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

@@ -11,8 +11,7 @@ class AddWorkstationColumnUsersTable extends Migration
      *
      * @return void
      */
-     public $tableName='users';
-     public $columnName='workstation';
+     public $tableName='users',$columnName='workstation';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

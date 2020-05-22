@@ -11,8 +11,7 @@ class AddRouteTypeToBookings extends Migration
      *
      * @return void
      */
-    public $tableName='bookings';
-    public $columnName='route_type';
+    public $tableName='bookings', $columnName='route_type';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

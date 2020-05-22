@@ -11,11 +11,12 @@ class AlterUsersOperatorIdTable extends Migration
      *
      * @return void
      */
+    public $tableName='users',$columnName='operator_id';
     public function up()
     {
-        Schema::table('users', function ($table) {
-            if (!Schema::hasColumn('users', 'operator_id')) {
-                $table->integer('operator_id')->default(0);
+        Schema::table($this->columnName, function ($table) {
+            if (!Schema::hasColumn($this->columnName, $this->columnName)) {
+                $table->integer($this->columnName)->default(0);
             }
         });
     }
@@ -27,8 +28,8 @@ class AlterUsersOperatorIdTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('operator_id');
+        Schema::table($this->columnName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }

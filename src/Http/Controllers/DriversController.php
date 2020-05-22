@@ -70,7 +70,6 @@ class DriversController extends Controller
             $user->status=1;
             $user->operator_id = auth()->user()->operator_id;
             $user->save();
-            $role= Role::where('name','BT Driver')->first();
             $user->syncRoles('BT Driver');
         //saving to the database
         $driver = new Driver();
@@ -139,8 +138,7 @@ class DriversController extends Controller
           $user1->status=1;
           $user1->operator_id = auth()->user()->operator_id;
           $user1->save();
-          $role= Role::where('name','BT Driver')->first();
-          $user1->syncRoles($role->id);
+          $user1->syncRoles('BT Driver');
           $user_id = $user1->id;
 
         }else{
@@ -148,8 +146,7 @@ class DriversController extends Controller
           $user->email= request()->input('email');
           $user->phone_number = request()->input('phone_number');
           $user->save();
-          $role= Role::where('name','BT Driver')->first();
-          $user->syncRoles($role->id);
+          $user->syncRoles('BT Driver');
           $user_id = $user->id;
 
         }
@@ -172,13 +169,6 @@ class DriversController extends Controller
         $driver = Driver::find($id);
         $name = $driver->name;
         $driver->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Driver Deleting ',
-            'bustravel-flash-message' => 'Driver '.$name.' has successfully been Deleted',
-        ];
-
         return Redirect::route('bustravel.drivers')->with(ToastNotification::toast($name. ' has successfully been Deleted','Driver Deleting','error'));
     }
 }

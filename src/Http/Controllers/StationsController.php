@@ -15,6 +15,7 @@ class StationsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:Manage BT Stations');
     }
 
     public function index()
@@ -31,7 +32,7 @@ class StationsController extends Controller
      * Suggest stations.
      *
      * @param  \Illuminate\HttpRequest $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function suggest(Request $request)

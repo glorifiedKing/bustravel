@@ -11,8 +11,7 @@ class AddLanguageColumnPaymentTransactionsTable extends Migration
      *
      * @return void
      */
-     public $tableName='payment_transactions';
-     public $columnName='language';
+     public $tableName='payment_transactions', $columnName='language';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
