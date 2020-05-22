@@ -19,8 +19,8 @@
             </div>
                         <div class="row">
                             <div class="col-md-12">
-                              
-                                <table style="width:100%" id="route_table" class="table table-striped table-hover table-responsive">
+
+                                <table style="width:100%" id="route_table" class="table table-striped table-hover table-responsive" summary="Routes Details">
                                     <thead>
                                         <tr>
                                             <tr>
@@ -44,7 +44,7 @@
                                       </tr>
                                     </thead>
                                     <tbody>
-                                     
+
                                       @foreach($routes_times as $index => $route_time)
                                       <tr>
                                     <td>{{$route_time->route->start->name??'None'}} ( {{$route_time->route->start->code??'None'}} ) </td>
@@ -65,10 +65,10 @@
                                       @endforeach
                                     </tbody>
                                 </table>
-                                
+
                             </div>
                         </div>
-                 
+
 @endsection
 @section('js')
 <script>
@@ -80,7 +80,7 @@ $(document).ready(function(){
                 var table =  $("#route_table").DataTable({
               	});
 
-            
+
             // Apply the search
               table.columns().every(function (index) {
                   $("#route_table thead tr:eq(1) th:eq(" + index + ") input").on("keyup change", function () {

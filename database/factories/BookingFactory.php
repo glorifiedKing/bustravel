@@ -14,5 +14,6 @@ $factory->define(Booking::class, function (Faker $faker) {
         'ticket_number'            => 'RAT/001',
         'user_id'                  => 1,
         'status'                   => 1,
+        'payment_transaction_id' => 1,
     ];
 });

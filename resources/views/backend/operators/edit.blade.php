@@ -86,7 +86,7 @@
                        <input type="file" id="exampleInputFile" name="newlogo">
                        <input type="hidden" name="logo" value={{$bus_operator->logo}}>
                        @if($bus_operator->logo)
-                             <img src="{{url('/logos/'.$bus_operator->logo) }}" width="70px"/>
+                             <img src="{{url('/logos/'.$bus_operator->logo) }}" width="70px" alt="{{$bus_operator->name}}"/>
                        @endif
                     </div>
                     <div class=" col-md-3 form-group">

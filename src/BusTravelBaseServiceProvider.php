@@ -47,6 +47,11 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                                   'icon' => 'fa fa-bell',
                               ],
                               [
+                                'text' => 'Printers',
+                                'url'  => route('bustravel.printers.list'),
+                                'icon' => 'fa fa-print',
+                              ],
+                              [
                                 'text' => 'Email Templates',
                                 'url'  => route('bustravel.email.templates'),
                                 'icon' => 'fa fa-bell',

@@ -82,7 +82,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="exampleInputEmail1">Email</label>
-                        <input type="text" name="email" value="{{$user->email}}"  class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Email">
+                        <input type="text" name="email" value="{{$user->email??''}}"  class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Email">
                         @if ($errors->has('email'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('email') }}</strong>
@@ -103,7 +103,7 @@
                        <input type="file" id="exampleInputFile" name="newpicture">
                        <input type="hidden" name="picture" value={{$driver->picture}}>
                        @if($driver->picture)
-                             <img src="{{url('/drivers/'.$driver->picture) }}" width="70px"/>
+                             <img src="{{url('/drivers/'.$driver->picture) }}" width="70px" alt="{{$driver->name}}"/>
                        @endif
                     </div>
                     <div class=" col-md-3 form-group">

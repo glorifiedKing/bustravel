@@ -130,5 +130,16 @@ Route::get('sms_template/{id}/edit','TicketTemplateController@edit_sms_template'
 Route::post('sms_template/{id}/edit','TicketTemplateController@update_sms_template')->name('bustravel.sms.templates.update');
 Route::get('sms_template/{id}/delete','TicketTemplateController@delete_sms_template')->name('bustravel.sms.templates.delete');
 
+// printers
+Route::get('printers','PrintersController@view_printers')->name('bustravel.printers.list');
+Route::get('printers/new','PrintersController@create_printer')->name('bustravel.printers.create');
+Route::post('printers/new','PrintersController@save_printer')->name('bustravel.printers.save');
+Route::get('printers/{id}/edit','PrintersController@edit_printer')->name('bustravel.printers.edit');
+Route::post('printers/{id}/edit','PrintersController@update_printer')->name('bustravel.printers.update');
+Route::get('printers/{id}/delete','PrintersController@delete_printer')->name('bustravel.printers.delete');
+
+
+Route::post('api/getBusServices/{operatorId}','BookingsController@get_route_times')->name('bustravel.api.get.route.times');
+
 // payment reports 
 Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');

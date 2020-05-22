@@ -5,6 +5,7 @@ use glorifiedking\BusTravel\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use glorifiedking\BusTravel\ToastNotification;
 
 class FaqsController extends Controller
 {
@@ -31,14 +32,7 @@ class FaqsController extends Controller
         $faq->question =  request()->input('question');
         $faq->answer = request()->input('answer');
         $faq->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Faq Saving',
-        'bustravel-flash-message' => 'Faq has successfully been saved',
-    ];
-
-        return redirect()->route('bustravel.faqs')->with($alerts);
+        return redirect()->route('bustravel.faqs')->with(ToastNotification::toast('Faq has successfully been saved','Faq Saving'));
     }
 
     public function updatefaqs($id, Request $request)
@@ -52,14 +46,7 @@ class FaqsController extends Controller
         $faq->question =  request()->input('question');
         $faq->answer = request()->input('answer');
         $faq->save();
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Faq Updating',
-        'bustravel-flash-message' => 'Faq has successfully been Updated',
-    ];
-
-        return redirect()->route('bustravel.faqs')->with($alerts);
+        return redirect()->route('bustravel.faqs')->with(ToastNotification::toast('Faq has successfully been updated','Faq Updating'));
     }
 
     //Delete Field
@@ -68,13 +55,6 @@ class FaqsController extends Controller
         $faq = Faq::find($id);
         $name = $faq->question;
         $faq->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Faq Deleted',
-            'bustravel-flash-message' =>  $name." has successfully been deleted",
-        ];
-
-        return Redirect::route('bustravel.faqs')->with($alerts);
+        return Redirect::route('bustravel.faqs')->with(ToastNotification::toast($name. ' has successfully been Deleted','Faq Deleting','error'));
     }
 }

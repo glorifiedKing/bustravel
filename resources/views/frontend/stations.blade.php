@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-md-12 ticket-card cart">
                               {!! $stations->links() !!}
-                                <table class="table">
+                                <table class="table" summary="List of all Stations">
                                     <tbody>
                                       <tr>
                                       <th scope="col">Station </th>

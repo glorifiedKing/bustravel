@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use glorifiedking\BusTravel\ToastNotification;
 
 class StationsController extends Controller
 {
@@ -92,14 +93,7 @@ class StationsController extends Controller
         $station->save();
 
         //send flash session data
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'success',
-            'bustravel-flash-title'   => 'Station Saving',
-            'bustravel-flash-message' => 'Station has successfully been saved',
-        ];
-
-        return redirect()->route('bustravel.stations')->with($alerts);
+        return redirect()->route('bustravel.stations')->with(ToastNotification::toast('Station has successfully been saved','Station Saving'));
     }
 
     public function destroy($id)
@@ -113,13 +107,6 @@ class StationsController extends Controller
         $station->delete();
 
         //send flash session data
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Station Deleting',
-            'bustravel-flash-message' => "Station: $station->name has successfully been deleted",
-        ];
-
-        return redirect()->route('bustravel.stations')->with($alerts);
+        return redirect()->route('bustravel.stations')->with(ToastNotification::toast('Station '. $station->name. ' has successfully been deleted','Station Deleting','error'));
     }
 }

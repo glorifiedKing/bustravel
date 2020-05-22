@@ -1,6 +1,6 @@
 @extends('bustravel::frontend.layouts.app')
 @section('title', 'PalmKash Bus Ticketing Homepage')
-@section('page-heading','Bus Ticketing System')        
+@section('page-heading','Bus Ticketing System')
 @section('navigaton-bar')
 
 
@@ -18,7 +18,7 @@
                         @endphp
                         @foreach($main_route_departures as $index => $route)
                         <div class="row">
-                            @php                                
+                            @php
                                 $key = array_search($route->id,array_column($cart,'id'));
                                 $date_of_travel = $cart[$key]['date_of_travel'];
                                 $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
@@ -29,7 +29,7 @@
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
                                 <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
-                                    
+
                                 </ul>
                                 <div class="card">
                                     <div class="card-body">
@@ -47,13 +47,13 @@
                                         </ul>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                         @endforeach
                         @foreach($stop_over_route_departures as $index => $route)
                         <div class="row">
-                            @php                                
+                            @php
                                 $key = array_search($route->id,array_column($cart,'id'));
                                 $date_of_travel = $cart[$key]['date_of_travel'];
                                 $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
@@ -64,7 +64,7 @@
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
                                     <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
-                                    
+
                                 </ul>
                                 <div class="card">
                                     <div class="card-body">
@@ -82,13 +82,13 @@
                                         </ul>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                         @endforeach
                         <div class="row">
                             <div class="col-md-12 ticket-card cart">
-                                <table class="table">
+                                <table class="table" summary="Cart Details">
                                     <tbody>
                                         <tr>
                                             <th scope="row">Trip total</th>
