@@ -11,8 +11,7 @@ class AddPaymentSourceBookingsTable extends Migration
      *
      * @return void
      */
-     public $tableName='bookings';
-     public $columnName='payment_transaction_id';
+     public $tableName='bookings', $columnName='payment_transaction_id';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

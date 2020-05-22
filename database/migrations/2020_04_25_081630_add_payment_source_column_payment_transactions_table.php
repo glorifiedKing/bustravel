@@ -11,8 +11,7 @@ class AddPaymentSourceColumnPaymentTransactionsTable extends Migration
      *
      * @return void
      */
-     public $tableName='payment_transactions';
-     public $columnName='payment_source';
+     public $tableName='payment_transactions', $columnName='payment_source';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

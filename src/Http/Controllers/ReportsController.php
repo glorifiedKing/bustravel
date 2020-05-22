@@ -16,6 +16,7 @@ class ReportsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Reports');
     }
 
     //sales Report

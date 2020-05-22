@@ -11,8 +11,7 @@ class AddInverseRoutesTable extends Migration
      *
      * @return void
      */
-    public $tableName='routes';
-    public $columnName='inverse';
+    public $tableName='routes', $columnName='inverse';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

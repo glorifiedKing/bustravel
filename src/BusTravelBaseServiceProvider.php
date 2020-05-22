@@ -68,7 +68,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'text' => 'Operators',
                             'url'  => route('bustravel.operators'),
                             'icon' => 'fa fa-bus',
-                            'can' => 'Manage BT Stations',
+                            'can' => 'View BT Operators',
                         ],
                         [
                             'text' => 'Stations',
@@ -85,7 +85,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
             'url'     => '#',
             'icon'    => 'fa fa-cube',
             'submenu' => [
-                
+
 
                 [
                     'text' => 'Buses',

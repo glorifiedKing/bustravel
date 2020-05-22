@@ -18,7 +18,6 @@ class UsersController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
-    }
 
     //fetching permissions
     public function permissions()
@@ -238,13 +237,6 @@ class UsersController extends Controller
         $user = config('bustravel.user_model', User::class)::find($id);
         $name = $user->name;
         $user->delete();
-        $alerts = [
-              'bustravel-flash'         => true,
-              'bustravel-flash-type'    => 'error',
-              'bustravel-flash-title'   => 'User Deleted',
-              'bustravel-flash-message' => 'User '.$name.' has successfully been deleted',
-          ];
-
         return Redirect::route('bustravel.users')->with(ToastNotification::toast($name.' has successfully been deleted','User Deleted','error'));
     }
 

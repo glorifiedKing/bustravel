@@ -11,8 +11,7 @@ class AddBoardedBookingsTable extends Migration
      *
      * @return void
      */
-     public $tableName='bookings';
-     public $columnName='boarded';
+     public $tableName='bookings',$columnName='boarded';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

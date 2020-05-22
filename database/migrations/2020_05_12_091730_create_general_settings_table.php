@@ -18,7 +18,7 @@ class CreateGeneralSettingsTable extends Migration
             $table->bigIncrements('id');
             $table->string('setting_prefix');
             $table->string('setting_description');
-            $table->string('setting_value')->nullable();;
+            $table->string('setting_value')->nullable();
             $table->timestamps();
             });
     }

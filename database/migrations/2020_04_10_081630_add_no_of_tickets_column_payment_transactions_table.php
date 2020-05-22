@@ -11,8 +11,7 @@ class AddNoOfTicketsColumnPaymentTransactionsTable extends Migration
      *
      * @return void
      */
-     public $tableName='payment_transactions';
-     public $columnName='no_of_tickets';
+     public $tableName='payment_transactions', $columnName='no_of_tickets';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {

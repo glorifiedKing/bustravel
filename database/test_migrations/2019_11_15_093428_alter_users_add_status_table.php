@@ -11,11 +11,12 @@ class AlterUsersAddStatusTable extends Migration
      *
      * @return void
      */
+    public $tableName='users',$columnName='status';
     public function up()
     {
-        Schema::table('users', function ($table) {
-            if (!Schema::hasColumn('users', 'status')) {
-                $table->tinyInteger('status')->default(0);
+        Schema::table($this->tableName, function ($table) {
+            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
+                $table->tinyInteger($this->columnName)->default(0);
             }
         });
     }
@@ -27,8 +28,8 @@ class AlterUsersAddStatusTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table($this->tableName, function (Blueprint $table) {
+            $table->dropColumn($this->columnName);
         });
     }
 }
