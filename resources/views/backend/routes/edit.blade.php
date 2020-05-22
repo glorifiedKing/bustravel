@@ -106,7 +106,7 @@
 
                    <h4 class="box-title">
                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                       Stopovers  <i class="fa fa-mouse-pointer"></i>
+                       Stopovers  <span class="fa fa-mouse-pointer"></span>
                      </a>
                    </h4>
                  <div id="collapseOne" class="panel-collapse collapse in">
