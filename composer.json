@@ -14,7 +14,8 @@
         "doctrine/dbal": "^2.10",
         "guzzlehttp/guzzle": "^6.5",
         "propaganistas/laravel-phone": "^4.2",
-        "te7a-houdini/laravel-trix": "^2.0"
+        "te7a-houdini/laravel-trix": "^2.0",
+        "africastalking/africastalking": "^2.3"
     },
     "require-dev": {
         "orchestra/testbench": "^4.3",

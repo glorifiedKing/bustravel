@@ -12,6 +12,7 @@ use glorifiedking\BusTravel\PaymentTransaction;
 use glorifiedking\BusTravel\OperatorPaymentMethod;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
+use glorifiedking\BusTravel\GeneralSetting;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -23,6 +24,7 @@ class ApiController extends Controller
     {
         //$this->middleware('web');
         //$this->middleware('auth');
+        $this->middleware('bt_key')->except('index','show_debit_test_form','get_station_by_name','get_route_times');
     }
 
     public function show_debit_test_form()
@@ -216,6 +218,7 @@ class ApiController extends Controller
             $first_name = $request->input('name') ?? 'Guest';
             $payee_reference = $request->input('msisdn');
             $date_of_travel = $request->input('date_of_travel') ?? date('Y-m-d');
+            $language = $request->input('language') ?? 'kinyarwanda';
 
             
 
@@ -255,7 +258,7 @@ class ApiController extends Controller
             $main_routes = ($route_type == 'main_route') ? [$route_id] : [];
             $stop_over_routes = ($route_type == 'stop_over_route') ? [$route_id] : [];
             $amount = $route->route->price;
-            $sms_cost = 10;  // must get it from config later 
+            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
             $amount += $sms_cost;
             $paying_user = 0;
 
@@ -285,6 +288,7 @@ class ApiController extends Controller
             $payment_transaction->transport_operator_id = $operator_id;
             $payment_transaction->no_of_tickets = $no_of_tickets;
             $payment_transaction->payment_source = 'ussd';
+            $payment_transaction->language = $language;
             $payment_transaction->save();
 
             // dd($payment_transaction);   
