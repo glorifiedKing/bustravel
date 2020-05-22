@@ -16,8 +16,10 @@ use glorifiedking\BusTravel\EmailTemplate;
 use glorifiedking\BusTravel\OperatorPaymentMethod;
 use glorifiedking\BusTravel\CreditTransaction;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
+use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Mail\TicketEmail;
+use AfricasTalking\SDK\AfricasTalking;
 
 class ProcessDebitCallback implements ShouldQueue
 {
@@ -73,7 +75,9 @@ class ProcessDebitCallback implements ShouldQueue
                     $pad_length = 6;
                     $pad_char = 0;
                     $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
-
+                    $send_sms = $transaction->send_sms;
+                    $africas_talking_username = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
+                    $africas_talking_apikey = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
                     $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
                     foreach($paid_main_routes as $departure_id)
                     {
@@ -133,12 +137,14 @@ class ProcessDebitCallback implements ShouldQueue
                     // 1 Sms 
                     $sms_template = SmsTemplate::where([
                         ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET']
+                        ['purpose','=','TICKET'],
+                        ['language','=',$transaction->language]
                     ])->first();
                     // 2 email 
                     $email_template = EmailTemplate::where([
                         ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET']
+                        ['purpose','=','TICKET'],
+                        ['language','=',$transaction->language]
                     ])->first();
                     $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
                     foreach($tickets_bought as $ticket_id)
@@ -156,7 +162,7 @@ class ProcessDebitCallback implements ShouldQueue
                             ['operator_id','=', $operator->id],
                             ['is_default','=', '1'],
                         ])->first();
-                        $sms_cost = 5; // must get from config later
+                        $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
 
                         // remove sms_cost from amount 
                        $merchant_credit = ($transaction->send_sms == 1) ? $transaction->amount - $sms_cost : $transaction->amount;
@@ -221,9 +227,27 @@ class ProcessDebitCallback implements ShouldQueue
 
                         }
                         
-                        if($sms_template)
+                        if($sms_template && $send_sms == 1)
                         {
                           // send sms 
+                            try{
+                                $AT       = new AfricasTalking($africas_talking_username, $africas_talking_apikey);                                
+                                $sms      = $AT->sms();
+                                
+                                $result   = $sms->send([
+                                    'to'      => $transaction->phone_number,
+                                    'message' => $sms_text
+                                ]);
+                                $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
+                                \Storage::disk('local')->append('sms_log.txt',$sms_log);
+
+                            }
+                            catch(\Exception $e)
+                            {
+                                $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
+
+                            }
                         }                    
 
                         if($email_template)

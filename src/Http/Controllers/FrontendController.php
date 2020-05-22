@@ -21,6 +21,7 @@ use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Auth;
+use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\Jobs\ProcessDebitCallback;
 use glorifiedking\BusTravel\Jobs\ProcessCreditCallback;
 
@@ -29,7 +30,8 @@ class FrontendController extends Controller
     public function __construct()
     {
         $this->middleware('web')->only('checkout');
-        $this->middleware('auth')->only('checkout');
+        $this->middleware('auth')->only('checkout','process_payment');
+        $this->middleware('bt_key')->only('process_payment_callback','credit_request_callback');
     }
 
     public function homepage()
@@ -177,7 +179,8 @@ class FrontendController extends Controller
 
     public function checkout(Request $request)
     {
-        return view('bustravel::frontend.checkout');
+        $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 9;
+        return view('bustravel::frontend.checkout',compact('sms_cost'));
     }
 
     public function bus_times(Request $request)
@@ -211,6 +214,8 @@ class FrontendController extends Controller
             'phone_number'  => 'requiredif:payment_method,mobile_money|phone:RW',
             'country' => 'required',
         ]);
+
+        $language = $request->language ?? 'english';
 
         // get amount to pay 
         $amount = 0;
@@ -247,7 +252,8 @@ class FrontendController extends Controller
         //add sms amount
         if($send_sms == 1)
         {
-            $sms_cost = 5;  // must get it from config later 
+
+            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 9;   
             $amount += $sms_cost;
         }      
         
@@ -297,6 +303,7 @@ class FrontendController extends Controller
         $payment_transaction->date_of_travel = $date_of_travel;
         $payment_transaction->transport_operator_id = $operator_id;
         $payment_transaction->no_of_tickets = $no_of_tickets;
+        $payment_transaction->language = $language;
         $payment_transaction->save();
 
         // dd($payment_transaction);   
@@ -353,173 +360,7 @@ class FrontendController extends Controller
         $notification_message = 'Payment Error: Payment has not been successfull! Try again';            
          
         // wait 1 minute and call check status// for final result of payment  
- /*       sleep(60);    
-        $request_uri = $base_api_url."/checktransactionstatus";
-        try{
-            $client = new \GuzzleHttp\Client(['verify' => false]);
-            $checkstatus = $client->request('POST', $request_uri, [                    
-                    'json'   => [
-                        "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                        "transaction_account" => $payee_reference,
-                        "transaction_reference_number" => $payment_transaction->id,                       
-                    ]
-                    ]); 
-        
-        
-       
-        
-        $code = $checkstatus->getStatusCode(); 
-        if($code == 200) 
-        {               
-         
-          
-          
-        // ignore if callback has already updated transaction 
-            $payment_transaction->refresh();
-            $transaction = $payment_transaction;
-            //check status 
-            if($transaction->status == 'pending')
-            {
-                //get new status 
-                
-
-                $response_body = json_decode($checkstatus->getBody(),true);
-                // log request
-                $status_variables = var_export($response_body,true);
-                 $status_log = date('Y-m-d H:i:s')." WITH:".$status_variables."";
-        //log the request 
-        \Storage::disk('local')->append('payment_checkstatus_log.txt',$status_log);
-                $new_transaction_status = $response_body['transaction_status'];
-                //for success create ticket add to email and sms queue
-                if($new_transaction_status == 'failed')
-                {
-                 // immediate failure 
-                    $transaction->status = 'failed';
-                    $transaction->payment_gateway_result = $response_body['status_code'];
-                    $transaction->save();
-                    $notification_type = 'Failed';
-                    $notification_message = 'Payment has not been successful!';
-                    
-                }
-                else if($new_transaction_status == 'completed')
-                {
-                    // create tickets
-                    $tickets_bought = array();
-                    $paid_main_routes = $transaction->main_routes;
-                    $paid_stop_over_routes = $transaction->stop_over_routes;
-                    $operator = Operator::find($transaction->transport_operator_id);
-                    $pad_length = 6;
-                    $pad_char = 0;
-                    $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
-
-                    $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
-                    foreach($paid_main_routes as $departure_id)
-                    {
-                        
-                        $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
-                        $booking = new Booking;
-                        $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
-                        $booking->routes_departure_time_id = $departure_id;
-                        $booking->amount = $departure_time->route->price;
-                        $booking->date_paid = date('Y-m-d');
-                        $booking->date_of_travel = $transaction->date_of_travel;
-                        $booking->time_of_travel = $departure_time->departure_time;
-                        $booking->ticket_number = $ticket_number;
-                        $booking->user_id = $transaction->user_id;
-                        $booking->route_type = 'main_route';
-                        $booking->save();
-
-                        $tickets_bought[] = $booking->id;
-
-                    } 
-                    foreach($paid_stop_over_routes as $departure_id)
-                    {
-                        
-                        $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
-                        $booking = new Booking;
-                        $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
-                        $booking->routes_departure_time_id = $departure_id;
-                        $booking->amount = $departure_time->route->price;
-                        $booking->date_paid = date('Y-m-d');
-                        $booking->date_of_travel = $transaction->date_of_travel;
-                        $booking->time_of_travel = $departure_time->departure_time;
-                        $booking->ticket_number = $ticket_number;
-                        $booking->route_type = 'stop_over_route';
-                        $booking->user_id = $transaction->user_id;
-                        $booking->save();
-
-                        $tickets_bought[] = $booking->id;
-
-                    }
-
-                    // update transaction status
-                    $transaction->status = 'completed';
-                    $transaction->save();
-
-                    //send notifications 
-                    // 1 Sms 
-                    $sms_template = SmsTemplate::where([
-                        ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET']
-                    ])->first();
-                    // 2 email 
-                    $email_template = EmailTemplate::where([
-                        ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET']
-                    ])->first();
-                    $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
-                    foreach($tickets_bought as $ticket_id)
-                    {
-                        $ticket = Booking::find($ticket_id);
-                        $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
-                        //dd($departure_route);
-                        $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,$transaction->date_of_travel,$departure_route->arrival_time,$transaction->date_of_travel,$ticket->amount,$ticket->date_paid,$transaction->payment_method);
-                        $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                        $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
-                        if($sms_template)
-                        {
-                          // send sms 
-                          if(strpos($notification_message, 'Payment Error:') !== false)
-                            {
-                                $notification_message = '';
-                            }
-                        }                    
-
-                        if($email_template)
-                        {
-                           //send email 
-                           
-                           $data = ['message' => $email_message];
-
-                            \Mail::to($transaction->email)->send(new TicketEmail($data));
-                            if(strpos($notification_message, 'Payment Error:') !== false)
-                            {
-                                $notification_message = '';
-                            }
-                            $notification_type = 'success';
-                            $notification_message .= 'An Email has been sent to you with your ticket details!';
-
-
-                        }
-                    }
-                    
-
-                    
-
-                }
-
-
-                
-            }
-        }
-        
-    }catch(\Exception $e)
-    {
-            $error = $e->getMessage();
-            $error_log = date('Y-m-d H:i:s')."error: ".$error."";
-        \Storage::disk('local')->append('payment_errors_log.txt',$error_log);
-    }
- */   
+    
             $notification = array(
                 'type' => $notification_type,
                 'message' => $notification_message
