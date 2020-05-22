@@ -119,12 +119,7 @@ class RoutesDepartureTimesController extends Controller
                 $stopover->save();
             }
         }
-        $alerts = [
-        'bustravel-flash'         => true,
-        $this->flash_type    => $this->flash_success,
-        $this->flash_title    => $this->flash_title_value,
-        $this->flash_message => 'Route has successfully been saved',
-    ];
+     
 
         return redirect()->route('bustravel.routes.edit',$route->route_id)->with(ToastNotification::toast(' Route has successfully been saved','Route Saving'));
     }

@@ -42,7 +42,7 @@
           </p>
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">Edit {{$route->start->name}} ( {{$route->start->code}} )  - {{$route->end->name}} ( {{$route->end->code}} ) Route</h5>
+            <h5 class="card-title">Edit {{$route->start->name}}  -- {{$route->end->name}}  Route</h5>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -106,7 +106,7 @@
 
                    <h4 class="box-title">
                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                       Stopovers Routes
+                       Stopovers  <i class="fa fa-mouse-pointer"></i>
                      </a>
                    </h4>
                  <div id="collapseOne" class="panel-collapse collapse in">
@@ -135,6 +135,7 @@
                    <div class="form-group col-md-12">
 
                      <table id="new-table" class="table table-striped table-hover">
+                      <caption>stops<caption>
                           <thead>
                             <tr>
                               <th scope="col" style="width: 30px"></th>
@@ -188,7 +189,7 @@
               <div class="box-footer">
                 <div class="form-group col-md-12">
                   <button type="submit" class="btn btn-primary">Submit</button>
-                  <a href="{{route('bustravel.routes.departures.create',$route->id)}}" class="btn btn-info">Create Departure and Arrival Times</a>
+                  
                 </div>
               </div>
             </form>
@@ -212,15 +213,16 @@
       <div class="card-header">
         <h4 class="card-title">
       <a  data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-        Route {{$route->start->name}} [ {{$route->start->code}} ] - {{$route->end->name}} [ {{$route->end->code}} ]  Departure/Arrival  Times
+        {{$route->start->name}}  -- {{$route->end->name}}   Service  Times
          <button type="button" class="btn btn-box-tool" data-toggle="collapse" data-target="#collapseExample" >
            <i class="fa fa-plus" aria-hidden="true"></i>
          </button>
       </a>
     </h4>
       </div>
-      <div class="collapse" id="collapseExample">
+      <div class="collapses in" id="collapseExample">
         <div class=" card-body">
+          <a href="{{route('bustravel.routes.departures.create',$route->id)}}" class="btn btn-info">Create Bus Service Times</a>
           <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" style="width:100%">
                  <thead>
                      <tr>

@@ -27,31 +27,43 @@
                     <h5 class="card-title">Add Route</h5>
                 </div>
                 <div class="card-body">
+                    <div class="callout">
+                        Please select your stations in order with the time at each station, add it to the route, repeat to add all stopovers,  then click generate to generate all possible combinations of sub-routes, add price, choose days of the week the service operates and save
+                    </div>
                     <form id="add-stations-form" method="GET">
                         <div class="row">
                             <div class="col-md-3 mb-4">
+                                <label>Station</label>
                                 <select class="form-control" name="station" required>
                                     <option value="" selected>Choose station...</option>
                                 </select>
                             </div>
                             <div class="col-md-2 mb-4">
+                                <label>Time at this station</label>
                                 <input type="time" class="form-control" name="time" value="" placeholder="00:00:00" required>
                             </div>
                             <div class="col-md-2 mb-4">
+                                <label>.</label>
                                 <input type="submit" class="btn btn-block btn-primary" id="add" value="Add">
                             </div>
                             <div class="col-md-2 mb-4">
+                                <label>.</label>
                                 <input type="button" class="btn btn-block btn-danger" id="remove" value="Remove">
                             </div>
                             <div class="col-md-2 mb-4">
+                                <label>.</label>
                                 <input type="button" class="btn btn-block btn-success" id="generate" value="Generate">
                             </div>
                         </div>
                     </form>
                     <div class="row" id="stations"></div>
-                    <form method="POST" action="">
+                    <form method="POST" action="{{route('bustravel.routes.store')}}">
+                        {{csrf_field() }}                    
+
+
                         <div class="responsive" id="routes">
                             <table class="table" id="routes-tbl">
+                                <caption>generated routes</caption>
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -66,6 +78,64 @@
                                 <tbody></tbody>
                             </table>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 ">
+                                <label>Bus To Use</label>
+                                <select class="form-control select2 {{ $errors->has('bus_id') ? ' is-invalid' : '' }}" name="bus_id"  placeholder="Select bus">
+                                  <option value="">Select Bus</option>
+                                  @foreach($buses as $bus)
+                                      <option value="{{$bus->id}}" {{ old('bus_id') == $bus->id ? 'selected' :  "" }}>{{$bus->number_plate}} - {{$bus->operator->name}} / Seating Capacity - {{$bus->seating_capacity}}</option>
+                                  @endforeach
+                                </select>
+                                @if ($errors->has('bus_id'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('bus_id') }}</strong>
+                                    </span>
+                                @endif
+                              </div>
+                              <div class="form-group col-md-6 ">
+                                <label>Drivers</label>
+                                <select class="form-control select2 {{ $errors->has('end_station') ? ' is-invalid' : '' }}" name="driver_id"  placeholder="Select Operator">
+                                  <option value="">Select Driver</option>
+                                  @foreach($drivers as $driver)
+                                      <option value="{{$driver->id}}" {{ old('driver_id') == $driver->id ? 'selected' :  "" }} >{{$driver->name}} - {{$driver->operator->name}}</option>
+                                  @endforeach
+                                </select>
+                                @if ($errors->has('driver_id'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('driver_id') }}</strong>
+                                    </span>
+                                @endif
+                              </div>
+                            <div class="form-group col-md-6">
+                                <label> Days of the week</label>
+                                <select class="form-control select2 {{ $errors->has('days_of_week') ? ' is-invalid' : '' }}" name="days_of_week[]"  placeholder="Select Days of Week" multiple required>
+                                <option value="Monday">Monday</option>
+                                <option  value="Tuesday">Tuesday</option>
+                                <option  value="Wednesday">Wednesday</option>
+                                <option  value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Public">Public</option>
+                                </select>
+                                @if ($errors->has('days_of_week'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('days_of_week') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class=" col-md-3 form-group">
+                                <label for="signed" class=" col-md-12 control-label">Auto Create Inverse</label>
+                                <label class="radio-inline">
+                                  <input type="radio"  name="has_inverse" value="1"> Yes</label>
+                                </label>
+                               <label class="radio-inline">
+                                  <input type="radio"  name="has_inverse" value="0" checked> No</label>
+                               </label>
+                            </div>
+                    </div>
+                        <button class="btn btn-info">Submit</button>
                     </form>
                 </div>
             </div>
@@ -114,7 +184,7 @@
                 placeholder: "Choose station...",
                 ajax: {
                     type: 'GET',
-                    url: 'http://localhost:8000/transit/stations/suggest',
+                    url: "{{route('bustravel.stations.suggest')}}",
                     dataType: 'json',
                     delay: 250,
                     cache: true,
