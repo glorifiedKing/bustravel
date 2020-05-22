@@ -111,6 +111,7 @@
                     <div class=" col-md-12 form-group">
                       @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
                       <table id="new-table" class="table table-striped table-hover">
+                        <caption>stops</caption>
                            <thead>
                              <tr>
                                <th scope="col" style="width: 30px"></th>

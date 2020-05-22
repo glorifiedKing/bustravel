@@ -115,12 +115,13 @@
                       $stopoverstimes =$route_departure_time->stopovers_times()->get();
                       @endphp
                     <table id="new-table" class="table table-striped table-hover">
+                      <caption>stops</caption>
                          <thead>
                            <tr>
                              <th scope="col" style="width: 30px"></th>
-                             <th scope="col" > Stop Over</th>
-                             <th scope="col" >Arrival Time</th>
-                             <th scope="col" >Departure Time</th>
+                             <th scope="col" > From - TO</th>
+                             <th scope="col" >Arrival Time at this station[TO]</th>
+                             <th scope="col" >Departure Time from previous station[From]</th>
                            </tr>
                          </thead>
 
@@ -133,6 +134,7 @@
                                            <tr item-id='{{$stoverstation->id}}'>
                                              <td><input type='checkbox' name='checkeditem[]'></td>
                                              <td >
+                                                {{$stoverstation->start_stopover_station->name}} -
                                                    {{$stoverstation->end_stopover_station->name}}
                                                  <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
                                              </td>

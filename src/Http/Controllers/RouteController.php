@@ -6,7 +6,11 @@ use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\StopoverRoute;
+use glorifiedking\BusTravel\Bus;
+use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\StopoverStation;
+use glorifiedking\BusTravel\RoutesDepartureTime;
+use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -40,56 +44,112 @@ class RouteController extends Controller
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
-        $bus_operators = Operator::where('status', 1)->orderBy('name', 'ASC')->get();
-        $stations = Station::orderBy('name', 'ASC')->get();
-        $routes = Route::where('status', 1)->get();
+        $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
+              
 
-        return view('bustravel::backend.routes.create', compact('bus_operators', 'stations', 'routes'));
+        return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
     }
 
     // saving a new buses in the database  route('bustravel.buses.store')
     public function store(Request $request)
     {
         //validation
-        $validation = request()->validate(Route::$rules);
-        //saving to the database
-        if (request()->input('start_station') == request()->input('end_station')) {
-            return redirect()->route('bustravel.routes.create')->withinput()->with(ToastNotification::toast('Start Station cannot be the same as End Station','Route Error','error'));
-        }
+        $request->validate([
+          'routes' => 'required|array',
+          'routes.*.from' => 'required|exists:stations,id',
+          'routes.*.to' => 'required|exists:stations,id',
+          'routes.*.in' => 'required|date_format:H:i',
+          'routes.*.out' => 'required|date_format:H:i,after:in',
+          'routes.*.price' => 'required|numeric',
+          'routes.*.order' => 'required|integer',
+          "days_of_week"    => "required|array",
+          'days_of_week.*' => 'required',
+      ]);
+
+      $all_routes = $request->routes;
+      $start_station = $all_routes[0]['from'];
+      $last_key = array_key_last($all_routes);
+      $end_station = $all_routes[$last_key]['to'];
+
+      //get route's of 
+      $main_route = array_filter($all_routes,function($route) use($start_station,$end_station){
+            return ($route['from'] == $start_station && $route['to'] == $end_station);
+      });
+     
+      $first_key_main_route = array_key_first($main_route);
+      $main_route_price = $main_route[$first_key_main_route]['price'];
+      $main_route_departure = $main_route[$first_key_main_route]['in'];
+      $main_route_arrival = $main_route[$first_key_main_route]['out'];
+
+      // get stop over routes 
+      unset($all_routes[$first_key_main_route]);
+      $stop_over_routes = $all_routes;
+   
         $route = new Route();
-        $route->start_station = request()->input('start_station');
-        $route->end_station = request()->input('end_station');
-        $route->price = str_replace(',', '', request()->input($this->route_price));
-        $route->return_price = str_replace(',', '', request()->input($this->route_return_price));
-        $route->status = request()->input('status');
+        $route->start_station = $start_station;
+        $route->end_station = $end_station;
+        $route->price = str_replace(',', '', $main_route_price);
+        $route->return_price = str_replace(',', '', $main_route_price);
+        $route->status = 1;
         $route->save();
-        //stop over routes
-        $stopovers = request()->input('stopover_startid') ?? 0;
-        if ($stopovers != 0) {
-            $endid = request()->input('stopover_endid');
-            $order = request()->input('stopover_order');
-            $price = request()->input('stopover_price');
-            foreach ($stopovers as $index => $stopover_endid) {
+
+        // create main service 
+        $route_time = new RoutesDepartureTime();
+        $route_time->route_id = $route->id;
+        $route_time->departure_time = $main_route_departure;
+        $route_time->arrival_time = $main_route_arrival;
+        $route_time->bus_id = request()->input('bus_id') ?? 0;
+        $route_time->driver_id = request()->input('driver_id') ?? 0;
+        $route_time->days_of_week = request()->input('days_of_week');
+        $route_time->restricted_by_bus_seating_capacity = 1;
+        $route_time->status = 1;
+        $route_time->save();
+        
+        if (!empty($stop_over_routes)) {
+            
+            foreach ($stop_over_routes as $index => $stop_over) {
                 $stopover = new StopoverStation();
                 $stopover->route_id = $route->id;
-                $stopover->start_station = $stopover_endid;
-                $stopover->end_station = $endid[$index];
-                $stopover->price = $price[$index];
-                $stopover->order = $order[$index];
+                $stopover->start_station = $stop_over['from'];
+                $stopover->end_station = $stop_over['to'];
+                $stopover->price = $stop_over['price'];
+                $stopover->order = $stop_over['order'];
                 $stopover->save();
+
+                $stop_over_time = new RoutesStopoversDepartureTime();
+                $stop_over_time->routes_times_id = $route_time->id;
+                $stop_over_time->route_stopover_id = $stopover->id;
+                $stop_over_time->arrival_time = $stop_over['out'];
+                $stop_over_time->departure_time = $stop_over['in'];
+                $stop_over_time->save();
+
+                
+
             }
         }
         //Create Route Inverse
         if(request()->input('has_inverse')==1)
         {
           $inverse = new Route();
-          $inverse->start_station = request()->input('end_station');
-          $inverse->end_station = request()->input('start_station');
-          $inverse->price = str_replace(',', '', request()->input($this->route_return_price));
-          $inverse->return_price = str_replace(',', '', request()->input($this->route_price));
-          $inverse->status = request()->input('status');
+          $inverse->start_station = $end_station;
+          $inverse->end_station = $start_station;
+          $inverse->price = str_replace(',', '', $main_route_price);
+          $inverse->return_price = str_replace(',', '', $main_route_price);
+          $inverse->status = 1;
           $inverse->inverse = $route->id;
           $inverse->save();
+
+          $inverse_route_time = new RoutesDepartureTime();
+          $inverse_route_time->route_id = $route->id;
+          $inverse_route_time->departure_time = $main_route['in'];
+          $inverse_route_time->arrival_time = $main_route['out'];
+          $inverse_route_time->bus_id = request()->input('bus_id') ?? 0;
+          $inverse_route_time->driver_id = request()->input('driver_id') ?? 0;
+          $inverse_route_time->days_of_week = request()->input('days_of_week');
+          $inverse_route_time->restricted_by_bus_seating_capacity = 1;
+          $inverse_route_time->status = 1;
+          $inverse_route_time->save();
           //Inverse stop over routes
           $route_stopovers =$route->stopovers()->orderBy('order','DESC')->get();
           if(!is_null($route_stopovers))
@@ -104,10 +164,22 @@ class RouteController extends Controller
               $inverse_stopover->order = $index;
               $inverse_stopover->save();
 
+              $inverse_stop_over_time = new RoutesStopoversDepartureTime();
+              $inverse_stop_over_time->routes_times_id = $inverse_route_time->id;
+              $inverse_stop_over_time->route_stopover_id = $inverse_stopover->id;
+              $inverse_stop_over_time->arrival_time = $stop_over_routes[$index]['out'];
+              $inverse_stop_over_time->departure_time = $stop_over_routes[$index]['in'];
+              $inverse_stop_over_time->save();
+
+
             }
           }
         }
-        return redirect()->route('bustravel.routes.departures.create',$route->id)->withinput()->with(ToastNotification::toast('Route has successfully been saved','Routing Saving'));
+
+       
+
+
+        return redirect()->route('bustravel.routes')->withinput()->with(ToastNotification::toast('Route and 1st Bus service have successfully been saved','Routing Saving'));
     }
 
     //Bus Edit form route('bustravel.buses.edit')
