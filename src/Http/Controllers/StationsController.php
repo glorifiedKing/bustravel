@@ -15,7 +15,7 @@ class StationsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
-        $this->middleware('can:Manage BT Stations');
+        $this->middleware('can:Manage BT Stations')->except('suggest');
     }
 
     public function index()
