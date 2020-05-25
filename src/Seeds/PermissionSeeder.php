@@ -55,6 +55,7 @@ class PermissionSeeder extends Seeder
         $permission36 = factory(Permission::class)->create(['name' => 'Create BT Users']);
         $permission37 = factory(Permission::class)->create(['name' => 'Update BT Users']);
         $permission38 = factory(Permission::class)->create(['name' => 'Delete BT Users']);
+        $permission39 = factory(Permission::class)->create(['name' => 'View BT Driver Manifest']);
 
         $role1 = factory(Role::class)->create(['name' => 'BT Super Admin']);
         $role1->givePermissionTo([
@@ -64,7 +65,7 @@ class PermissionSeeder extends Seeder
           $permission19, $permission20, $permission21, $permission22, $permission23, $permission24,
           $permission25, $permission26, $permission27, $permission28, $permission29, $permission30,
           $permission31, $permission32, $permission33, $permission34, $permission35, $permission36,
-          $permission37, $permission38,
+          $permission37, $permission38,$permission39,
         ]);
         $role2 = factory(Role::class)->create(['name' => 'BT Administrator']);
         $role2->givePermissionTo([
@@ -72,7 +73,7 @@ class PermissionSeeder extends Seeder
           $permission16, $permission17, $permission18, $permission19, $permission20, $permission21,
           $permission22, $permission23, $permission24, $permission25, $permission26, $permission27,
           $permission28, $permission29, $permission30, $permission31, $permission32, $permission33,
-          $permission34, $permission35, $permission36, $permission37, $permission38,
+          $permission34, $permission35, $permission36, $permission37, $permission38,$permission39,
         ]);
         $role3 = factory(Role::class)->create(['name' => 'BT Cashier']);
         $role3->givePermissionTo([
@@ -85,7 +86,7 @@ class PermissionSeeder extends Seeder
 
         $role5 = factory(Role::class)->create(['name' => 'BT Driver']);
         $role5->givePermissionTo([
-          $permission24, $permission25, $permission31, $permission32,
+          $permission24, $permission25, $permission31, $permission32,$permission39,
         ]);
         $role6 = factory(Role::class)->create(['name' => 'BT User']);
         $user = User::where('email', 'admin@admin.com')->first();

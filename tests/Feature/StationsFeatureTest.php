@@ -17,16 +17,15 @@ class StationsFeatureTest extends TestCase
     public function testDenyGuestAccess()
     {
         //$this->withoutExceptionHandling();
-        $response = $this->get('/transit/stations');
+        $response = $this->get('/transit/routes');
         $response->assertStatus(302);
     }
 
     public function testDenyUserWithoutPermissions()
-    {
-        //$this->withoutExceptionHandling();
-        $user = factory(User::class)->create();
-        $response = $this->actingAs($user)->get('/transit/stations');
-        $response->assertStatus(302);
+    {  Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+        $response = $this->actingAs($user)->get('/transit/routes');
+        $response->assertStatus(403);
     }
 
     public function testListStations()
@@ -49,9 +48,10 @@ class StationsFeatureTest extends TestCase
 
     public function testDenyStationsCreateForm()
     {
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
         $response = $this->actingAs($user)->get('/transit/stations/create');
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 
     public function testStationsCreateForm()

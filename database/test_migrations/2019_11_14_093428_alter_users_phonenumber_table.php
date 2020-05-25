@@ -11,7 +11,7 @@ class AlterUsersPhonenumberTable extends Migration
      *
      * @return void
      */
-     public $tableName='users',$columnName='workstation';
+     public $tableName='users',$columnName='phone_number';
     public function up()
     {
         Schema::table($this->tableName, function ($table) {

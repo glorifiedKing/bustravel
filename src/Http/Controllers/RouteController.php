@@ -24,6 +24,8 @@ class RouteController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Routes')->only('index');
+        $this->middleware('can:Create BT Routes')->except('index');
     }
 
     //fetching buses route('bustravel.buses')
@@ -46,7 +48,7 @@ class RouteController extends Controller
     {
         $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
         $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
-              
+
 
         return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
     }
@@ -72,20 +74,20 @@ class RouteController extends Controller
       $last_key = array_key_last($all_routes);
       $end_station = $all_routes[$last_key]['to'];
 
-      //get route's of 
+      //get route's of
       $main_route = array_filter($all_routes,function($route) use($start_station,$end_station){
             return ($route['from'] == $start_station && $route['to'] == $end_station);
       });
-     
+
       $first_key_main_route = array_key_first($main_route);
       $main_route_price = $main_route[$first_key_main_route]['price'];
       $main_route_departure = $main_route[$first_key_main_route]['in'];
       $main_route_arrival = $main_route[$first_key_main_route]['out'];
 
-      // get stop over routes 
+      // get stop over routes
       unset($all_routes[$first_key_main_route]);
       $stop_over_routes = $all_routes;
-   
+
         $route = new Route();
         $route->start_station = $start_station;
         $route->end_station = $end_station;
@@ -94,7 +96,7 @@ class RouteController extends Controller
         $route->status = 1;
         $route->save();
 
-        // create main service 
+        // create main service
         $route_time = new RoutesDepartureTime();
         $route_time->route_id = $route->id;
         $route_time->departure_time = $main_route_departure;
@@ -105,9 +107,9 @@ class RouteController extends Controller
         $route_time->restricted_by_bus_seating_capacity = 1;
         $route_time->status = 1;
         $route_time->save();
-        
+
         if (!empty($stop_over_routes)) {
-            
+
             foreach ($stop_over_routes as $index => $stop_over) {
                 $stopover = new StopoverStation();
                 $stopover->route_id = $route->id;
@@ -124,7 +126,7 @@ class RouteController extends Controller
                 $stop_over_time->departure_time = $stop_over['in'];
                 $stop_over_time->save();
 
-                
+
 
             }
         }
@@ -176,7 +178,7 @@ class RouteController extends Controller
           }
         }
 
-       
+
 
 
         return redirect()->route('bustravel.routes')->withinput()->with(ToastNotification::toast('Route and 1st Bus service have successfully been saved','Routing Saving'));

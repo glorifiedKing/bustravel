@@ -37,7 +37,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
 
                         [
                             'text'    => 'Company Settings',
-                            'url'     => route('bustravel.company_settings'),
+                            //'url'     => route('bustravel.company_settings'),
                             'icon'    => 'fa fa-cog',
                             'can' => 'Manage BT Operator Settings',
                             'submenu' => [
@@ -68,7 +68,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'text' => 'Operators',
                             'url'  => route('bustravel.operators'),
                             'icon' => 'fa fa-bus',
-                            'can' => 'View BT Operators',
+                            'can' => 'Manage BT General Settings',
                         ],
                         [
                             'text' => 'Stations',
@@ -142,24 +142,26 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'text' => 'Route Performance',
                         'url'  => route('bustravel.reports.profitroute'),
                         'icon' => 'fa fa-route',
-
+                        'can' => 'View BT Sales Reports',
                     ],
                     [
                         'text' => 'Passenger Traffic',
                         'url'  => route('bustravel.reports.traffic'),
                         'icon' => 'fa fa-traffic-light',
-
+                        'can' => 'View BT Sales Reports',
                     ],
                     [
                         'text' => 'Bookings',
                         'url'  => route('bustravel.reports.bookings'),
                         'icon' => 'fa fa-money-check',
+                        'can' => 'View BT Reports'
 
                     ],
                     [
                         'text' => 'Cashier Report',
                         'url'  => route('bustravel.bookings.cashier.report'),
                         'icon' => 'fa fa-money-check',
+                        'can' => 'View BT Reports'
 
                     ],
                     [
@@ -230,6 +232,7 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                                     'text' => 'Faqs',
                                     'url'  => route('bustravel.faqs'),
                                     'icon' => 'fas fa-fw fa-flag',
+                                    'can' => 'Manage BT General Settings',
                                 ],
                             ],
 

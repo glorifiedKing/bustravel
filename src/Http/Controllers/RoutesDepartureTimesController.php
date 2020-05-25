@@ -25,6 +25,7 @@ class RoutesDepartureTimesController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+          $this->middleware('can:Create BT Routes');
     }
 
     //fetching buses route('bustravel.buses')
@@ -119,7 +120,7 @@ class RoutesDepartureTimesController extends Controller
                 $stopover->save();
             }
         }
-     
+
 
         return redirect()->route('bustravel.routes.edit',$route->route_id)->with(ToastNotification::toast(' Route has successfully been saved','Route Saving'));
     }

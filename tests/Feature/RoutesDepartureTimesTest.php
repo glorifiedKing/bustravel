@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\Operator;
@@ -18,9 +18,9 @@ class RoutesDepartureTimesTest extends TestCase
     //testing getting Routes Departure Times list
     public function testGetRoutesDepartureTimes()
     {
-
-
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $user->operator_id = $operator->id;
@@ -51,7 +51,9 @@ class RoutesDepartureTimesTest extends TestCase
     public function testCreateRouteDepartureTimes()
     {
 
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $user->operator_id = $operator->id;
@@ -87,7 +89,9 @@ class RoutesDepartureTimesTest extends TestCase
     //testing Route Departure Time  Update
     public function testUpdateRoutesDepartureTimes()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $user->operator_id = $operator->id;
         $user->save();
@@ -125,7 +129,9 @@ class RoutesDepartureTimesTest extends TestCase
     // testing Route Departure Time Delete
     public function testDeleteRoute()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $user->operator_id = $operator->id;
         $user->save();

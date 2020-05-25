@@ -35,6 +35,10 @@ class BookingsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Bookings')->only('index');
+        $this->middleware('can:Create BT Bookings')->only('create','store','edit','update','delete');
+        $this->middleware('can:View BT Driver Manifest')->only('manifest','route_manifest','boarded');
+
     }
 
     //fetching buses route('bustravel.buses')
@@ -45,6 +49,10 @@ class BookingsController extends Controller
          $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
          $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
          $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->get();
+        }
+        elseif(auth()->user()->hasAnyRole('BT Cashier'))
+        {
+         $bookings = Booking::where('user_id',auth()->user()->id)->orderBy('id', 'DESC')->get();
         }
       else
         {
@@ -323,12 +331,14 @@ class BookingsController extends Controller
 
   public function manifest()
   {
+    $travel_day_of_week = date('l');
     if(auth()->user()->hasAnyRole('BT Driver'))
       {
        $driver =Driver::where('user_id',auth()->user()->id)->first();
        $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-       $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)->get();
+       $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
+       ->where('days_of_week', 'like', "%$travel_day_of_week%")->get();
        $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->get();
       }
     else
@@ -336,7 +346,7 @@ class BookingsController extends Controller
         $driver =Driver::where('user_id',auth()->user()->id)->first();
         $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
         $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-        $driver_routes= RoutesDepartureTime::get();
+        $driver_routes= RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->get();
         $bookings = Booking::orderBy('id', 'DESC')->get();
 
       }
@@ -390,10 +400,21 @@ class BookingsController extends Controller
   public function route_tracking($id)
   {
     $today =date('Y-m-d');
+    $travel_time = date('H:i');
     $route =RoutesDepartureTime::find($id);
+    $bus_seating_capacity=$route->bus->seating_capacity??null;
+    if(is_null($bus_seating_capacity))
+    {
+     return redirect()->route('bustravel.bookings.manifest')->with(ToastNotification::toast('No Bus Assigned to this Route','Route Tracking','error'));
+    }
+
     $tracking= RouteTracking::where('date_of_travel',$today)->first();
     if(is_null($tracking))
     {
+      if($travel_time> $route->departure_time)
+      {
+       return redirect()->route('bustravel.bookings.manifest')->with(ToastNotification::toast('Departure Time has already elapsed','Route Tracking','error'));
+      }
      $tracking =new RouteTracking;
      $tracking->routes_times_id =$route->id;
      $tracking->driver_id =$route->driver_id;
@@ -408,7 +429,7 @@ class BookingsController extends Controller
   {
     $tracking =RouteTracking::find($id);
     $tracking->started=1;
-    $tracking->start_time =date('H:i A');
+    $tracking->start_time =date('H:i');
     $tracking->save();
     $alerts = [
         'bustravel-flash'         => true,

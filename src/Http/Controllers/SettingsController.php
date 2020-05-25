@@ -17,7 +17,8 @@ class SettingsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
-        $this->middleware('can:Manage BT General Settings');
+        $this->middleware('can:Manage BT General Settings')->only('general_settings','store_general_settings','update_general_settings');
+        $this->middleware('can:Manage BT Operator Settings')->only('fields','storefields','updatefields','deletefields');
     }
 
     //fetching operators route('bustravel.operators')

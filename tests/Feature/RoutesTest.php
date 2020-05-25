@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\Station;
@@ -15,7 +15,9 @@ class RoutesTest extends TestCase
     //testing getting Routes list
     public function testGetRoutes()
     {
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
@@ -37,7 +39,9 @@ class RoutesTest extends TestCase
     //testing create Route
     public function testCreateRoute()
     {
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
@@ -59,7 +63,9 @@ class RoutesTest extends TestCase
     //testing Route Update
     public function testUpdateRoute()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
@@ -77,7 +83,9 @@ class RoutesTest extends TestCase
     // testing Route Delete
     public function testDeleteRoute()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
