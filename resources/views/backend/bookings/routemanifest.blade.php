@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Bookings - {{date('d-m-Y')}}
+        <h1 class="m-0 text-dark"><a href="{{route('bustravel.bookings.manifest')}}" class="btn btn-info">Back</a>  Bookings - {{date('d-m-Y')}}
         @if($tracking->started==1 && $tracking->ended==0)
         <span class="badge badge-warning ">Bus  Enroute  </span>
         @elseif($tracking->ended==1)

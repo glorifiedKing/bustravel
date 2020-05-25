@@ -16,7 +16,7 @@ class OperatorsController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
-        $this->middleware('can:View BT Operators');
+        $this->middleware('can:Manage BT General Settings');
     }
 
     //fetching operators route('bustravel.operators')

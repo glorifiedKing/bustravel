@@ -14,7 +14,9 @@ class DriversTest extends TestCase
     //testing getting drivers list
     public function testGetDrivers()
     {
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         //  create Driver
@@ -32,6 +34,7 @@ class DriversTest extends TestCase
     {
         Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $data = [
@@ -57,6 +60,7 @@ class DriversTest extends TestCase
     {
         Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $user1 =factory(User::class)->create();
         $user1->syncRoles('BT Driver');
@@ -76,7 +80,10 @@ class DriversTest extends TestCase
     // testing Driver Delete
     public function testDeleteDriver()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
+        
         $operator = factory(Operator::class)->create();
         $driver = factory(Driver::class)->create(['operator_id' => $operator->id]);
         $this->actingAs($user)->delete('/transit/drivers/'.$driver->id.'/delete'); // your route to delete Bus

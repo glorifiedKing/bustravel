@@ -12,14 +12,6 @@ class BusesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testDenyUnauthorized()
-    {
-        $user = factory(User::class)->create();
-        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
-        $response = $this->actingAs($user, 'web')->get('/transit/buses');
-        $response->assertStatus(302);
-    }
-
     //testing getting operators list
     public function testGetBuses()
     {
@@ -41,7 +33,9 @@ class BusesTest extends TestCase
     //testing create Bus
     public function testCreateBus()
     {
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $data = [
@@ -61,7 +55,9 @@ class BusesTest extends TestCase
     //testing Bus Update
     public function testUpdateBus()
     {
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
         $bus->number_plate = 'UBE200';
@@ -73,7 +69,9 @@ class BusesTest extends TestCase
     // testing Bus Delete
     public function testDeleteBus()
     {
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $bus = factory(Bus::class)->create(['operator_id' => $operator->id]);
         $this->actingAs($user)->delete('/transit/buses/'.$bus->id.'/delete'); // your route to delete Bus

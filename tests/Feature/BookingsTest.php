@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\BookingCustomField;
 use glorifiedking\BusTravel\BookingsField;
@@ -21,7 +21,9 @@ class BookingsTest extends TestCase
     //testing getting Bookings list
     public function testGetBookings()
     {
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
@@ -63,8 +65,11 @@ class BookingsTest extends TestCase
 
     //testing create Route Departure Time
     public function testCreateBookings()
-    { $this->withoutExceptionHandling();
-        $user = factory(User::class)->create();
+    {
+      $this->withoutExceptionHandling();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         //  create operator
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
@@ -114,8 +119,9 @@ class BookingsTest extends TestCase
     //testing Route Departure Time  Update
     public function testUpdateBooking()
     {
-        $this->withoutExceptionHandling();
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();
@@ -159,7 +165,9 @@ class BookingsTest extends TestCase
     // testing Route Departure Time Delete
     public function testDeleteBooking()
     {
-        $user = factory(User::class)->create();
+       Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+       $user = factory(User::class)->create();
+       $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $station1 = factory(Station::class)->create();
         $station2 = factory(Station::class)->create();

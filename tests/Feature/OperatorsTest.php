@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,7 +13,9 @@ class OperatorsTest extends TestCase
     //testing getting operators list
     public function testGetOperators()
     {
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         //When user visit the operator page
       $response = $this->actingAs($user)->get('/transit/operators'); // your route to get Operator
@@ -37,7 +39,9 @@ class OperatorsTest extends TestCase
         'status'              => 1,
 
       ];
-        $user = factory(User::class)->create();
+      Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+      $user = factory(User::class)->create();
+      $user->assignRole('BT Super Admin');
         //When user submits operator request to create endpoint
       $this->actingAs($user)->post('/transit/operators', $data); // your route to create operator
       //It gets stored in the database
@@ -47,7 +51,9 @@ class OperatorsTest extends TestCase
     //testing operator Update
     public function testUpdateOperator()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $operator->name = 'Link Bus';
         $this->actingAs($user)->patch('/transit/operators/'.$operator->id.'/update', $operator->toArray()); // your route to update Operator
@@ -58,7 +64,9 @@ class OperatorsTest extends TestCase
     // testing Operator Delete
     public function testDeleteOperator()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $this->actingAs($user)->delete('/transit/operators/'.$operator->id.'/delete'); // your route to delete Operator
         //The operator should be deleted from the database.

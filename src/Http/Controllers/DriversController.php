@@ -20,6 +20,8 @@ class DriversController extends Controller
     {
         $this->middleware('web');
         $this->middleware('auth');
+        $this->middleware('can:View BT Drivers')->only('index');
+        $this->middleware('can:Create BT Drivers')->except('index');
     }
 
     //fetching Drivers route('bustravel.drivers')

@@ -1,7 +1,7 @@
 <?php
 
 namespace glorifiedking\BusTravel\Tests;
-
+use Artisan;
 use glorifiedking\BusTravel\BookingCustomField;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\User;
@@ -14,7 +14,9 @@ class SettingsTest extends TestCase
     //testing getting Fields list
     public function testGetBookingCustomFields()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $field = factory(BookingCustomField::class)->create([
        'operator_id'=> $operator->id,
@@ -30,6 +32,9 @@ class SettingsTest extends TestCase
     //testing create Field
     public function testCreateField()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
+        $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $data = [
         'operator_id'  => $operator->id,
@@ -40,7 +45,6 @@ class SettingsTest extends TestCase
         'status'       => 1,
 
       ];
-        $user = factory(User::class)->create();
         //When user submits Feilds request to create endpoint
       $this->actingAs($user)->post('/transit/company_settings/fields', $data); // your route to create operator
       //It gets stored in the database
@@ -50,7 +54,9 @@ class SettingsTest extends TestCase
     //testing Feild Update
     public function testUpdateField()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $field = factory(BookingCustomField::class)->create([
       'operator_id' => $operator->id,
@@ -64,7 +70,9 @@ class SettingsTest extends TestCase
     // testing Operator Delete
     public function testDeleteField()
     {
+        Artisan::call('db:seed', ['--class' => 'glorifiedking\BusTravel\Seeds\PermissionSeeder']);
         $user = factory(User::class)->create();
+        $user->assignRole('BT Super Admin');
         $operator = factory(Operator::class)->create();
         $field = factory(BookingCustomField::class)->create([
       'operator_id' => $operator->id,
