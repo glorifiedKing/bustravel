@@ -143,3 +143,15 @@ Route::post('api/getBusServices/{operatorId}','BookingsController@get_route_time
 
 // payment reports 
 Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');
+
+//dashboard
+Route::get('dashboard','DashboardController@index')->name('bustravel.dashboard');
+
+//documentation 
+Route::get('docs','DocumentationController@index')->name('bustravel.docs');
+Route::get('docs/buses','DocumentationController@buses')->name('bustravel.docs.buses');
+Route::get('docs/drivers','DocumentationController@drivers')->name('bustravel.docs.drivers');
+Route::get('docs/routes','DocumentationController@routes')->name('bustravel.docs.routes');
+Route::get('docs/bookings','DocumentationController@bookings')->name('bustravel.docs.bookings');
+Route::get('docs/reports','DocumentationController@reports')->name('bustravel.docs.reports');
+Route::get('docs/settings','DocumentationController@settings')->name('bustravel.docs.settings');

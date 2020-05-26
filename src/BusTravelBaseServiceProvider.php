@@ -234,6 +234,12 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                                     'icon' => 'fas fa-fw fa-flag',
                                     'can' => 'Manage BT General Settings',
                                 ],
+                                [
+                                    'text' => 'Docs',
+                                    'url'  => route('bustravel.docs'),
+                                    'icon' => 'fas fa-fw fa-flag',
+                                    'can' => 'View BT Stations',
+                                ],
                             ],
 
                     ];

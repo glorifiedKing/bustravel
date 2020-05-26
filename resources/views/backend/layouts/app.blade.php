@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@trixassets
+
 
 @section('title','Bus Travel')
 
