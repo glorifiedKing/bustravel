@@ -14,12 +14,13 @@ class AlterUsersAddStatusTable extends Migration
     public $tableName='users';
     public $columnName='status';
     public function up()
-    {
+    {         
         Schema::table($this->tableName, function ($table) {
             if (!Schema::hasColumn($this->tableName, $this->columnName)) {
                 $table->tinyInteger($this->columnName)->default(0);
             }
         });
+       
     }
 
     /**

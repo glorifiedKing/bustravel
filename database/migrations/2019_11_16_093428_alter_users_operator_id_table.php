@@ -15,11 +15,13 @@ class AlterUsersOperatorIdTable extends Migration
     public $columnName='operator_id';
     public function up()
     {
+          
         Schema::table($this->tableName, function ($table) {
             if (!Schema::hasColumn($this->tableName, $this->columnName)) {
                 $table->integer($this->columnName)->default(0);
             }
         });
+        
     }
 
     /**
