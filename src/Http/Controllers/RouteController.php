@@ -53,6 +53,10 @@ class RouteController extends Controller
         return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
     }
 
+     function sort_order($a,$b) {
+      return $a['order']>$b['order'];
+    }
+
     // saving a new buses in the database  route('bustravel.buses.store')
     public function store(Request $request)
     {
@@ -86,8 +90,10 @@ class RouteController extends Controller
 
       // get stop over routes
       unset($all_routes[$first_key_main_route]);
-      $stop_over_routes = $all_routes;
+      $stop_over_routes = $all_routes;    
+      
 
+      
         $route = new Route();
         $route->start_station = $start_station;
         $route->end_station = $end_station;
@@ -143,9 +149,9 @@ class RouteController extends Controller
           $inverse->save();
 
           $inverse_route_time = new RoutesDepartureTime();
-          $inverse_route_time->route_id = $route->id;
-          $inverse_route_time->departure_time = $main_route['in'];
-          $inverse_route_time->arrival_time = $main_route['out'];
+          $inverse_route_time->route_id = $inverse->id;
+          $inverse_route_time->departure_time = $main_route_departure;
+          $inverse_route_time->arrival_time = $main_route_arrival;
           $inverse_route_time->bus_id = request()->input('bus_id') ?? 0;
           $inverse_route_time->driver_id = request()->input('driver_id') ?? 0;
           $inverse_route_time->days_of_week = request()->input('days_of_week');
@@ -153,29 +159,36 @@ class RouteController extends Controller
           $inverse_route_time->status = 1;
           $inverse_route_time->save();
           //Inverse stop over routes
-          $route_stopovers =$route->stopovers()->orderBy('order','DESC')->get();
-          if(!is_null($route_stopovers))
-          {
-            foreach($route_stopovers as $index => $route_stopover)
-            {
+          //reverse sort 
+          usort($stop_over_routes,function($a,$b){
+            return $a['order']<$b['order'];
+          });
+          $inverse_stop_over_routes = $stop_over_routes;
+
+          if (!empty($inverse_stop_over_routes)) {
+
+            foreach ($inverse_stop_over_routes as $index => $stop_over) {
               $inverse_stopover = new StopoverStation();
               $inverse_stopover->route_id = $inverse->id;
-              $inverse_stopover->start_station = $route_stopover->end_station;
-              $inverse_stopover->end_station = $route_stopover->start_station;
-              $inverse_stopover->price = $route_stopover->price;
+              $inverse_stopover->end_station = $stop_over['from'];
+              $inverse_stopover->start_station = $stop_over['to'];
+              $inverse_stopover->price = $stop_over['price'];
               $inverse_stopover->order = $index;
               $inverse_stopover->save();
 
               $inverse_stop_over_time = new RoutesStopoversDepartureTime();
               $inverse_stop_over_time->routes_times_id = $inverse_route_time->id;
               $inverse_stop_over_time->route_stopover_id = $inverse_stopover->id;
-              $inverse_stop_over_time->arrival_time = $stop_over_routes[$index]['out'];
-              $inverse_stop_over_time->departure_time = $stop_over_routes[$index]['in'];
+              $inverse_stop_over_time->arrival_time = $inverse_stop_over_routes[$index+1]['out'] ?? $inverse_stop_over_routes[$index-1]['out'] ??$stop_over['out'];
+              $inverse_stop_over_time->departure_time = $inverse_stop_over_routes[$index+1]['in'] ?? $inverse_stop_over_routes[$index-1]['in'] ?? $stop_over['in'];
               $inverse_stop_over_time->save();
 
 
+
             }
-          }
+        }
+
+         
         }
 
 

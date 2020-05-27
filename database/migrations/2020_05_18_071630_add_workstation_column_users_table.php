@@ -14,12 +14,15 @@ class AddWorkstationColumnUsersTable extends Migration
     public $tableName='users';
     public $columnName='workstation';
     public function up()
-    {
+    {       
+            
+
         Schema::table($this->tableName, function ($table) {
             if (!Schema::hasColumn($this->tableName, $this->columnName)) {
                 $table->unsignedBigInteger($this->columnName)->nullable();
             }
         });
+      
     }
 
     /**

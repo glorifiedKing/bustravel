@@ -11,8 +11,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         Route::auth();
-        $this->loadLaravelMigrations();
-        $this->loadMigrationsFrom(__DIR__.'/../database/test_migrations');
+        //$this->loadLaravelMigrations();
+        //$this->loadMigrationsFrom(__DIR__.'/../database/test_migrations');
         /*$this->artisan('migrate',[
           '--database' => 'testdb',
           '--realpath' => realpath(__DIR__.'/../database/test_migrations'),
