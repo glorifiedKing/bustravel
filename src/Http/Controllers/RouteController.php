@@ -165,7 +165,7 @@ class RouteController extends Controller
           });
           $inverse_stop_over_routes = $stop_over_routes;
 
-          if (!empty($stop_over_routes)) {
+          if (!empty($inverse_stop_over_routes)) {
 
             foreach ($inverse_stop_over_routes as $index => $stop_over) {
               $inverse_stopover = new StopoverStation();
@@ -179,8 +179,8 @@ class RouteController extends Controller
               $inverse_stop_over_time = new RoutesStopoversDepartureTime();
               $inverse_stop_over_time->routes_times_id = $inverse_route_time->id;
               $inverse_stop_over_time->route_stopover_id = $inverse_stopover->id;
-              $inverse_stop_over_time->arrival_time = $stop_over['out'];
-              $inverse_stop_over_time->departure_time = $stop_over['in'];
+              $inverse_stop_over_time->arrival_time = $inverse_stop_over_routes[$index+1]['out'] ?? $inverse_stop_over_routes[$index-1]['out'] ??$stop_over['out'];
+              $inverse_stop_over_time->departure_time = $inverse_stop_over_routes[$index+1]['in'] ?? $inverse_stop_over_routes[$index-1]['in'] ?? $stop_over['in'];
               $inverse_stop_over_time->save();
 
 
