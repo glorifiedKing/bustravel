@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-
+<link href="{{ asset('vendor/glorifiedking/css/backend_css.css') }}" rel="stylesheet">
 
 @section('title','Bus Travel')
 
@@ -11,6 +11,7 @@
 
 
 @section('css')
+
 
 
 @stop
