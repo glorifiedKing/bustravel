@@ -1,24 +1,24 @@
-<nav class="navbar navbar-expand-lg">
-    <button style="background-color: white !important;" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-light" >
+    <button style="background-color:#fccc04 !important;" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span  class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav page-links">
+        <ul class="navbar-nav page-links" >
             <li class="nav-item active">
-                <a class="nav-link" href="{{route('bustravel.homepage')}}">
+                <a class="nav-link" href="{{route('bustravel.homepage')}}" style="color:white !important">
                     Home <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="{{route('bustravel.bus.times')}}">
+                <a class="nav-link" href="{{route('bustravel.bus.times')}}" style="color:white !important">
                     Bus Times / Tickets <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{route('bustravel.bus.stations')}}">Station / Bus Info</a>
+                <a class="nav-link" href="{{route('bustravel.bus.stations')}}" style="color:white !important">Station / Bus Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{route('bustravel.bus.faqs')}}">Help</a>
+                <a class="nav-link" href="{{route('bustravel.bus.faqs')}}" style="color:white !important">Help</a>
             </li>
         </ul>
         @if (session('cart'))
