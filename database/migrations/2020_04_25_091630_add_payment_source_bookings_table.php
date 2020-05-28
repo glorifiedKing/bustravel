@@ -11,12 +11,12 @@ class AddPaymentSourceBookingsTable extends Migration
      *
      * @return void
      */
-     public $tableName='bookings', $columnName='payment_transaction_id';
+     public $tableName='bookings', $columnName='payment_source';
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
             if (!Schema::hasColumn($this->tableName, $this->columnName)) {
-                $table->unsignedBigInteger($this->columnName)->nullable();
+                $table->string($this->columnName)->nullable();
             }
         });
     }

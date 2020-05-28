@@ -76,6 +76,7 @@
                             </span>
                         @endif
                     </div>
+                    @if(auth()->user()->hasAnyRole('BT Super Admin'))
                     <div class="form-group col-md-3">
                          <label>Select Operator</label>
                          <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator" >
@@ -90,6 +91,9 @@
                              </span>
                          @endif
                     </div>
+                    @else
+                    <input type="hidden" value="{{auth()->user()->operator_id}}" name="operator_id">
+                    @endif
                     <div class="form-group col-md-3">
                         <label>Workstation[for cashiers]</label>
                         <select class="form-control select2 {{ $errors->has('workstation') ? ' is-invalid' : '' }}" name="workstation"  placeholder="Select Operator" >

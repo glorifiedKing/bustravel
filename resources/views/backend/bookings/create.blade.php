@@ -40,7 +40,7 @@
                       <input id="route_id" type="number" hidden name="route_id" >
                       <input id="route_type" type="text" hidden name="route_type" >
                       <select id="from_station_id"  name="from_station_id" class="form-control {{ $errors->has('printer_name') ? 'is-invalid' : '' }}" >
-                        <option value="{{$workstation->id}}">{{$workstation->name}}</option>
+                        <option value="{{$workstation->id??0}}">{{$workstation->name??''}}</option>
                       </select>
                        @error('printer_name')
                           <small class="form-text invalid-feedback" >
@@ -55,7 +55,7 @@
                        @foreach ($stations as $station)
                            <option value="{{$station->id}}">{{$station->name}}</option>
                        @endforeach
-                      </select> 
+                      </select>
                        @error('printer_url')
                           <small class="form-text invalid-feedback" >
                               {{ $message }}
@@ -84,7 +84,7 @@
                     <label>Amount</label>
                     <input readonly class="form-control" name="amount" id="amount">
                   </div>
-                  <div class="form-row">                    
+                  <div class="form-row">
                   @foreach($custom_fields as $fields)
                        <div class="form-group col-xs-6 ">
                          <label>{{$fields->field_name}}</label>
@@ -94,7 +94,7 @@
                     @endforeach
                   </div>
                   <hr>
-                  <div class="form-row">                    
+                  <div class="form-row">
                     <div class="form-group col-xs-6">
                       <label>Pay by</label>
                       <select name="payment_method" class="form-control">
@@ -111,7 +111,7 @@
                       </select>
                     </div>
                   </div>
-                
+
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
@@ -151,7 +151,7 @@
            $('#amount').val('');
            $('#route_id').val('');
           $('#route_type').val('');
-           
+
             $.post(operators_url,
             {
               _token: "{{ csrf_token() }}",
@@ -170,11 +170,11 @@
 
                   $("#table_results tbody").html(table_body);
               }
-              
+
             });
          });
          $('#table_results').on('click','tbody tr',function(){
-           
+
           var route_id = $(this).data('route');
           var route_type = $(this).data('type');
           var route_price = $(this).data('amount');
@@ -182,7 +182,7 @@
           $('#route_type').val(route_type);
           $('#amount').val(route_price);
 
-          
+
          });
          $('.select2').select2();
        })
