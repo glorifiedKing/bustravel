@@ -76,6 +76,7 @@
                             </span>
                         @endif
                     </div>
+                    @if(auth()->user()->hasAnyRole('BT Super Admin'))
                     <div class="form-group col-md-3">
                          <label>Select Operator</label>
                          <select class="form-control select2 {{ $errors->has('operator_id') ? ' is-invalid' : '' }}" name="operator_id"  placeholder="Select Operator" >
@@ -90,6 +91,10 @@
                              </span>
                          @endif
                     </div>
+                    @else
+                    <input type="hidden" value="{{$user->operator_id}}" name="operator_id">
+                    @endif
+
                     <div class="form-group col-md-3">
                         <label>Workstation[for cashiers]</label>
                         <select class="form-control select2 {{ $errors->has('workstation') ? ' is-invalid' : '' }}" name="workstation"  placeholder="Select Operator" >
@@ -108,10 +113,10 @@
                     </div>
                     <div class="form-group col-md-3  ">
                         <label for="exampleInputEmail1">Password</label>
-                        <input type="password"  name="newpassword" value="{{old('newpassword')}}" class="form-control {{ $errors->has('newpassword') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Password"  >
-                        @if ($errors->has('newpassword'))
+                        <input type="password"  name="password" value="{{old('password')}}" class="form-control {{ $errors->has('password') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Password"  >
+                        @if ($errors->has('password'))
                             <span class="invalid-feedback">
-                                <strong>{{ $errors->first('newpassword') }}</strong>
+                                <strong>{{ $errors->first('password') }}</strong>
                             </span>
                         @endif
                     </div>

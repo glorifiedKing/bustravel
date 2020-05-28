@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use glorifiedking\BusTravel\ToastNotification;
+use glorifiedking\BusTravel\GeneralSetting;
 
 class UsersController extends Controller
 {
@@ -142,17 +143,40 @@ class UsersController extends Controller
     //fetching Roles
     public function users()
     {
-        $users = config('bustravel.user_model', User::class)::all();
-
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+      {
+          $users = config('bustravel.user_model', User::class)::where('operator_id',auth()->user()->operator_id)->get();
+      }
+      else
+      {
+          $users = config('bustravel.user_model', User::class)::all();
+      }
         return view('bustravel::backend.users.users.index', compact('users'));
     }
 
     public function createusers()
     {
-        $roles = Role::all(); //Get all permissions
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+        {
+          $operator_roles = GeneralSetting::where('setting_prefix','operator_roles')->first()->setting_value ?? 'BT User';
+          $array_roles = explode(',', $operator_roles);
+          $arrayrole=[];
+          foreach($array_roles as$key=>$array_role)
+          {
+            $role =Role::where('name','like',"%$array_role%")->first();
+            if(!is_null($role))
+            {
+            $arrayrole[]=$role->id;
+            }
+          }
+          $roles=Role::whereIn('id',$arrayrole)->get();
+        }
+      else
+        {
+          $roles = Role::all(); //Get all permissions
+        }
         $operators = Operator::where('status', 1)->get();
         $stations = Station::all();
-
         return view('bustravel::backend.users.users.create', compact('roles', 'operators','stations'));
     }
 
@@ -184,7 +208,25 @@ class UsersController extends Controller
 
     public function editusers($id)
     {
-        $roles = Role::all(); //Get all permissions
+      if(auth()->user()->hasAnyRole('BT Administrator'))
+        {
+          $operator_roles = GeneralSetting::where('setting_prefix','operator_roles')->first()->setting_value ?? 'BT User';
+          $array_roles = explode(',', $operator_roles);
+          $arrayrole=[];
+          foreach($array_roles as$key=>$array_role)
+          {
+            $role =Role::where('name','like',"%$array_role%")->first();
+            if(!is_null($role))
+            {
+            $arrayrole[]=$role->id;
+            }
+          }
+          $roles=Role::whereIn('id',$arrayrole)->get();
+        }
+      else
+        {
+          $roles = Role::all(); //Get all permissions
+        }
         $operators = Operator::where('status', 1)->get();
         $stations = Station::all();
         $user = config('bustravel.user_model', User::class)::find($id);
@@ -199,7 +241,7 @@ class UsersController extends Controller
     public function updateusers($id, Request $request)
     {
         //saving to the database
-        if (request()->input('newpassword') == '') {
+        if (request()->input('password') == '') {
             $validation = request()->validate([
             'name'  => 'required|max:255|unique:users,name,'.$id,
             'email' => 'required|email|max:255|unique:users,email,'.$id,
@@ -219,8 +261,8 @@ class UsersController extends Controller
             $validation = request()->validate([
             'name'                  => 'required|max:255|unique:users,name,'.$id,
             'email'                 => 'required|email|max:255|unique:users,email,'.$id,
-            'newpassword'           => 'required|min:7|confirmed',
-            'password_confirmation' => 'required|same:newpassword',
+            'password'           => 'required|min:7|confirmed',
+            'password_confirmation' => 'required|same:password',
           ]);
             $user = config('bustravel.user_model', User::class)::find($id);
             $user->name = request()->input('name');

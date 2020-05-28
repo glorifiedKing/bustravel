@@ -18,7 +18,7 @@ class ReportsController extends Controller
         $this->middleware('auth');
         $this->middleware('can:View BT Reports');
         $this->middleware('can:View BT Sales Reports')->only('sales','routes','traffic');
-      
+
     }
 
     //sales Report
@@ -465,12 +465,31 @@ class ReportsController extends Controller
         } else {
            if(!is_null($start_station))
            {
-             $routes =Route::where('start_station',$start_station)->pluck('id');
-             $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+             if(auth()->user()->hasAnyRole('BT Administrator'))
+               {
+                $routes =Route::where('operator_id',auth()->user()->operator_id)->where('start_station',$start_station)->pluck('id');
+                $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+                $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               }
+               else
+               {
+                 $routes =Route::where('start_station',$start_station)->pluck('id');
+                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               }
 
-              $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
            }else{
-               $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+
+             if(auth()->user()->hasAnyRole('BT Administrator'))
+               {
+                $routes =Route::where('operator_id',auth()->user()->operator_id)->pluck('id');
+                $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+                $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               }
+               else
+               {
+                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               }
            }
 
         }
@@ -508,11 +527,27 @@ class ReportsController extends Controller
 
           }
 
+     }elseif(auth()->user()->hasAnyRole('BT Administrator'))
+     {
+       if (!is_null($ticket)) {
+           $bookings = Booking::where('ticket_number', $ticket)->orderBY('id', 'DESC')->get();
+       } else {
+
+         if(!is_null($start_station))
+         {
+           $routes =Route::where('operator_id',auth()->user()->operator_id)->where('start_station',$start_station)->pluck('id');
+           $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+           $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+         }else{
+           $routes =Route::where('operator_id',auth()->user()->operator_id)->pluck('id');
+           $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+           $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+         }
+       }
+
      }
       else
         {
-
-
           if (!is_null($ticket)) {
               $bookings = Booking::where('ticket_number', $ticket)->orderBY('id', 'DESC')->get();
           } else {
