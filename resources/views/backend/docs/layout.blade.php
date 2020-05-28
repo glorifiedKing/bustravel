@@ -22,7 +22,7 @@
 	        </button>
         </div>
 				<div class="p-4 pt-5">
-		  		<div class="col-md-12 sidebar-logo"><a href="#" class="logo"><img src="{{asset('vendor/glorifiedking/docs/images/temp_logo.png') }}"/></a></div>
+		  		<div class="col-md-12 sidebar-logo"><a href="#" class="logo"><img src="{{asset('vendor/glorifiedking/docs/images/temp_logo.png') }}" alt="temp_logo"/></a></div>
 	        <ul class="list-unstyled components mb-5">
 	          <li class="{{ (url()->current() == route('bustravel.docs')) ? 'active' : '' }}">
               <a href="{{route('bustravel.docs')}}"> User account access</a>

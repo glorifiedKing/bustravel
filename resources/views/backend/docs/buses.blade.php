@@ -4,7 +4,7 @@
 
 
 
-@section('content') 
+@section('content')
     <h4 id="account_login" class="mb-4">Operator buses list</h4>
     <div class="container-fluid">
     <div class="row">
@@ -20,7 +20,7 @@
         </div>
         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
         <h6>Bus list page</h6>
-        <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/buses_listing.png') }}"/>
+        <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/buses_listing.png') }}" alt="demo_image"/>
         </div>
     </div>
     </div>
@@ -39,8 +39,8 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Add buses page</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_buses_image.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_buses_image.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
-  @stop  
+  @stop
