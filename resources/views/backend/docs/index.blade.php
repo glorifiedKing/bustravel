@@ -4,7 +4,7 @@
 
 
 
-@section('content')          
+@section('content')
         <h4 id="account_login" class="mb-4">User account login</h4>
         <p>Related links: <a href="#change_my_password">Change your password, </a><a href="#sign_me_out">Sign out of you account</a></p>
         <div class="container-fluid">
@@ -12,7 +12,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 pt-6">
                 <p>
                   <ol>
-                    <li>Begin by navigating to the web address; <a href="https://transport.palmkash.com" target="_blank">https://transport.palmkash.com</a></li>
+                    <li>Begin by navigating to the web address; <a href="https://transport.palmkash.com" target="_blank" rel="noopener noreferrer">https://transport.palmkash.com</a></li>
                     <li>On the righthand side of the page, click the link labelled <strong>"Your Account"</strong>. <br>A drop
                     down list will appear with 2 options, Login and Register as shown in the screenshot. Select Login.</li>
                     <li>On the next page, type in your user email and password then click the <strong>"Login"</strong> button.</li>
@@ -33,7 +33,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 pt-6">
                 <p>
                   <ol>
-                    <li>Begin by navigating to the web address; <a href="https://transport.palmkash.com" target="_blank">https://transport.palmkash.com</a></li>
+                    <li>Begin by navigating to the web address; <a href="https://transport.palmkash.com" target="_blank" rel="noopener noreferrer">https://transport.palmkash.com</a></li>
                     <li>Log into you account using your active user email and password.</li>
                     <li>After you are logged select the <strong>"User and Profile"</strong> link in the left sidebar menu and select <strong>"Profile"</strong>.</li>
                     <li>Enter your new password (should be a minimum of eight characters) in both fields and save/submit.</li>
@@ -68,4 +68,3 @@
         </div>
 
 @stop
- 

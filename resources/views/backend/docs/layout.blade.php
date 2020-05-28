@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-      
+
   	<title>@yield('title','PalmKash User Manual')</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -27,7 +27,7 @@
 	          <li class="{{ (url()->current() == route('bustravel.docs')) ? 'active' : '' }}">
               <a href="{{route('bustravel.docs')}}"> User account access</a>
 	          </li>
-	         
+
             <li class="{{ (url()->current() == route('bustravel.docs.buses')) ? 'active' : '' }}">
 	              <a href="{{route('bustravel.docs.buses')}}">Buses</a>
 	          </li>
@@ -54,7 +54,7 @@
 
 	        <div class="footer">
 	        	<p>
-						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a href="https://palmkash.com" target="_blank">PalmKash</a>
+						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a href="https://palmkash.com" target="_blank" rel="noopener noreferrer">PalmKash</a>
 				</p>
 	        </div>
 
@@ -64,9 +64,9 @@
         <!-- Page Content  -->
       <div id="content" class="p-4 p-md-5 pt-5">
           @yield('content')
-       
 
-        
+
+
       </div>
 		</div>
 
