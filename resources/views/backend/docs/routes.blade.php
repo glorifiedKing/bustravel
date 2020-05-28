@@ -4,7 +4,7 @@
 
 
 
-@section('content') 
+@section('content')
     <h4 id="account_login" class="mb-4">Operator routes list</h4>
     <div class="container-fluid">
         <div class="row">
@@ -21,7 +21,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Routes list page</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/routes_listing.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/routes_listing.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Add route stations page</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_route_stations.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_route_stations.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -61,10 +61,10 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Add route prices page</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_route_prices.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/add_route_prices.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
 
 
-@stop  
+@stop

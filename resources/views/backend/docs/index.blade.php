@@ -22,7 +22,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
               <h6>Login link screenshot</h6>
-              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/login-drop-down-link.png') }}"/>
+              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/login-drop-down-link.png') }}" alt="demo_image"/>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
               <h6>Change password screenshot</h6>
-              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/change-password.png') }}"/>
+              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/change-password.png') }}" alt="demo_image"/>
             </div>
           </div>
         </div>
@@ -62,7 +62,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
               <h6>Login link screenshot</h6>
-              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/logout-link.png') }}"/>
+              <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/logout-link.png') }}" alt="demo_image"/>
             </div>
           </div>
         </div>

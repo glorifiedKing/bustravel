@@ -4,7 +4,7 @@
 
 
 
-@section('content') 
+@section('content')
     <h4 id="account_login" class="mb-4">Operator sales report</h4>
     <div class="container-fluid">
         <div class="row">
@@ -19,7 +19,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Sample sales report</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/sales_report.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/sales_report.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Sample route performance report</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/route_performance_report.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/route_performance_report.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Sample passenger traffic report</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/passenger_traffic_report.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/passenger_traffic_report.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Sample bookings report</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/bookings_report.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/bookings_report.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
@@ -94,8 +94,8 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-4">
             <h6>Sample cashier report</h6>
-            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/cashier_report.png') }}"/>
+            <img class="demo_image" src="{{asset('vendor/glorifiedking/docs/images/cashier_report.png') }}" alt="demo_image"/>
             </div>
         </div>
     </div>
-@stop  
+@stop
