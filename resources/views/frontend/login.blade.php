@@ -32,7 +32,7 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
-                                    <a href="" class="forgot-pass">Forgot Password</a>
+                                <a href="{{route('password.request')}}" class="forgot-pass">Forgot Password</a>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary cust-btn-link">Login</button> 
