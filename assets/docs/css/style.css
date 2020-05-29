@@ -7495,7 +7495,8 @@ a.text-dark:hover, a.text-dark:focus {
   color: rgba(255, 255, 255, 0.5) !important; }
 
 .text-hide {
-  font: 0/0 a;
+  font-size: 0rem;
+  line-height: 0rem;
   color: transparent;
   text-shadow: none;
   background-color: transparent;
