@@ -22,6 +22,10 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+          <p>
+          <span class="badge badge-warning ">   Updated {{ $diffs = Carbon\Carbon::parse($booking->updated_at)->diffForHumans() }} </span>   &nbsp
+          <span class="badge badge-success ">   Created {{ $diffs = Carbon\Carbon::parse($booking->created_at)->diffForHumans() }} </span>    &nbsp
+          </p>
         <div class="card">
             <div class="card-header">
             <h5 class="card-title">Edit {{$booking->ticket_number}}  Ticket Number</h5>
@@ -35,42 +39,45 @@
 
               <div class="box-body">
                 <div class="row">
-                  <div class="form-group col-md-6">
-                       <label> Routes</label>
-                       <select class="form-control select2 {{ $errors->has('routes_departure_time_id') ? ' is-invalid' : '' }}" name="routes_departure_time_id"  placeholder="Select Operator">
-                         <option value="">Select Route</option>
-                         @foreach($routes_times as $route_course)
-                             <option value="{{$route_course->id}}" @php echo $booking->routes_departure_time_id == $route_course->id ? 'selected' :  "" @endphp>{{$route_course->route->start->name}} ( {{$route_course->route->start->code}} ) - {{$route_course->route->end->name}} ( {{$route_course->route->end->code}} ) / {{$route_course->departure_time}}</option>
-                         @endforeach
-                       </select>
-                       @if ($errors->has('routes_departure_time_id'))
-                           <span class="invalid-feedback">
-                               <strong>{{ $errors->first('routes_departure_time_id') }}</strong>
-                           </span>
-                       @endif
-                  </div>
-                  <div class="form-group col-md-6 ">
-                    <label>Start Bus</label>
-                    <select class="form-control select2 {{ $errors->has('user_id') ? ' is-invalid' : '' }}" name="user_id"  placeholder="Select Users">
-                      <option value="">Select User</option>
-                      @foreach($users as $user)
-                          <option value="{{$user->id}}" @php echo $booking->user_id == $user->id ? 'selected' :  "" @endphp>{{$user->name}}</option>
-                      @endforeach
-                    </select>
-                    @if ($errors->has('user_id'))
-                        <span class="invalid-feedback">
-                            <strong>{{ $errors->first('user_id') }}</strong>
-                        </span>
-                    @endif
+                  <div class="form-group col-md-3 ">
+                    <label>From</label>
+                    <input  readonly type="text"  name="from" value="{{$booking->route_departure_time->route->start->name}} " class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1">
                   </div>
                   <div class="form-group col-md-3 ">
+                    <label>To</label>
+                    <input readonly type="text"  name="amount" value="{{$booking->route_departure_time->route->end->name}}" class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
+                  </div>
+                  <div class="form-group col-md-12">
+                    <table id="table_results" class="table table-striped">
+                        <caption> Bus service</caption>
+                        <thead>
+                          <tr>
+                            <th scope="col">Time</th>
+                            <th scope="col">Bus</th>
+                            <th scope="col">Driver</th>
+                            <th scope="col">Travelled</th>
+                          </tr>
+                          <tr>
+                             <td>{{$booking->route_departure_time->departure_time}} - {{$booking->route_departure_time->arrival_time}}</td>
+                             <td>{{$booking->route_departure_time->bus->number_plate??''}} </td>
+                             <td>{{$booking->route_departure_time->driver->name??''}} </td>
+                             <td>
+                               @if($booking->boarded==0)
+                               <span class="badge badge-danger "><i class="fa fa-times"></i> No</span>
+                               @else
+                               <span class="badge badge-success "><i class="fa fa-check"></i> Yes</span>
+                               @endif
+                             </td></tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                  </div>
+                  <hr>
+                  <div class="form-group col-md-12 ">
                     <label>Amount</label>
-                    <input type="text"  name="amount" value="{{$booking->amount}}" class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Amount" >
-                    @if ($errors->has('amount'))
-                        <span class="invalid-feedback">
-                            <strong>{{ $errors->first('amount') }}</strong>
-                        </span>
-                    @endif
+                    <input readonly class="form-control" name="amount" id="amount" value="{{$booking->amount}}">
                   </div>
                   <div class="form-group col-md-3 ">
                     <label>Date Paid</label>
@@ -90,8 +97,15 @@
                         </span>
                     @endif
                   </div>
+                  <div class="form-group col-md-3">
+                    <label>Pay by</label>
+                    <select name="payment_method" class="form-control">
+                      <option value="cash" @php echo $booking->payment_source == "cash" ? 'selected' :  "" @endphp>CASH</option>
+                      <option value="palm_kash" @php echo $booking->payment_source == "palm_kash" ? 'selected' :  "" @endphp>Palm</option>
+                    </select>
+                  </div>
                   <div class=" col-md-12 form-group">
-                    <h4>Custom Fields</h4>
+                    <hr>
                   </div>
                   @foreach($custom_fields as $fields)
                     @if(in_array($fields->id, $booking_fields_ids))
@@ -122,10 +136,10 @@
                   <div class=" col-md-3 form-group">
                       <label for="signed" class=" col-md-12 control-label">Status</label>
                       <label class="radio-inline">
-                        <input type="radio" id="Active" name="status" value="1" @php echo $booking->status == 1? 'checked' :  "" @endphp>  Paid </label>
+                        <input type="radio" id="Active" name="status" value="1" @php echo $booking->status == 1? 'checked' :  "" @endphp>  Paid 
                       </label>
                      <label class="radio-inline">
-                        <input type="radio" id="Deactive" name="status" value="0" @php echo $booking->status == 0? 'checked' :  "" @endphp>  Not Paid</label>
+                        <input type="radio" id="Deactive" name="status" value="0" @php echo $booking->status == 0? 'checked' :  "" @endphp>  Not Paid
                      </label>
                   </div>
                 </div>

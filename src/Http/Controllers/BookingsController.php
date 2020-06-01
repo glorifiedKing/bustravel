@@ -277,18 +277,18 @@ class BookingsController extends Controller
     public function update($id, Request $request)
     {
         //validation
-        $validation = request()->validate(Booking::$rules);
+        //$validation = request()->validate(Booking::$rules);
         //saving to the database
         $booking = Booking::find($id);
-        $booking->routes_departure_time_id = request()->input('routes_departure_time_id');
+        // $booking->routes_departure_time_id = request()->input('routes_departure_time_id');
         $booking->amount = request()->input('amount');
-        $booking->date_paid = request()->input('date_paid') ?? null;
-        $booking->date_of_travel = request()->input('date_of_travel') ?? null;
-        $booking->time_of_travel = $booking->time_of_travel;
-        $booking->ticket_number = $booking->ticket_number;
-        $booking->user_id = request()->input('user_id');
-        $booking->status = request()->input('status');
-        $booking->save();
+        // $booking->date_paid = request()->input('date_paid') ?? null;
+        // $booking->date_of_travel = request()->input('date_of_travel') ?? null;
+        // $booking->time_of_travel = $booking->time_of_travel;
+        // $booking->ticket_number = $booking->ticket_number;
+        // $booking->user_id = request()->input('user_id');
+        // $booking->status = request()->input('status');
+          $booking->save();
 
         $fields_values = request()->input('field_value') ?? 0;
         $fields_id = request()->input('field_id') ?? 0;
@@ -302,15 +302,7 @@ class BookingsController extends Controller
                 $custom_fields->save();
             }
         }
-
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Booking Updating',
-        'bustravel-flash-message' => 'Booking has successfully been updated',
-    ];
-
-        return redirect()->route('bustravel.bookings.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('Booking has successfully been updated','Booking Updating'));
     }
 
     //Delete Route Departure Times
@@ -319,14 +311,7 @@ class BookingsController extends Controller
         $booking = Booking::find($id);
         $name = $booking->ticket_number;
         $booking->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Booking Deleting ',
-            'bustravel-flash-message' => 'Booking '.$name.' has successfully been Deleted',
-        ];
-
-        return Redirect::route('bustravel.bookings')->with($alerts);
+        return Redirect::route('bustravel.bookings')->with(ToastNotification::toast($name.' has successfully been Deleted','Booking Deleted','error'));
     }
 
   public function manifest()

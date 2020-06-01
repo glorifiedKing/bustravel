@@ -119,9 +119,10 @@
                          <thead>
                            <tr>
                              <th scope="col" style="width: 30px"></th>
-                             <th scope="col" > From - TO</th>
-                             <th scope="col" >Arrival Time at this station[TO]</th>
-                             <th scope="col" >Departure Time from previous station[From]</th>
+                             <th scope="col" > From</th>
+                             <th scope="col" > To</th>
+                             <th scope="col" >In</th>
+                             <th scope="col" >Out</th>
                            </tr>
                          </thead>
 
@@ -133,11 +134,10 @@
                                        @if($times->route_stopover_id== $stoverstation->id)
                                            <tr item-id='{{$stoverstation->id}}'>
                                              <td><input type='checkbox' name='checkeditem[]'></td>
-                                             <td >
-                                                {{$stoverstation->start_stopover_station->name}} -
-                                                   {{$stoverstation->end_stopover_station->name}}
+                                             <td >{{$stoverstation->start_stopover_station->name}}
                                                  <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
                                              </td>
+                                             <td>{{$stoverstation->end_stopover_station->name}}</td>
                                              <td >
                                               <div class="form-group">
                                                <div class="input-group date timepicker" id="arrival_time{{$stoverstation->id}}" data-target-input="nearest">

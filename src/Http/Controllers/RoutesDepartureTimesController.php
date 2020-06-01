@@ -75,27 +75,31 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
-          if(strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time')))
+          }
+          $main_arrival = Carbon::parse(request()->input('arrival_time'));
+          $main_departure =carbon::parse(request()->input('departure_time'));
+          if($main_departure > $main_arrival)
           {
            return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Saving','error'));
           }
-          $stopovers = request()->input($this->stopover_route_id) ?? 0;
+          $stopovers = request()->input($this->stopover_route_id) ??NULL;
           $arrival = request()->input('stopover_arrival_time');
           $departure = request()->input('stopover_departure_time');
-
-          foreach ($stopovers as $index => $stopover_routeid) {
-            if((strtotime(strftime("%F") . ' ' .request()->input('departure_time')) > strtotime(strftime("%F") . ' ' .$arrival[$index]) ) && (strtotime(strftime("%F") . ' ' .$arrival[$index]) > strtotime(strftime("%F") . ' ' .request()->input('arrival_time'))))
-            {
-             return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
+          if(!is_null($stopovers))
+          {
+            foreach ($stopovers as $index => $stopover_routeid) {
+              $s_arrival =Carbon::parse($arrival[$index]);
+              $s_departure =Carbon::parse($departure[$index]);
+              if($s_arrival->greaterThanOrEqualTo($main_departure) && $s_arrival->lessThanOrEqualTo($main_arrival)){
+              }else{
+              return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
+               }
+               if($s_departure->greaterThanOrEqualTo($main_departure) && $s_departure->lessThanOrEqualTo($main_arrival)){
+                }else{
+                return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving','error'));
+                }
             }
-
           }
-
-        }
-
-         $time_diff = strtotime(strftime("%F") . ' ' .request()->input('departure_time')) - strtotime(strftime("%F") . ' ' .request()->input('arrival_time'));
-
-
         //saving to the database
         $route = new RoutesDepartureTime();
         $route->route_id = request()->input('route_id');
@@ -107,8 +111,8 @@ class RoutesDepartureTimesController extends Controller
         $route->restricted_by_bus_seating_capacity = request()->input('restricted_by_bus_seating_capacity');
         $route->status = request()->input('status');
         $route->save();
-        $stopovers = request()->input($this->stopover_route_id) ?? 0;
-        if ($stopovers != 0) {
+        if(!is_null($stopovers))
+        {
             $arrival = request()->input('stopover_arrival_time');
             $departure = request()->input('stopover_departure_time');
             foreach ($stopovers as $index => $stopover_routeid) {
@@ -166,31 +170,31 @@ class RoutesDepartureTimesController extends Controller
             "days_of_week"    => "required|array",
             'days_of_week.*' => 'required',
           ]);
-          $main_arrival = Carbon::parse(request()->input('arrival_time'));
-          $main_departure =carbon::parse(request()->input('departure_time'));
-          if($main_departure > $main_arrival)
-          {
-           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Updating','error'));
-          }
-          $stopovers = request()->input($this->stopover_route_id) ?? 0;
-          $arrival = request()->input('stopover_arrival_time');
-          $departure = request()->input('stopover_departure_time');
-
-          foreach ($stopovers as $index => $stopover_routeid) {
-            $s_arrival =Carbon::parse($arrival[$index])->format('Y-m-d H:m:s');
-            $s_departure =Carbon::parse($departure[$index])->format('Y-m-d H:m:s');
-            if(($s_arrival > $main_departure ) && ($s_arrival < $main_arrival))
-            {
-            }else{
-             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
-            }
-            if(($s_departure > $main_departure ) && ($s_departure < $main_arrival))
-            {
-            }else{
-             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
-            }
         }
-      }
+        $main_arrival = Carbon::parse(request()->input('arrival_time'));
+        $main_departure =carbon::parse(request()->input('departure_time'));
+        if($main_departure > $main_arrival)
+        {
+         return redirect()->route($this->service_edit,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Updating','error'));
+        }
+        $stopovers = request()->input($this->stopover_route_id) ??NULL;
+        $arrival = request()->input('stopover_arrival_time');
+        $departure = request()->input('stopover_departure_time');
+        if(!is_null($stopovers))
+        {
+          foreach ($stopovers as $index => $stopover_routeid) {
+            $s_arrival =Carbon::parse($arrival[$index]);
+            $s_departure =Carbon::parse($departure[$index]);
+            if($s_arrival->greaterThanOrEqualTo($main_departure) && $s_arrival->lessThanOrEqualTo($main_arrival)){
+            }else{
+           return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+             }
+             if($s_departure->greaterThanOrEqualTo($main_departure) && $s_departure->lessThanOrEqualTo($main_arrival)){
+              }else{
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+              }
+          }
+        }
 
         //saving to the database
         $route = RoutesDepartureTime::find($id);
@@ -204,8 +208,8 @@ class RoutesDepartureTimesController extends Controller
         $route->status = request()->input('status');
         $route->save();
         $overs = $route->stopovers_times()->delete();
-        $stopovers = request()->input($this->stopover_route_id) ?? 0;
-        if ($stopovers != 0) {
+        if(!is_null($stopovers))
+        {
             $arrival = request()->input('stopover_arrival_time');
             $departure = request()->input('stopover_departure_time');
             foreach ($stopovers as $index => $stopover_routeid) {

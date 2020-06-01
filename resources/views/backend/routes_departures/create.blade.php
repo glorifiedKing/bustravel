@@ -115,9 +115,10 @@
                            <thead>
                              <tr>
                                <th scope="col" style="width: 30px"></th>
-                               <th scope="col"> Stop Over</th>
-                               <th scope="col">Arrival Time</th>
-                               <th scope="col">Departure Time</th>
+                               <th scope="col"> From</th>
+                               <th scope="col"> To</th>
+                               <th scope="col">In</th>
+                               <th scope="col">Out</th>
                              </tr>
                            </thead>
 
@@ -126,8 +127,11 @@
                             <tr item-id='{{$stoverstation->stopover_id}}'>
                               <td><input type='checkbox' name='checkeditem[]'></td>
                               <td >
-                                   {{$stoverstation->start_stopover_station->name}} - {{$stoverstation->end_stopover_station->name}}
+                                   {{$stoverstation->start_stopover_station->name}}
                                   <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
+                              </td>
+                              <td >
+                                  {{$stoverstation->end_stopover_station->name}}
                               </td>
                               <td >
                                 <div class="form-group">
