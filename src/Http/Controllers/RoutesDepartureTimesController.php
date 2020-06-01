@@ -90,16 +90,18 @@ class RoutesDepartureTimesController extends Controller
             foreach ($stopovers as $index => $stopover_routeid) {
               $s_arrival =Carbon::parse($arrival[$index]);
               $s_departure =Carbon::parse($departure[$index]);
-              if($s_arrival->greaterThanOrEqualTo($main_departure) && $s_arrival->lessThanOrEqualTo($main_arrival)){
-               continue;
-              }else{
+              if($s_arrival->lessThan($main_departure)){
               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
                }
-               if($s_departure->greaterThanOrEqualTo($main_departure) && $s_departure->lessThanOrEqualTo($main_arrival)){
-                continue;
-                }else{
+               if( $s_arrival->greaterThan($main_arrival)){
+               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
+                }
+               if($s_departure->lessThan($main_departure)){
                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving','error'));
                 }
+                if( $s_departure->greaterThan($main_arrival)){
+                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving','error'));
+                 }
             }
           }
         //saving to the database
@@ -187,16 +189,18 @@ class RoutesDepartureTimesController extends Controller
           foreach ($stopovers as $index => $stopover_routeid) {
             $s_arrival =Carbon::parse($arrival[$index]);
             $s_departure =Carbon::parse($departure[$index]);
-            if($s_arrival->greaterThanOrEqualTo($main_departure) && $s_arrival->lessThanOrEqualTo($main_arrival)){
-             continue;
-            }else{
-           return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+            if($s_arrival->lessThan($main_departure)){
+             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
              }
-             if($s_departure->greaterThanOrEqualTo($main_departure) && $s_departure->lessThanOrEqualTo($main_arrival)){
-              continue;
-              }else{
+             if( $s_arrival->greaterThan($main_arrival)){
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+              }
+             if($s_departure->lessThan($main_departure)){
               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
               }
+              if( $s_departure->greaterThan($main_arrival)){
+               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+               }
           }
         }
 
