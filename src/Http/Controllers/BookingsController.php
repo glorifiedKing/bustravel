@@ -31,6 +31,7 @@ use Mike42\Escpos\EscposImage;
 
 class BookingsController extends Controller
 {
+    public $travel_date='date_of_travel';
     public function __construct()
     {
         $this->middleware('web');
@@ -346,15 +347,15 @@ class BookingsController extends Controller
       else
       {
           $driver =Driver::where('user_id',auth()->user()->id)->first();
-          $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
+          $bookings = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->orderBy('id', 'DESC')->get();
           $ticket ="";
       }
 
-      $tracking=RouteTracking::where('routes_times_id',$id)->where('date_of_travel',$today)->first();
+      $tracking=RouteTracking::where('routes_times_id',$id)->where($this->travel_date,$today)->first();
       $times_id =RoutesDepartureTime::find($id);
       $not_booked =$times_id->bus->seating_capacity -$bookings->count();
-      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->where('boarded',1)->count();
-      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->where('boarded',0)->count();
+      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',1)->count();
+      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',0)->count();
 
       return view('bustravel::backend.bookings.routemanifest', compact('bookings','driver','route_id','ticket','onboard_tickets','notonboard_tickets','not_booked','times_id','tracking'));
   }
@@ -378,7 +379,7 @@ class BookingsController extends Controller
      return redirect()->route('bustravel.bookings.manifest')->with(ToastNotification::toast('No Bus Assigned to this Route','Route Tracking','error'));
     }
 
-    $tracking= RouteTracking::where('date_of_travel',$today)->first();
+    $tracking= RouteTracking::where($this->travel_date,$today)->first();
     if(is_null($tracking))
     {
       if($travel_time> $route->departure_time)
