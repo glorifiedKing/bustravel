@@ -82,8 +82,8 @@ class RoutesDepartureTimesController extends Controller
             'days_of_week.*' => 'required',
           ]);
           }
-          $main_arrival = Carbon::parse(request()->input($this->Arrival_Time));
-          $main_departure =carbon::parse(request()->input($this->departure_Time));
+          $main_arrival = Carbon::parse(request()->input('arrival_time'));
+          $main_departure =carbon::parse(request()->input('departure_time'));
           if($main_departure > $main_arrival)
           {
            return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input($this->Arrival_Time). ' is less than Departure Time - '.request()->input($this->departure_Time),$this->route_saving,$this->error));
@@ -113,8 +113,8 @@ class RoutesDepartureTimesController extends Controller
         //saving to the database
         $route = new RoutesDepartureTime();
         $route->route_id = request()->input('route_id');
-        $route->departure_time = request()->input($this->departure_Time);
-        $route->arrival_time = request()->input($this->Arrival_Time);
+        $route->departure_time = request()->input('departure_time');
+        $route->arrival_time = request()->input('arrival_time');
         $route->bus_id = request()->input('bus_id') ?? 0;
         $route->driver_id = request()->input('driver_id') ?? 0;
         $route->days_of_week = request()->input('days_of_week');
@@ -181,8 +181,8 @@ class RoutesDepartureTimesController extends Controller
             'days_of_week.*' => 'required',
           ]);
         }
-        $main_arrival = Carbon::parse(request()->input($this->Arrival_Time));
-        $main_departure =carbon::parse(request()->input($this->departure_Time));
+        $main_arrival = Carbon::parse(request()->input('arrival_time'));
+        $main_departure =carbon::parse(request()->input('departure_time'));
         if($main_departure > $main_arrival)
         {
          return redirect()->route($this->service_edit,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input($this->Arrival_Time). ' is less than Departure Time - '.request()->input($this->departure_Time),$this->route_updating,$this->error));
@@ -213,7 +213,7 @@ class RoutesDepartureTimesController extends Controller
         //saving to the database
         $route = RoutesDepartureTime::find($id);
         $route->route_id = request()->input('route_id');
-        $route->departure_time = request()->input($this->departure_Time);
+        $route->departure_time = request()->input('departure_time');
         $route->arrival_time = request()->input($this->Arrival_Time);
         $route->bus_id = request()->input('bus_id') ?? 0;
         $route->driver_id = request()->input('driver_id') ?? 0;
