@@ -18,8 +18,9 @@ use glorifiedking\BusTravel\ToastNotification;
 
 class RouteController extends Controller
 {
-   public $route_price='price';
-   public $route_return_price='return_price';
+   public $route_price='price',
+    $route_return_price='return_price',
+    $route_updating='Route Updating';
     public function __construct()
     {
         $this->middleware('web');
@@ -90,10 +91,10 @@ class RouteController extends Controller
 
       // get stop over routes
       unset($all_routes[$first_key_main_route]);
-      $stop_over_routes = $all_routes;    
-      
+      $stop_over_routes = $all_routes;
 
-      
+
+
         $route = new Route();
         $route->start_station = $start_station;
         $route->end_station = $end_station;
@@ -159,7 +160,7 @@ class RouteController extends Controller
           $inverse_route_time->status = 1;
           $inverse_route_time->save();
           //Inverse stop over routes
-          //reverse sort 
+          //reverse sort
           usort($stop_over_routes,function($a,$b){
             return $a['order']<$b['order'];
           });
@@ -188,7 +189,7 @@ class RouteController extends Controller
             }
         }
 
-         
+
         }
 
 

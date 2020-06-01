@@ -19,8 +19,9 @@ class RoutesDepartureTimesController extends Controller
     public
     $service_create ='bustravel.routes.departures.create',
     $service_edit ='bustravel.routes.departures.edit',
-    $stopover_route_id='stopover_routeid';
-
+    $stopover_route_id='stopover_routeid',
+    $route_updating='Route Updating',
+    $error ='error';
     public function __construct()
     {
         $this->middleware('web');
@@ -80,7 +81,7 @@ class RoutesDepartureTimesController extends Controller
           $main_departure =carbon::parse(request()->input('departure_time'));
           if($main_departure > $main_arrival)
           {
-           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Saving','error'));
+           return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Saving',$this->error));
           }
           $stopovers = request()->input($this->stopover_route_id) ??NULL;
           $arrival = request()->input('stopover_arrival_time');
@@ -91,16 +92,16 @@ class RoutesDepartureTimesController extends Controller
               $s_arrival =Carbon::parse($arrival[$index]);
               $s_departure =Carbon::parse($departure[$index]);
               if($s_arrival->lessThan($main_departure)){
-              return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
+              return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving',$this->error));
                }
                if( $s_arrival->greaterThan($main_arrival)){
-               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving','error'));
+               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Saving',$this->error));
                 }
                if($s_departure->lessThan($main_departure)){
-                return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving','error'));
+                return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving',$this->error));
                 }
                 if( $s_departure->greaterThan($main_arrival)){
-                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving','error'));
+                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route saving',$this->error));
                  }
             }
           }
@@ -179,7 +180,7 @@ class RoutesDepartureTimesController extends Controller
         $main_departure =carbon::parse(request()->input('departure_time'));
         if($main_departure > $main_arrival)
         {
-         return redirect()->route($this->service_edit,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),'Route Updating','error'));
+         return redirect()->route($this->service_edit,request()->input('route_id'))->withinput()->with(ToastNotification::toast('Arrival time - '.request()->input('arrival_time'). ' is less than Departure Time - '.request()->input('departure_time'),$this->route_updating,$this->error));
         }
         $stopovers = request()->input($this->stopover_route_id) ??NULL;
         $arrival = request()->input('stopover_arrival_time');
@@ -190,16 +191,16 @@ class RoutesDepartureTimesController extends Controller
             $s_arrival =Carbon::parse($arrival[$index]);
             $s_departure =Carbon::parse($departure[$index]);
             if($s_arrival->lessThan($main_departure)){
-             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),$this->route_updating,$this->error));
              }
              if( $s_arrival->greaterThan($main_arrival)){
-              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Arrival time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),$this->route_updating,$this->error));
               }
              if($s_departure->lessThan($main_departure)){
-              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),$this->route_updating,$this->error));
               }
               if( $s_departure->greaterThan($main_arrival)){
-               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),'Route Updating','error'));
+               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast('StopOver Departure time should be between '.request()->input('departure_time'). ' and '.request()->input('arrival_time'),$this->route_updating,$this->error));
                }
           }
         }
@@ -229,7 +230,7 @@ class RoutesDepartureTimesController extends Controller
                 $stopover->save();
             }
         }
-        return redirect()->route($this->service_edit, $id)->with(ToastNotification::toast('Route has successfully been updated','Route Updating'));
+        return redirect()->route($this->service_edit, $id)->with(ToastNotification::toast('Route has successfully been updated',$this->route_updating));
     }
 
     //Delete Route Departure Times
@@ -239,6 +240,6 @@ class RoutesDepartureTimesController extends Controller
         $name = $routes_departure_time->route->start->name.' - '.$routes_departure_time->route->end->name.' at '.$routes_departure_time->departure_time;
         $routes_departure_time->delete();
 
-        return Redirect::route('bustravel.routes.departures')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting','error'));
+        return Redirect::route('bustravel.routes.departures')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting',$this->error));
     }
 }
