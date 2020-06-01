@@ -63,9 +63,9 @@
                              <td>{{$booking->route_departure_time->driver->name??''}} </td>
                              <td>
                                @if($booking->boarded==0)
-                               <span class="badge badge-danger "><i class="fa fa-times"></i> No</span>
+                               <span class="badge badge-danger "><span class="fa fa-times"></span> No</span>
                                @else
-                               <span class="badge badge-success "><i class="fa fa-check"></i> Yes</span>
+                               <span class="badge badge-success "><span class="fa fa-check"></span> Yes</span>
                                @endif
                              </td></tr>
                         </thead>
@@ -136,7 +136,7 @@
                   <div class=" col-md-3 form-group">
                       <label for="signed" class=" col-md-12 control-label">Status</label>
                       <label class="radio-inline">
-                        <input type="radio" id="Active" name="status" value="1" @php echo $booking->status == 1? 'checked' :  "" @endphp>  Paid 
+                        <input type="radio" id="Active" name="status" value="1" @php echo $booking->status == 1? 'checked' :  "" @endphp>  Paid
                       </label>
                      <label class="radio-inline">
                         <input type="radio" id="Deactive" name="status" value="0" @php echo $booking->status == 0? 'checked' :  "" @endphp>  Not Paid

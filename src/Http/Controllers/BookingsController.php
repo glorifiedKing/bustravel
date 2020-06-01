@@ -276,20 +276,11 @@ class BookingsController extends Controller
     //Update Operator route('bustravel.operators.upadate')
     public function update($id, Request $request)
     {
-        //validation
-        //$validation = request()->validate(Booking::$rules);
+
         //saving to the database
         $booking = Booking::find($id);
-        // $booking->routes_departure_time_id = request()->input('routes_departure_time_id');
         $booking->amount = request()->input('amount');
-        // $booking->date_paid = request()->input('date_paid') ?? null;
-        // $booking->date_of_travel = request()->input('date_of_travel') ?? null;
-        // $booking->time_of_travel = $booking->time_of_travel;
-        // $booking->ticket_number = $booking->ticket_number;
-        // $booking->user_id = request()->input('user_id');
-        // $booking->status = request()->input('status');
           $booking->save();
-
         $fields_values = request()->input('field_value') ?? 0;
         $fields_id = request()->input('field_id') ?? 0;
         $fields_empty = BookingsField::where('booking_id', $id)->delete();
