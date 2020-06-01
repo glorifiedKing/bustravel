@@ -364,13 +364,7 @@ class BookingsController extends Controller
     $booking =Booking::find($id);
     $booking->boarded=1;
     $booking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Ticket '.$booking->ticket_number.' marked Onboard',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$booking->routes_departure_time_id)->with($alerts);
+     return redirect()->route('bustravel.bookings.route.manifest',$booking->routes_departure_time_id)->with(ToastNotification::toast($booking->ticket_number.' marked Onboard','On Board'));
 
   }
   public function route_tracking($id)
@@ -407,13 +401,7 @@ class BookingsController extends Controller
     $tracking->started=1;
     $tracking->start_time =date('H:i');
     $tracking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Route has started ,Safe Journey ',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with($alerts);
+     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with(ToastNotification::toast('Route has started ,Safe Journey ','On Board'));
 
   }
 
@@ -423,13 +411,7 @@ class BookingsController extends Controller
     $tracking->ended=1;
     $tracking->end_time =date('H:i A');
     $tracking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Route has Ended ,Welcome Back',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with($alerts);
+     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with(ToastNotification::toast('Route has Ended ,Welcome Back','On Board'));
 
   }
 
