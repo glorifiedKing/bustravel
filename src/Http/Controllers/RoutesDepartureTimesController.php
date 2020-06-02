@@ -96,16 +96,16 @@ class RoutesDepartureTimesController extends Controller
               $s_arrival =Carbon::parse($arrival[$index]);
               $s_departure =Carbon::parse($departure[$index]);
               if($s_arrival->lessThan($main_departure)){
-              return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
+              return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
                }
                if( $s_arrival->greaterThan($main_arrival)){
-               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
+               return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
                 }
                if($s_departure->lessThan($main_departure)){
-                return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
+                return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
                 }
                 if( $s_departure->greaterThan($main_arrival)){
-                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
+                 return redirect()->route($this->service_create,request()->input('route_id'))->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_saving,$this->error));
                  }
             }
           }
@@ -195,16 +195,16 @@ class RoutesDepartureTimesController extends Controller
             $s_arrival =Carbon::parse($arrival[$index]);
             $s_departure =Carbon::parse($departure[$index]);
             if($s_arrival->lessThan($main_departure)){
-             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
+             return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
              }
              if( $s_arrival->greaterThan($main_arrival)){
-              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_arrival.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
               }
              if($s_departure->lessThan($main_departure)){
-              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
+              return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
               }
               if( $s_departure->greaterThan($main_arrival)){
-               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). ' and '.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
+               return redirect()->route($this->service_edit,$id)->withinput()->with(ToastNotification::toast($this->time_error_departure.request()->input($this->R_departure_Time). '-'.request()->input($this->R_Arrival_Time),$this->route_updating,$this->error));
                }
           }
         }
