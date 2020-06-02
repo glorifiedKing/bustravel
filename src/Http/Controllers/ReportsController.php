@@ -12,6 +12,9 @@ use Illuminate\Routing\Controller;
 
 class ReportsController extends Controller
 {
+    public $role_cashier ='BT Cashier',
+     $userId='user_id';
+
     public function __construct()
     {
         $this->middleware('web');
@@ -471,13 +474,18 @@ class ReportsController extends Controller
                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
                }
+               elseif(auth()->user()->hasAnyRole($this->role_cashier))
+               {
+                 $routes =Route::where('start_station',$start_station)->pluck('id');
+                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+                 $bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               }
                else
                {
                  $routes =Route::where('start_station',$start_station)->pluck('id');
                  $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                  $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
                }
-
            }else{
 
              if(auth()->user()->hasAnyRole('BT Administrator'))
@@ -486,9 +494,13 @@ class ReportsController extends Controller
                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
                }
+               elseif(auth()->user()->hasAnyRole($this->role_cashier))
+               {
+                 $bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+               }
                else
                {
-                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+                 $bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
                }
            }
 
@@ -508,21 +520,20 @@ class ReportsController extends Controller
       $ticket = request()->input('ticket') ?? null;
       $start_station = request()->input('start_station') ?? null;
 
-      if(auth()->user()->hasAnyRole('BT Cashier'))
+      if(auth()->user()->hasAnyRole($this->role_cashier))
         {
           if (!is_null($ticket)) {
 
-              $bookings = Booking::where('ticket_number', $ticket)->where('user_id',auth()->user()->id)->orderBY('id', 'DESC')->get();
+              $bookings = Booking::where('ticket_number', $ticket)->where($this->userId,auth()->user()->id)->orderBY('id', 'DESC')->get();
           } else {
 
             if(!is_null($start_station))
             {
               $routes =Route::where('start_station',$start_station)->pluck('id');
               $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
-
-               $bookings = Booking::where('user_id',auth()->user()->id)-whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
+               $bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->whereIn('routes_departure_time_id',$route_times)->orderBY('id', 'DESC')->get();
             }else{
-                $bookings = Booking::where('user_id',auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
+                $bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->orderBY('id', 'DESC')->get();
             }
 
           }

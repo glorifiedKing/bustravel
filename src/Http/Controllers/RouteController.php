@@ -15,11 +15,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use glorifiedking\BusTravel\ToastNotification;
+use glorifiedking\BusTravel\Http\Requests\CreateRouteRequest;
 
 class RouteController extends Controller
 {
-   public $route_price='price';
-   public $route_return_price='return_price';
+   public $route_price='price',
+    $route_return_price='return_price',
+    $route_updating='Route Updating';
     public function __construct()
     {
         $this->middleware('web');
@@ -58,20 +60,8 @@ class RouteController extends Controller
     }
 
     // saving a new buses in the database  route('bustravel.buses.store')
-    public function store(Request $request)
+    public function store(CreateRouteRequest $request)
     {
-        //validation
-        $request->validate([
-          'routes' => 'required|array',
-          'routes.*.from' => 'required|exists:stations,id',
-          'routes.*.to' => 'required|exists:stations,id',
-          'routes.*.in' => 'required|date_format:H:i',
-          'routes.*.out' => 'required|date_format:H:i,after:in',
-          'routes.*.price' => 'required|numeric',
-          'routes.*.order' => 'required|integer',
-          "days_of_week"    => "required|array",
-          'days_of_week.*' => 'required',
-      ]);
 
       $all_routes = $request->routes;
       $start_station = $all_routes[0]['from'];
@@ -90,10 +80,10 @@ class RouteController extends Controller
 
       // get stop over routes
       unset($all_routes[$first_key_main_route]);
-      $stop_over_routes = $all_routes;    
-      
+      $stop_over_routes = $all_routes;
 
-      
+
+
         $route = new Route();
         $route->start_station = $start_station;
         $route->end_station = $end_station;
@@ -159,7 +149,7 @@ class RouteController extends Controller
           $inverse_route_time->status = 1;
           $inverse_route_time->save();
           //Inverse stop over routes
-          //reverse sort 
+          //reverse sort
           usort($stop_over_routes,function($a,$b){
             return $a['order']<$b['order'];
           });
@@ -188,7 +178,7 @@ class RouteController extends Controller
             }
         }
 
-         
+
         }
 
 

@@ -27,10 +27,14 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
+use glorifiedking\BusTravel\Http\Requests\CreateBookingRequest;
 
 
 class BookingsController extends Controller
 {
+    public $travel_date='date_of_travel',
+    $on_board='On Board',
+    $route_manifest='bustravel.bookings.route.manifest';
     public function __construct()
     {
         $this->middleware('web');
@@ -80,15 +84,8 @@ class BookingsController extends Controller
     }
 
     // saving a new route departure times in the database  route('bustravel.routes.departures.store')
-    public function store(Request $request)
+    public function store(CreateBookingRequest $request)
     {
-        //validation
-        $validation = $request->validate([
-            'route_id' => 'required',
-            'route_type' => 'required',
-            'amount'     => 'required',
-            'printer'    =>   'required',
-        ]);
         $route_id = $request->route_id;
         $route_type = $request->route_type;
         $payment_method = $request->payment_method;
@@ -276,20 +273,11 @@ class BookingsController extends Controller
     //Update Operator route('bustravel.operators.upadate')
     public function update($id, Request $request)
     {
-        //validation
-        $validation = request()->validate(Booking::$rules);
+
         //saving to the database
         $booking = Booking::find($id);
-        $booking->routes_departure_time_id = request()->input('routes_departure_time_id');
         $booking->amount = request()->input('amount');
-        $booking->date_paid = request()->input('date_paid') ?? null;
-        $booking->date_of_travel = request()->input('date_of_travel') ?? null;
-        $booking->time_of_travel = $booking->time_of_travel;
-        $booking->ticket_number = $booking->ticket_number;
-        $booking->user_id = request()->input('user_id');
-        $booking->status = request()->input('status');
-        $booking->save();
-
+          $booking->save();
         $fields_values = request()->input('field_value') ?? 0;
         $fields_id = request()->input('field_id') ?? 0;
         $fields_empty = BookingsField::where('booking_id', $id)->delete();
@@ -302,15 +290,7 @@ class BookingsController extends Controller
                 $custom_fields->save();
             }
         }
-
-        $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'Booking Updating',
-        'bustravel-flash-message' => 'Booking has successfully been updated',
-    ];
-
-        return redirect()->route('bustravel.bookings.edit', $id)->with($alerts);
+        return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('Booking has successfully been updated','Booking Updating'));
     }
 
     //Delete Route Departure Times
@@ -319,14 +299,7 @@ class BookingsController extends Controller
         $booking = Booking::find($id);
         $name = $booking->ticket_number;
         $booking->delete();
-        $alerts = [
-            'bustravel-flash'         => true,
-            'bustravel-flash-type'    => 'error',
-            'bustravel-flash-title'   => 'Booking Deleting ',
-            'bustravel-flash-message' => 'Booking '.$name.' has successfully been Deleted',
-        ];
-
-        return Redirect::route('bustravel.bookings')->with($alerts);
+        return Redirect::route('bustravel.bookings')->with(ToastNotification::toast($name.' has successfully been Deleted','Booking Deleted','error'));
     }
 
   public function manifest()
@@ -370,15 +343,15 @@ class BookingsController extends Controller
       else
       {
           $driver =Driver::where('user_id',auth()->user()->id)->first();
-          $bookings = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->orderBy('id', 'DESC')->get();
+          $bookings = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->orderBy('id', 'DESC')->get();
           $ticket ="";
       }
 
-      $tracking=RouteTracking::where('routes_times_id',$id)->where('date_of_travel',$today)->first();
+      $tracking=RouteTracking::where('routes_times_id',$id)->where($this->travel_date,$today)->first();
       $times_id =RoutesDepartureTime::find($id);
       $not_booked =$times_id->bus->seating_capacity -$bookings->count();
-      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->where('boarded',1)->count();
-      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where('date_of_travel',$today)->where('boarded',0)->count();
+      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',1)->count();
+      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',0)->count();
 
       return view('bustravel::backend.bookings.routemanifest', compact('bookings','driver','route_id','ticket','onboard_tickets','notonboard_tickets','not_booked','times_id','tracking'));
   }
@@ -388,13 +361,7 @@ class BookingsController extends Controller
     $booking =Booking::find($id);
     $booking->boarded=1;
     $booking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Ticket '.$booking->ticket_number.' marked Onboard',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$booking->routes_departure_time_id)->with($alerts);
+     return redirect()->route($this->route_manifest,$booking->routes_departure_time_id)->with(ToastNotification::toast($booking->ticket_number.' marked Onboard',$this->on_board));
 
   }
   public function route_tracking($id)
@@ -408,7 +375,7 @@ class BookingsController extends Controller
      return redirect()->route('bustravel.bookings.manifest')->with(ToastNotification::toast('No Bus Assigned to this Route','Route Tracking','error'));
     }
 
-    $tracking= RouteTracking::where('date_of_travel',$today)->first();
+    $tracking= RouteTracking::where($this->travel_date,$today)->first();
     if(is_null($tracking))
     {
       if($travel_time> $route->departure_time)
@@ -422,7 +389,7 @@ class BookingsController extends Controller
      $tracking->date_of_travel =$today;
      $tracking->save();
     }
-   return redirect()->route('bustravel.bookings.route.manifest',$route->id);
+   return redirect()->route($this->route_manifest,$route->id);
   }
 
   public function route_tracking_start($id)
@@ -431,13 +398,7 @@ class BookingsController extends Controller
     $tracking->started=1;
     $tracking->start_time =date('H:i');
     $tracking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Route has started ,Safe Journey ',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with($alerts);
+     return redirect()->route($this->route_manifest,$tracking->routes_times_id)->with(ToastNotification::toast('Route has started ,Safe Journey ',$this->on_board));
 
   }
 
@@ -447,13 +408,7 @@ class BookingsController extends Controller
     $tracking->ended=1;
     $tracking->end_time =date('H:i A');
     $tracking->save();
-    $alerts = [
-        'bustravel-flash'         => true,
-        'bustravel-flash-type'    => 'success',
-        'bustravel-flash-title'   => 'On Board',
-        'bustravel-flash-message' => 'Route has Ended ,Welcome Back',
-    ];
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with($alerts);
+     return redirect()->route($this->route_manifest,$tracking->routes_times_id)->with(ToastNotification::toast('Route has Ended ,Welcome Back',$this->on_board));
 
   }
 

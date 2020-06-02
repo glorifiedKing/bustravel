@@ -56,20 +56,20 @@
                                 <th scope="col">Amount Client paid</th>
                                 <th scope="col">Amount to operator</th>
                                 <th scope="col">Status</th>
-                                
+
                             </tr>
                         </thead>
                         <tbody>
 
                         @foreach ($payment_reports as $payment_report)
-                            <tr>                              
+                            <tr>
                                 <td>{{$payment_report->created_at}}</td>
-                                <td>{{$payment_report->payment_transaction->payment_source}}</td>
-                                <td>{{$payment_report->payment_transaction->payee_reference}}</td>
+                                <td>{{$payment_report->payment_transaction->payment_source??''}}</td>
+                                <td>{{$payment_report->payment_transaction->payee_reference??''}}</td>
                                 <td>{{$payment_report->payment_transaction->amount}}
                                 <td>{{$payment_report->amount}}</td>
                                 <td>{{$payment_report->status}}</td>
-                                
+
                             </tr>
 
                         @endforeach
@@ -98,8 +98,8 @@
                     <span class="description-text">LATEST PAYMENTS</span>
                 </div>
                 <!-- /.description-block -->
-                </div>                
-                
+                </div>
+
             </div>
             <!-- /.row -->
             </div>
@@ -121,7 +121,7 @@
     <script>
         $(function () {
             $("#example1").DataTable();
-            
+
         });
     </script>
 @stop
