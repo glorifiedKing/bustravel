@@ -31,7 +31,9 @@ use Mike42\Escpos\EscposImage;
 
 class BookingsController extends Controller
 {
-    public $travel_date='date_of_travel';
+    public $travel_date='date_of_travel',
+    $on_board='On Board',
+    $route_manifest='bustravel.bookings.route.manifest';
     public function __construct()
     {
         $this->middleware('web');
@@ -365,7 +367,7 @@ class BookingsController extends Controller
     $booking =Booking::find($id);
     $booking->boarded=1;
     $booking->save();
-     return redirect()->route('bustravel.bookings.route.manifest',$booking->routes_departure_time_id)->with(ToastNotification::toast($booking->ticket_number.' marked Onboard','On Board'));
+     return redirect()->route($this->route_manifest,$booking->routes_departure_time_id)->with(ToastNotification::toast($booking->ticket_number.' marked Onboard',$this->on_board));
 
   }
   public function route_tracking($id)
@@ -393,7 +395,7 @@ class BookingsController extends Controller
      $tracking->date_of_travel =$today;
      $tracking->save();
     }
-   return redirect()->route('bustravel.bookings.route.manifest',$route->id);
+   return redirect()->route($this->route_manifest,$route->id);
   }
 
   public function route_tracking_start($id)
@@ -402,7 +404,7 @@ class BookingsController extends Controller
     $tracking->started=1;
     $tracking->start_time =date('H:i');
     $tracking->save();
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with(ToastNotification::toast('Route has started ,Safe Journey ','On Board'));
+     return redirect()->route($this->route_manifest,$tracking->routes_times_id)->with(ToastNotification::toast('Route has started ,Safe Journey ',$this->on_board));
 
   }
 
@@ -412,7 +414,7 @@ class BookingsController extends Controller
     $tracking->ended=1;
     $tracking->end_time =date('H:i A');
     $tracking->save();
-     return redirect()->route('bustravel.bookings.route.manifest',$tracking->routes_times_id)->with(ToastNotification::toast('Route has Ended ,Welcome Back','On Board'));
+     return redirect()->route($this->route_manifest,$tracking->routes_times_id)->with(ToastNotification::toast('Route has Ended ,Welcome Back',$this->on_board));
 
   }
 
