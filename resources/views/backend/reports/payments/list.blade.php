@@ -66,7 +66,7 @@
                                 <td>{{$payment_report->created_at}}</td>
                                 <td>{{$payment_report->payment_transaction->payment_source??''}}</td>
                                 <td>{{$payment_report->payment_transaction->payee_reference??''}}</td>
-                                <td>{{$payment_report->payment_transaction->amount}}
+                                <td>{{$payment_report->payment_transaction->amount??''}}
                                 <td>{{$payment_report->amount}}</td>
                                 <td>{{$payment_report->status}}</td>
 
