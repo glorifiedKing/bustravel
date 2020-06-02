@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use glorifiedking\BusTravel\ToastNotification;
+use glorifiedking\BusTravel\Http\Requests\CreateRouteRequest;
 
 class RouteController extends Controller
 {
@@ -59,20 +60,8 @@ class RouteController extends Controller
     }
 
     // saving a new buses in the database  route('bustravel.buses.store')
-    public function store(Request $request)
+    public function store(CreateRouteRequest $request)
     {
-        //validation
-        $request->validate([
-          'routes' => 'required|array',
-          'routes.*.from' => 'required|exists:stations,id',
-          'routes.*.to' => 'required|exists:stations,id',
-          'routes.*.in' => 'required|date_format:H:i',
-          'routes.*.out' => 'required|date_format:H:i,after:in',
-          'routes.*.price' => 'required|numeric',
-          'routes.*.order' => 'required|integer',
-          "days_of_week"    => "required|array",
-          'days_of_week.*' => 'required',
-      ]);
 
       $all_routes = $request->routes;
       $start_station = $all_routes[0]['from'];

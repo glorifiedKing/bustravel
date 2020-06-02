@@ -13,7 +13,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
 use glorifiedking\BusTravel\ToastNotification;
-
+use glorifiedking\BusTravel\Http\Requests\CreateServicesRequest;
 class RoutesDepartureTimesController extends Controller
 {
     public $service_create ='bustravel.routes.departures.create',
@@ -54,33 +54,8 @@ class RoutesDepartureTimesController extends Controller
     }
 
     // saving a new route departure times in the database  route('bustravel.routes.departures.store')
-    public function store(Request $request)
+    public function store(CreateServicesRequest $request)
     {
-        //validation
-        if(request()->input('has_stover')== 0)
-        {
-          $validation = request()->validate([
-            'route_id'       => 'required',
-            $this->R_departure_Time => 'required',
-            $this->R_Arrival_Time => 'required',
-            "days_of_week"    => "required|array",
-            'days_of_week.*' => 'required',
-          ]);
-
-
-        }else{
-          $validation = request()->validate([
-            'route_id'       => 'required',
-            $this->R_departure_Time => 'required',
-            $this->R_Arrival_Time => 'required',
-            "stopover_arrival_time"    => "required|array",
-            'stopover_arrival_time.*' => 'required',
-            "stopover_departure_time"    => "required|array",
-            'stopover_departure_time.*' => 'required',
-            "days_of_week"    => "required|array",
-            'days_of_week.*' => 'required',
-          ]);
-          }
           $main_arrival = Carbon::parse(request()->input($this->R_Arrival_Time));
           $main_departure =carbon::parse(request()->input($this->R_departure_Time));
           if($main_departure > $main_arrival)
@@ -153,33 +128,8 @@ class RoutesDepartureTimesController extends Controller
     }
 
     //Update Operator route('bustravel.operators.upadate')
-    public function update($id, Request $request)
+    public function update( $id, CreateServicesRequest $request)
     {
-        //validation
-
-        if(request()->input('has_stover')== 0)
-        {
-          $validation = request()->validate([
-            'route_id'       => 'required',
-            $this->R_departure_Time => 'required',
-            $this->R_Arrival_Time => 'required',
-            "days_of_week"    => "required|array",
-            'days_of_week.*' => 'required',
-          ]);
-
-        }else{
-          $validation = request()->validate([
-            'route_id'       => 'required',
-            $this->R_departure_Time => 'required',
-            $this->R_Arrival_Time => 'required',
-            "stopover_arrival_time"    => "required|array",
-            'stopover_arrival_time.*' => 'required',
-            "stopover_departure_time"    => "required|array",
-            'stopover_departure_time.*' => 'required',
-            "days_of_week"    => "required|array",
-            'days_of_week.*' => 'required',
-          ]);
-        }
         $main_arrival = Carbon::parse(request()->input($this->R_Arrival_Time));
         $main_departure =carbon::parse(request()->input($this->R_departure_Time));
         if($main_departure > $main_arrival)

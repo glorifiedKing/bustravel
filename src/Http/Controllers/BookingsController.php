@@ -27,6 +27,7 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
+use glorifiedking\BusTravel\Http\Requests\CreateBookingRequest;
 
 
 class BookingsController extends Controller
@@ -83,15 +84,8 @@ class BookingsController extends Controller
     }
 
     // saving a new route departure times in the database  route('bustravel.routes.departures.store')
-    public function store(Request $request)
+    public function store(CreateBookingRequest $request)
     {
-        //validation
-        $validation = $request->validate([
-            'route_id' => 'required',
-            'route_type' => 'required',
-            'amount'     => 'required',
-            'printer'    =>   'required',
-        ]);
         $route_id = $request->route_id;
         $route_type = $request->route_type;
         $payment_method = $request->payment_method;
