@@ -179,6 +179,12 @@ class FrontendController extends Controller
 
     public function checkout(Request $request)
     {
+        $cart = session()->get('cart.items');
+        //check for empty cart 
+        if(!$cart)
+        {
+            return redirect()->route('bustravel.cart');
+        }
         $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 9;
         return view('bustravel::frontend.checkout',compact('sms_cost'));
     }
@@ -187,7 +193,7 @@ class FrontendController extends Controller
     {
         $now = date('H:i');  
         $travel_day_of_week = date('l');      
-        $routes_times =RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$now)->get();
+        $routes_times =RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$now)->get()->sortBy('departure_time');
         
         return view('bustravel::frontend.bus_times',compact('routes_times'));
     }

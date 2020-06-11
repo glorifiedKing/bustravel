@@ -78,31 +78,27 @@ $(document).ready(function(){
                     $(this).html( '<input size="5" type="text" placeholder="Search.." >' );
                 } );
                 var table =  $("#route_table").DataTable({
+                    "order": [[ 2, "asc" ]]
               	});
 
 
             // Apply the search
               table.columns().every(function (index) {
                   $("#route_table thead tr:eq(1) th:eq(" + index + ") input").on("keyup change", function () {
-                     if(index == 100)
+                     if(index == 0)
                      {
-                       if(this.value.length < 1){
-                         table.column($(this).parent().index() + ":visible")
-                             .search("")
+                      
+                         table.search(this.value, false, false, true)
                              .draw();
-                       }
-                       else {
-                         table.column($(this).parent().index() + ":visible")
-                             .search("^" + this.value + "$", true, false, true)
-                             .draw();
-                       }
+                      
 
-                     }
-                     else {
+                    }
+                    else 
+                    {
                       table.column($(this).parent().index() + ":visible")
                           .search(this.value)
                           .draw();
-                        }
+                    }
                   });
               });
 });
