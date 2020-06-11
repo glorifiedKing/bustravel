@@ -103,6 +103,7 @@ Route::post('report_routes', 'ReportsController@routes')->name('bustravel.report
 Route::get('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic');
 Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic.period');
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
+Route::get('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
 Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');
@@ -122,7 +123,7 @@ Route::post('email_template/{id}/edit','TicketTemplateController@update_email_te
 Route::get('email_template/{id}/delete','TicketTemplateController@delete_email_template')->name('bustravel.email.templates.delete');
 
 
-// sms templates 
+// sms templates
 Route::get('sms_template','TicketTemplateController@view_sms_templates')->name('bustravel.sms.templates');
 Route::get('sms_template/new','TicketTemplateController@create_sms_template')->name('bustravel.sms.templates.create');
 Route::post('sms_template/new','TicketTemplateController@save_sms_template')->name('bustravel.sms.templates.save');
@@ -141,13 +142,13 @@ Route::get('printers/{id}/delete','PrintersController@delete_printer')->name('bu
 
 Route::post('api/getBusServices/{operatorId}','BookingsController@get_route_times')->name('bustravel.api.get.route.times');
 
-// payment reports 
+// payment reports
 Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');
 
 //dashboard
 Route::get('dashboard','DashboardController@index')->name('bustravel.dashboard');
 
-//documentation 
+//documentation
 Route::get('docs','DocumentationController@index')->name('bustravel.docs');
 Route::get('docs/buses','DocumentationController@buses')->name('bustravel.docs.buses');
 Route::get('docs/drivers','DocumentationController@drivers')->name('bustravel.docs.drivers');

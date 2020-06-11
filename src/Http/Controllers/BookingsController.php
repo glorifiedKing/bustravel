@@ -13,6 +13,7 @@ use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\StopoverStation;
 use glorifiedking\BusTravel\Printer as BusTravelPrinter;
 use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\VoidTicket;
 use glorifiedking\BusTravel\RouteTracking;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\ToastNotification;
@@ -41,6 +42,7 @@ class BookingsController extends Controller
         $this->middleware('auth');
         $this->middleware('can:View BT Bookings')->only('index');
         $this->middleware('can:Create BT Bookings')->only('create','store','edit','update','delete');
+        $this->middleware('can:Create BT Drivers')->only('delete');
         $this->middleware('can:View BT Driver Manifest')->only('manifest','route_manifest','boarded');
 
     }
@@ -52,15 +54,15 @@ class BookingsController extends Controller
         {
          $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
          $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-         $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->get();
+         $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->whereNotIn('status',[2])->get();
         }
         elseif(auth()->user()->hasAnyRole('BT Cashier'))
         {
-         $bookings = Booking::where('user_id',auth()->user()->id)->orderBy('id', 'DESC')->get();
+         $bookings = Booking::where('user_id',auth()->user()->id)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
         }
       else
         {
-           $bookings = Booking::orderBy('id', 'DESC')->get();
+           $bookings = Booking::orderBy('id', 'DESC')->whereNotIn('status',[2])->get();
         }
 
 
@@ -263,11 +265,12 @@ class BookingsController extends Controller
         $booking_fields_ids = BookingsField::where('booking_id', $id)->pluck('field_id')->all();
         $custom_fields = BookingCustomField::where('status', 1)->orderBy('field_order', 'ASC')->get();
         $booking = Booking::find($id);
+        $void_status =VoidTicket::where('booking_id',$booking->id)->first();
         if (is_null($booking)) {
             return Redirect::route('bustravel.bookings');
         }
 
-        return view('bustravel::backend.bookings.edit', compact('booking_fields_ids', 'booking_fields', 'booking', 'users', 'routes_times', 'custom_fields'));
+        return view('bustravel::backend.bookings.edit', compact('booking_fields_ids', 'booking_fields', 'booking', 'users', 'routes_times', 'custom_fields','void_status'));
     }
 
     //Update Operator route('bustravel.operators.upadate')
@@ -277,7 +280,8 @@ class BookingsController extends Controller
         //saving to the database
         $booking = Booking::find($id);
         $booking->amount = request()->input('amount');
-          $booking->save();
+        $booking->status=request()->input('status');
+        $booking->save();
         $fields_values = request()->input('field_value') ?? 0;
         $fields_id = request()->input('field_id') ?? 0;
         $fields_empty = BookingsField::where('booking_id', $id)->delete();
@@ -290,6 +294,25 @@ class BookingsController extends Controller
                 $custom_fields->save();
             }
         }
+
+       if(request()->input('status')==2)
+       {
+        $void =VoidTicket::where('booking_id',$booking->id)->first();
+        if(is_null($void))
+        {
+          $void_new = new VoidTicket();
+          $void_new->booking_id=$booking->id;
+          $void_new->void_reason =request()->input('void_reason');
+          $void_new->user_id=auth()->user()->id;
+          $void_new->save();
+        }else{
+          $void->void_reason =request()->input('void_reason');
+          $void->save();
+        }
+
+      }else{
+      $void =VoidTicket::where('booking_id',$booking->id)->delete();
+      }
         return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('Booking has successfully been updated','Booking Updating'));
     }
 
@@ -312,7 +335,7 @@ class BookingsController extends Controller
        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
        $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
        ->where('days_of_week', 'like', "%$travel_day_of_week%")->get();
-       $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->get();
+       $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
       }
     else
       {
@@ -320,7 +343,7 @@ class BookingsController extends Controller
         $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
         $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
         $driver_routes= RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->get();
-        $bookings = Booking::orderBy('id', 'DESC')->get();
+        $bookings = Booking::whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
 
       }
 
@@ -337,21 +360,21 @@ class BookingsController extends Controller
           ]);
           $driver =Driver::where('user_id',auth()->user()->id)->first();
           $ticket = request()->input('ticket');
-          $bookings = Booking::where('ticket_number',$ticket)->get();
+          $bookings = Booking::where('ticket_number',$ticket)->whereNotIn('status',[2])->get();
 
       }
       else
       {
           $driver =Driver::where('user_id',auth()->user()->id)->first();
-          $bookings = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->orderBy('id', 'DESC')->get();
+          $bookings = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
           $ticket ="";
       }
 
       $tracking=RouteTracking::where('routes_times_id',$id)->where($this->travel_date,$today)->first();
       $times_id =RoutesDepartureTime::find($id);
       $not_booked =$times_id->bus->seating_capacity -$bookings->count();
-      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',1)->count();
-      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->where('boarded',0)->count();
+      $onboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->whereNotIn('status',[2])->where('boarded',1)->count();
+      $notonboard_tickets = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->whereNotIn('status',[2])->where('boarded',0)->count();
 
       return view('bustravel::backend.bookings.routemanifest', compact('bookings','driver','route_id','ticket','onboard_tickets','notonboard_tickets','not_booked','times_id','tracking'));
   }

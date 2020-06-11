@@ -37,15 +37,34 @@
               <form role="form" action="{{route('bustravel.bookings.update',$booking->id)}}" method="POST">
               {{csrf_field() }}
 
+              @php
+              if($booking->route_type=="main_route"){
+              $start_station =  $booking->route_departure_time->route->start->name??'';
+              $end_station =  $booking->route_departure_time->route->end->name??'';
+              $departure_time= $booking->route_departure_time->departure_time??'';
+              $arrival_time= $booking->route_departure_time->arrival_time??'';
+              $route_bus = $booking->route_departure_time->bus->number_plate??"";
+              $route_driver = $booking->route_departure_time->driver->name??'';
+              }else {
+                $start_station =  $booking->stop_over_route_departure_time->route->start_stopover_station->name??'';
+                $end_station =  $booking->stop_over_route_departure_time->route->end_stopover_station->name??'';
+                $departure_time= $booking->stop_over_route_departure_time->departure_time??'';
+                $arrival_time= $booking->stop_over_route_departure_time->arrival_time??'';
+                $route_bus = $booking->stop_over_route_departure_time->main_route_departure_time->bus->number_plate??'';
+                $route_driver = $booking->stop_over_route_departure_time->main_route_departure_time->driver->name??'';
+              }
+
+              @endphp
+
               <div class="box-body">
                 <div class="row">
                   <div class="form-group col-md-3 ">
                     <label>From</label>
-                    <input  readonly type="text"  name="from" value="{{$booking->route_departure_time->route->start->name}} " class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1">
+                    <input  readonly type="text"  name="from" value="{{$start_station}} " class="form-control {{ $errors->has('from') ? ' is-invalid' : '' }}" id="exampleInputEmail1">
                   </div>
                   <div class="form-group col-md-3 ">
                     <label>To</label>
-                    <input readonly type="text"  name="amount" value="{{$booking->route_departure_time->route->end->name}}" class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
+                    <input readonly type="text"  name="to" value="{{$end_station}}" class="form-control {{ $errors->has('to') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
                   </div>
                   <div class="form-group col-md-12">
                     <table id="table_results" class="table table-striped">
@@ -58,9 +77,9 @@
                             <th scope="col">Travelled</th>
                           </tr>
                           <tr>
-                             <td>{{$booking->route_departure_time->departure_time}} - {{$booking->route_departure_time->arrival_time}}</td>
-                             <td>{{$booking->route_departure_time->bus->number_plate??''}} </td>
-                             <td>{{$booking->route_departure_time->driver->name??''}} </td>
+                             <td>{{$departure_time}} - {{$arrival_time}}</td>
+                             <td>{{$route_bus}} </td>
+                             <td>{{$route_driver}} </td>
                              <td>
                                @if($booking->boarded==0)
                                <span class="badge badge-danger "><span class="fa fa-times"></span> No</span>
@@ -141,6 +160,13 @@
                      <label class="radio-inline">
                         <input type="radio" id="Deactive" name="status" value="0" @php echo $booking->status == 0? 'checked' :  "" @endphp>  Not Paid
                      </label>
+                     <label class="radio-inline">
+                        <input type="radio" id="Void" name="status" value="2" @php echo $booking->status == 2? 'checked' :  "" @endphp>  Void
+                     </label>
+                  </div>
+                  <div id="VoidReason" class=" col-md-6 form-group">
+                    <label>Void Reason</label>
+                    <input type="text"  name="void_reason" value="{{$void_status->void_reason??''}}" class="form-control {{ $errors->has('void_reason') ? ' is-invalid' : '' }}" id="Voidtext" placeholder="Reason"  >
                   </div>
                 </div>
               </div>
@@ -176,6 +202,25 @@
         $(function () {
           $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
           $('.select2').select2();
+          $('#VoidReason').hide();
+          if($("#Void").is(":checked"))
+          {
+          $("#VoidReason").show(1000);
+         $("#Voidtext").attr("required",true);
+         }
+          $(":input[name=status]:eq(2)").click(function(){
+            $('#VoidReason').show();
+            $("#Voidtext").attr("required",true);
+        });
+        $(":input[name=status]:eq(1)").click(function(){
+          $('#VoidReason').hide();
+          $("#Voidtext").attr("required",false);
+      });
+      $(":input[name=status]:eq(0)").click(function(){
+        $('#VoidReason').hide();
+        $("#Voidtext").attr("required",false);
+    });
+
         })
     </script>
 @stop

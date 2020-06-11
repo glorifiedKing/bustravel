@@ -35,11 +35,11 @@
 
               <div class="box-body">
                 <div class="form-row">
-                  <div class="form-group col-xs-6 ">
+                  <div class="form-group col-md-4 col-xs-6 ">
                       <label for="inputEmail4">From</label>
                       <input id="route_id" type="number" hidden name="route_id" >
                       <input id="route_type" type="text" hidden name="route_type" >
-                      <select id="from_station_id"  name="from_station_id" class="form-control {{ $errors->has('printer_name') ? 'is-invalid' : '' }}" >
+                      <select id="from_station_id"  name="from_station_id" class="select2 form-control {{ $errors->has('printer_name') ? 'is-invalid' : '' }}" >
                         <option value="{{$workstation->id??0}}">{{$workstation->name??''}}</option>
                       </select>
                        @error('printer_name')
@@ -48,9 +48,9 @@
                           </small>
                       @enderror
                   </div>
-                  <div class="form-group col-xs-6">
+                  <div class="form-group col-md-4 col-xs-6">
                       <label for="inputPassword4">To </label>
-                      <select id="to_station_id"  name="to_station_id" class="form-control {{ $errors->has('printer_url') ? 'is-invalid' : '' }}" >
+                      <select id="to_station_id"  name="to_station_id" class="form-control select2 {{ $errors->has('printer_url') ? 'is-invalid' : '' }}" >
                        <option value="0">To Station</option>
                        @foreach ($stations as $station)
                            <option value="{{$station->id}}">{{$station->name}}</option>
@@ -80,6 +80,9 @@
                     </table>
                   </div>
                   <hr>
+                  <div class="form-group col-xs-12 ">
+                    <p id="DepartimeSelected"></p>
+                  </div>
                   <div class="form-group col-xs-12 ">
                     <label>Amount</label>
                     <input readonly class="form-control" name="amount" id="amount">
@@ -164,7 +167,7 @@
                 var table_row = "";
                 data.forEach(function(item) {
 
-                   table_row = "<tr data-route='"+item['id']+"' data-amount='"+item['price']+"' data-type='"+item['route_type']+"'> <td>"+item['time']+"</td><td>"+item['seats_left']+"</td><td>"+item['price']+"</td><td><button type='button' class='btn btn-xs btn-success bus_service_select'>select</button></td></tr>";
+                   table_row = "<tr data-route='"+item['id']+"' data-amount='"+item['price']+"' data-type='"+item['route_type']+"' data-time='"+item['time']+"'> <td>"+item['time']+"</td><td>"+item['seats_left']+"</td><td>"+item['price']+"</td><td><button type='button' class='btn btn-xs btn-success bus_service_select'>select</button></td></tr>";
                     table_body = table_body + table_row;
                   });
 
@@ -178,9 +181,12 @@
           var route_id = $(this).data('route');
           var route_type = $(this).data('type');
           var route_price = $(this).data('amount');
+          var route_time = $(this).data('time');
           $('#route_id').val(route_id);
           $('#route_type').val(route_type);
           $('#amount').val(route_price);
+          $('#DepartimeSelected').html('<span class ="badge badge-success"><span class="fa fa-check"></span></span>  '+route_time);
+
 
 
          });

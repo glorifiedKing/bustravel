@@ -72,9 +72,14 @@
                                   @endif
                                </td>
                                <td>{{$booking->ticket_number}}</td>
+                                @if($booking->route_type=="main_route")
                                 <td>{{$booking->route_departure_time->route->operator->name??'None'}}</td>
-                                <td>{{$booking->route_departure_time->route->start->code??'None'}} - {{$booking->route_departure_time->route->end->code??'None'}} / {{$booking->route_departure_time->departure_time??'None'}}</td>
-                                <td>{{number_format($booking->amount,2)}} </td>
+                                <td>{{$booking->route_departure_time->route->start->code??''}} - {{$booking->route_departure_time->route->end->code??'None'}} / {{$booking->route_departure_time->departure_time??'None'}}</td>
+                                @else
+                                <td>{{$booking->stop_over_route_departure_time->route->route->operator->name??'None'}}</td>
+                                <td>{{$booking->stop_over_route_departure_time->route->start_stopover_station->code??''}} - {{$booking->stop_over_route_departure_time->route->end_stopover_station->code??'None'}} / {{$booking->stop_over_route_departure_time->departure_time??'None'}}</td>
+                                @endif
+                               <td>{{number_format($booking->amount,2)}} </td>
                                 <td>{{$booking->date_paid}}</td>
                                 <td>{{$booking->date_of_travel}}</td>
                                 <td>{{Carbon\Carbon::parse($booking->created_at)->format('Y-m-d')}}</td>
