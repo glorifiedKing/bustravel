@@ -17,7 +17,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="inputEmail4">Name</label>
-                                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="inputEmail4" placeholder="John Doe">
+                                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="inputEmail4" value="{{old('name')}}" placeholder="John Doe">
                                     @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -26,7 +26,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="inputPassword4">Email</label>
-                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="inputPassword4" placeholder="name@email.com">
+                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{old('email')}}" id="inputPassword4" placeholder="name@email.com">
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -49,8 +49,21 @@
                                     <input type="password" class="form-control" name="password_confirmation" id="inputPassword4" placeholder="******">
                                 </div>
                             </div>
+                            <div class="form-row">
+                                <div class="form-check">
+                                    <input name="agree_terms" class="form-check-input {{ $errors->has('agree_terms') ? 'is-invalid' : '' }}" type="checkbox" id="gridCheck">
+                                    <label class="form-check-label" for="gridCheck">
+                                    I agree to <a href="#">terms and conditions</a>
+                                    </label>
+                                    @error('agree_terms')
+                                        <small class="form-text invalid-feedback" >
+                                            {{ $message }}
+                                        </small>
+                                    @enderror
+                                </div>
+                            </div>
                             <button type="submit" class="btn btn-primary cust-btn-link">Sign Up</button>
-                            <div class="terms-link">By signing up, you accept our <a>Terms of Use.</a></div>
+                            
                         </form>
                     </div>
                 </div>
