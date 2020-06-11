@@ -10,28 +10,34 @@
                 <div class="col-md-4 order-md-2 mb-4">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Your cart</span>
-                        <span class="badge badge-secondary badge-pill">{{count(session()->get('cart.items'))}}</span>
+                    <span class="badge badge-secondary"><a href="{{route('bustravel.cart')}}">Modify Order</a></span>
                     </h4>
                     @php
                             $cart = session()->get('cart.items');
                             $total_amount = 0;
                             $reserve_fee = 0;
                             $booking_fee = 0;
+                            $total_tickets = 0;
                         @endphp
                     <ul class="list-group mb-3">
                         @foreach($cart as $index=> $item)
                         @php                                
                                 
                                 $total_amount += $item['quantity']*$item['amount'];
+                                $total_tickets += $item['quantity'];
                             @endphp
+                        @endforeach
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
-                                <h6 class="my-0">Bus Tickets</h6>
-                                <small class="text-muted">cost</small>
+                                <h6 class="my-0">No Of Bus Tickets</h6>
+                                <small class="text-muted">tickets cost</small>
                             </div>
-                            <span class="text-muted">RWF {{$item['amount']}}</span>
+                            <div>
+                                <h6 class="my-0">{{$total_tickets}}</h6>
+                                <small class="text-muted">RWF {{$total_amount}}</small>
+                            </div>
                         </li>
-                        @endforeach
+                        
                         
                         
                         <li class="list-group-item d-flex justify-content-between bg-light">
@@ -72,7 +78,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="email">Email [for ticket delivery]</label>
-                            <input type="email" name="email" class="form-control" id="email" placeholder="you@example.com" value="{{  old('email') ?? Auth::user()->email}}">
+                            <input type="email" name="email" class="form-control" id="email" placeholder="you@example.com" value="{{  old('email')}}">
                             @error('email')
                                 <div class="invalid-feedback" role="alert">
                                     {{ $message }}
@@ -124,7 +130,7 @@
                         <h4 class="mb-3">Ticket Delivery</h4>
                         <div class="d-block my-3">                            
                             <div>
-                                <input  name="ticketdeliveryemail" type="checkbox" value="email" checked >
+                                <input  name="ticketdeliveryemail" type="checkbox" value="email" >
                                 <label for="paypal">Email</label><br>
                                 @error('ticketdeliveryemail')
                                     <div class="invalid-feedback" role="alert">

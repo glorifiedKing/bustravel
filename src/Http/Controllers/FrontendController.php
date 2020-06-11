@@ -59,7 +59,7 @@ class FrontendController extends Controller
         $travel_time = Carbon::parse($request->time_of_travel)->format('G:i');
         $no_of_tickets = $request->adults;
         //dd($travel_day_of_week);
-        $departure_time = RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get();   
+        $departure_time = RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get()->sortBy('departure_time');   
         //dd($departure_time);
         // first search for main route 
         $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
@@ -67,7 +67,7 @@ class FrontendController extends Controller
         }])->where([
             ['start_station', '=', $request->departure_station],
             ['end_station', '=', $request->to_station],            
-        ])->get();
+        ])->get()->sortBy('departure_time');
         //dd($route_results);  
         if ($route_results->isEmpty()) {
 
@@ -86,7 +86,7 @@ class FrontendController extends Controller
         ])->where([
             ['start_station', '=', $request->departure_station],
             ['end_station', '=', $request->to_station],            
-        ])->get();
+        ])->get()->sortBy('departure_time');
         $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
 
         return view('bustravel::frontend.route_search_results', compact('route_results','stop_over_routes', 'date_of_travel','no_of_tickets'));
@@ -133,28 +133,53 @@ class FrontendController extends Controller
             $route_time = RoutesStopoversDepartureTime::findOrFail($route_departure_time_id);
         }
         $operator_id = $route_time->route->operator->id ?? $route_time->route->route->operator->id;
-        if ($request->session()->has('cart')) {
-            if (!in_array($route_departure_time_id, array_column($request->session()->get('cart.items'), 'id'))) {
+        //dd($request->session());
+        try
+        {
+            if ($request->session()->has('cart')) {
+                if (!in_array($route_departure_time_id, array_column($request->session()->get('cart.items'), 'id'))) {
+                    $request->session()->push('cart.items', [
+                         'id'             => $route_departure_time_id,
+                         'quantity'       => $quantity,
+                         'amount'         => $route_time->route->price,
+                         'date_of_travel' => $date_of_travel,
+                         'route_type'     => $route_type,
+                         'operator_id'    => $operator_id,  
+                    ]);
+                }
+                if (in_array($route_departure_time_id, array_column($request->session()->get('cart.items'), 'id'))) {
+                    // get current quantity
+                    $cart_items = $request->session()->get('cart.items');
+                    $session_key = array_search($route_departure_time_id,array_column($request->session()->get('cart.items'), 'id'));
+                    $old_quantity = $cart_items[$session_key]['quantity'];
+                    $new_quantity = $old_quantity + $quantity;
+                    if($new_quantity > 0)
+                    {
+                        $request->session()->put("cart.items.$session_key.quantity",$new_quantity);
+                    }
+                    else if($new_quantity == 0)
+                    {
+                        $request->session()->pull("cart.items.$session_key"); 
+                    }
+                }
+            } elseif (!$request->session()->has('cart')) {
+                $request->session()->put('cart.items', []);
                 $request->session()->push('cart.items', [
-                     'id'             => $route_departure_time_id,
-                     'quantity'       => $quantity,
-                     'amount'         => $route_time->route->price,
-                     'date_of_travel' => $date_of_travel,
-                     'route_type'     => $route_type,
-                     'operator_id'    => $operator_id,  
-                ]);
+                    'id'             => $route_departure_time_id,
+                    'quantity'       => $quantity,
+                    'amount'         => $route_time->route->price,
+                    'date_of_travel' => $date_of_travel,
+                    'route_type'     => $route_type,
+                    'operator_id'    => $operator_id,
+               ]);
             }
-        } elseif (!$request->session()->has('cart')) {
-            $request->session()->put('cart.items', []);
-            $request->session()->push('cart.items', [
-                'id'             => $route_departure_time_id,
-                'quantity'       => $quantity,
-                'amount'         => $route_time->route->price,
-                'date_of_travel' => $date_of_travel,
-                'route_type'     => $route_type,
-                'operator_id'    => $operator_id,
-           ]);
+
         }
+        catch(\Exception $e)
+        {
+            $this->clear_cart($request);
+        }
+        
 
         return redirect()->route('bustravel.cart');
     }
@@ -214,7 +239,7 @@ class FrontendController extends Controller
         //validate 
         $validated_data = $request->validate([
             'first_name'        => 'required|',
-            'email'    => 'email|requiredif:ticketdeliveryemail,email',
+            'email'    => 'required_with:ticketdeliveryemail|nullable|email:filter',
             'ticketdeliveryemail'    => 'required_without:ticketdeliverysms',
             'address_1'    => 'required',
             'phone_number'  => 'requiredif:payment_method,mobile_money|phone:RW',
