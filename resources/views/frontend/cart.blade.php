@@ -14,6 +14,8 @@
                             $total_amount = 0;
                             $reserve_fee = 0;
                             $booking_fee = 0;
+                            $main_route_tickets = 0;
+                            $stop_over_route_tickets = 0;
                             $total_tickets = count($main_route_departures) + count($stop_over_route_departures);
                         @endphp
                         @foreach($main_route_departures as $index => $route)
@@ -25,6 +27,7 @@
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
                                 $duration = $end_time->diffInMinutes($start_time,true);
+                                $main_route_tickets += $cart[$key]['quantity'];
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
@@ -34,7 +37,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
-                                        <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
+                                        <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
                                         <h3 class="price">
                                             <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
@@ -43,7 +46,7 @@
                                             <li class="list-inline-item">From: {{$route->route->start->name}}</li>
                                             <li class="list-inline-item">To: {{$route->route->end->name}}</li>
                                             <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
-                                            <li class="list-inline-item add-btn"><a href="{{route('bustravel.cart.remove.item',$key)}}"> Remove ticket</a></li>
+                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',1])}}"> +</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -60,6 +63,7 @@
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
                                 $duration = $end_time->diffInMinutes($start_time,true);
+                                $stop_over_route_tickets += $cart[$key]['quantity'];
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
@@ -69,7 +73,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
-                                        <h5 class="card-text">Est. Duration - {{$duration/60}} hrs</h5>
+                                        <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
                                         <h3 class="price">
                                             <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
@@ -78,7 +82,8 @@
                                             <li class="list-inline-item">From: {{$route->route->start_stopover_station->name}}</li>
                                             <li class="list-inline-item">To: {{$route->route->end_stopover_station->name}}</li>
                                             <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
-                                            <li class="list-inline-item add-btn"><a href="{{route('bustravel.cart.remove.item',$key)}}"> Remove ticket</a></li>
+                                            
+                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',1])}}"> +</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -90,6 +95,10 @@
                             <div class="col-md-12 ticket-card cart">
                                 <table class="table" summary="Cart Details">
                                     <tbody>
+                                        <tr>
+                                            <th scope="row">No of Tickets</th>
+                                        <td> {{$main_route_tickets+$stop_over_route_tickets}}</td>
+                                        </tr>
                                         <tr>
                                             <th scope="row">Trip total</th>
                                         <td>RWF {{$total_amount}}</td>
