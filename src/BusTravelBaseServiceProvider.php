@@ -158,6 +158,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
 
                     ],
                     [
+                        'text' => 'Void Tickets',
+                        'url'  => route('bustravel.reports.void.bookings'),
+                        'icon' => 'fa fa-money-check',
+                        'can' => 'View BT Reports'
+
+                    ],
+                    [
                         'text' => 'Cashier Report',
                         'url'  => route('bustravel.bookings.cashier.report'),
                         'icon' => 'fa fa-money-check',
