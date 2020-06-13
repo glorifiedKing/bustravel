@@ -36,7 +36,7 @@
                                     </script>
 
                                 <ul class="list-inline">
-                                <li id="notification_title"  class="list-inline-item"><img height="100px" src="{{asset('vendor/glorifiedking/images/loading.gif')}}"> please wait...</li>
+                                <li id="notification_title"  class="list-inline-item"><img alt="load" height="100px" src="{{asset('vendor/glorifiedking/images/loading.gif')}}"> please wait...</li>
                                 </ul>
                                 
                                 <h3 id="notification_message" class="card-title"></h3>
