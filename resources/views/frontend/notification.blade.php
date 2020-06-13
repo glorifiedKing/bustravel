@@ -101,7 +101,12 @@
                             if(data.status == 'completed' || data.status == 'failed')
                             {
                                 console.log(data.status);
-                                $("#notification_title").html("<span>"+data.status+": "+data.result+"</span>");
+                                var c_result = data.result;
+                                if(data.status == 'completed')
+                                {
+                                    c_result = "";
+                                }
+                                $("#notification_title").html("<span>"+data.status+": "+c_result+"</span>");
                                 $("#notification_message").html("process has "+data.status+" : <a href='"+home_url+"'>Back</a>");
                             }
                             else if(data.status == 'error')

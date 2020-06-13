@@ -46,7 +46,7 @@
                                             <li class="list-inline-item">From: {{$route->route->start->name}}</li>
                                             <li class="list-inline-item">To: {{$route->route->end->name}}</li>
                                             <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
-                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',1])}}"> +</a></li>
+                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',1])}}"> +</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
                                             <li class="list-inline-item">To: {{$route->route->end_stopover_station->name}}</li>
                                             <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
                                             
-                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,date('Y-m-d'),'main_route',1])}}"> +</a></li>
+                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',1])}}"> +</a></li>
                                         </ul>
                                     </div>
                                 </div>
