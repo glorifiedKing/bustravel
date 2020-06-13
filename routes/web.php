@@ -156,3 +156,5 @@ Route::get('docs/routes','DocumentationController@routes')->name('bustravel.docs
 Route::get('docs/bookings','DocumentationController@bookings')->name('bustravel.docs.bookings');
 Route::get('docs/reports','DocumentationController@reports')->name('bustravel.docs.reports');
 Route::get('docs/settings','DocumentationController@settings')->name('bustravel.docs.settings');
+
+Route::get('payment_status/{id}','FrontendController@get_payment_status')->name('bustravel.payment.status');
