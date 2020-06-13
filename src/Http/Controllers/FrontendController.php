@@ -29,8 +29,8 @@ class FrontendController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('web')->only('checkout');
-        $this->middleware('auth')->only('checkout','process_payment');
+        $this->middleware('web')->only('checkout','get_payment_status');
+        $this->middleware('auth')->only('checkout','process_payment','get_payment_status');
         $this->middleware('bt_key')->only('process_payment_callback','credit_request_callback');
     }
 
@@ -422,5 +422,22 @@ class FrontendController extends Controller
         return response()->json([
             "status_code" => "200"
         ]);
+    }
+
+    public function get_payment_status($id)
+    {
+        $transaction = PaymentTransaction::find($id);
+        if(!$transaction)
+        {
+            return response()->json([
+                'status' => 'error',
+                'result' => 'transaction not found'
+            ],200);
+        }
+        return response()->json([
+            'status' => $transaction->status,
+            'result' => $transaction->payment_gateway_result
+        ],200);
+
     }
 }
