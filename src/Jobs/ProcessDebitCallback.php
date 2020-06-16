@@ -236,7 +236,8 @@ class ProcessDebitCallback implements ShouldQueue
                                 
                                 $result   = $sms->send([
                                     'to'      => $transaction->phone_number,
-                                    'message' => $sms_text
+                                    'message' => $sms_text,
+                                    'from' => 'PalmKash',
                                 ]);
                                 $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
                                 \Storage::disk('local')->append('sms_log.txt',$sms_log);
