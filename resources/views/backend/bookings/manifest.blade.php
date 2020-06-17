@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">My Routes -  {{$driver->name??""}}</h1>
+        <h1 class="m-0 text-dark"> Services{{$driver->name??""}}</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -59,20 +59,10 @@
                                </td>
                                 <td>{{$route_departure_time->route->operator->name}}</td>
                                 <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
-                                <td>{{number_format($route_departure_time->route->price,2)}} - {{number_format($route_departure_time->route->return_price,2)}}</td>
+                                <td>{{number_format($route_departure_time->route->price,2)}} </td>
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
-                                <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
-                                <td>
-                                  @if($manage==0)
-                                    @if(auth()->user()->hasAnyRole('BT Driver'))
-                                      <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
-                                    @else
-                                    <span class="badge badge-warning">No passanger on the bus Yet</span>
-                                     <a title="View" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    @endif
-                                  @else
-                                    <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
-                                  @endif
+                                <td>{{$route_departure_time->departure_time}}</td>
+                                <td>  <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
 
 
                                 </td>

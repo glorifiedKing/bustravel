@@ -117,8 +117,8 @@ class RoutesDepartureTimesController extends Controller
     public function edit($id)
     {
         $routes = Route::where('status', 1)->get();
-        $drivers = Driver::where('status', 1)->orderBy('name', 'ASC')->get();
-        $buses = Bus::where('status', 1)->get();
+        $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
         $route_departure_time = RoutesDepartureTime::find($id);
         if (is_null($route_departure_time)) {
             return Redirect::route('bustravel.routes.departures');

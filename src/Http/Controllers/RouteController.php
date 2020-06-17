@@ -33,7 +33,7 @@ class RouteController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-        if(auth()->user()->hasAnyRole('BT Administrator'))
+        if(auth()->user()->hasAnyRole('BT Administrator') OR auth()->user()->hasAnyRole('BT Cashier'))
           {
             $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
           }
