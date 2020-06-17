@@ -231,13 +231,13 @@ class ProcessDebitCallback implements ShouldQueue
                         {
                           // send sms 
                             try{
+                            	 $from = "PalmKash";
                                 $AT       = new AfricasTalking($africas_talking_username, $africas_talking_apikey);                                
-                                $sms      = $AT->sms();
-                                
+                                $sms      = $AT->sms();                                
                                 $result   = $sms->send([
-                                    'to'      => $transaction->phone_number,
-                                    'message' => $sms_text,
-                                    'from' => 'PalmKash',
+                                    "to"      => $transaction->phone_number,
+                                    "message" => $sms_text,
+                                    "from" => $from,
                                 ]);
                                 $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
                                 \Storage::disk('local')->append('sms_log.txt',$sms_log);
