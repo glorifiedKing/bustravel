@@ -29,8 +29,8 @@ class FrontendController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('web')->only('checkout');
-        $this->middleware('auth')->only('checkout','process_payment');
+        $this->middleware('web')->only('checkout','get_payment_status');
+        $this->middleware('auth')->only('checkout','process_payment','get_payment_status');
         $this->middleware('bt_key')->only('process_payment_callback','credit_request_callback');
     }
 
@@ -313,7 +313,8 @@ class FrontendController extends Controller
             ['is_default','=', '1'],
         ])->first();
 
-        //abort if operator has no payment method 
+        //abort if operator has no payment method
+        $phone_number = $no = "250".substr($request->phone_number, -9); 
 
         // start transaction in trasaction table 
         $payment_transaction = new PaymentTransaction;
@@ -324,7 +325,7 @@ class FrontendController extends Controller
         $payment_transaction->user_id = $paying_user;
         $payment_transaction->first_name = $request->first_name;
         $payment_transaction->last_name = $request->last_name;
-        $payment_transaction->phone_number = $request->phone_number;
+        $payment_transaction->phone_number = $phone_number;
         $payment_transaction->email = $request->email;
         $payment_transaction->address_1 = $request->address_1;
         $payment_transaction->address_2 = $request->address_2;
@@ -422,5 +423,22 @@ class FrontendController extends Controller
         return response()->json([
             "status_code" => "200"
         ]);
+    }
+
+    public function get_payment_status($id)
+    {
+        $transaction = PaymentTransaction::find($id);
+        if(!$transaction)
+        {
+            return response()->json([
+                'status' => 'error',
+                'result' => 'transaction not found'
+            ],200);
+        }
+        return response()->json([
+            'status' => $transaction->status,
+            'result' => $transaction->payment_gateway_result
+        ],200);
+
     }
 }
