@@ -15,7 +15,9 @@ use Illuminate\Routing\Controller;
 class ReportsController extends Controller
 {
     public $role_cashier ='BT Cashier',
-     $userId='user_id';
+     $userId='user_id', $route_type ="route_type",
+     $main_route ="main_route", $stop_over_route="stop_over_route"
+     ;
 
     public function __construct()
     {
@@ -466,8 +468,8 @@ class ReportsController extends Controller
         $ticket = request()->input('ticket') ?? null;
         $start_station = request()->input('start_station') ?? null;
         if (!is_null($ticket)) {
-          $main_bookings = Booking::where('ticket_number', $ticket)->where('route_type','main_route')->whereNotIn('status',[2])->get();
-          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where('route_type','stop_over_route')->whereNotIn('status',[2])->get();
+          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->get();
+          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         } else {
            if(!is_null($start_station))
@@ -477,8 +479,8 @@ class ReportsController extends Controller
                 $routes_ids =Route::where('start_station',$start_station)->where('operator_id',auth()->user()->operator_id)->pluck('id');
                 $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id');
-                $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
                elseif(auth()->user()->hasAnyRole($this->role_cashier))
@@ -486,8 +488,8 @@ class ReportsController extends Controller
                  $routes =Route::where('start_station',$start_station)->pluck('id');
                  $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                 }else
@@ -495,8 +497,8 @@ class ReportsController extends Controller
                  $routes =Route::where('start_station',$start_station)->pluck('id');
                  $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-                 $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$his->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                }
@@ -507,21 +509,21 @@ class ReportsController extends Controller
                  $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
                  $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id')->all();
-                 $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                }
                elseif(auth()->user()->hasAnyRole($this->role_cashier))
                {
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
                else
                {
-                 $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
            }
@@ -543,8 +545,8 @@ class ReportsController extends Controller
       $start_station = request()->input('start_station') ?? null;
       if (!is_null($ticket)) {
 
-        $main_bookings = Booking::where('ticket_number', $ticket)->where('route_type','main_route')->whereNotIn('status',[2])->get();
-        $stop_over_bookings =Booking::where('ticket_number', $ticket)->where('route_type','stop_over_route')->whereNotIn('status',[2])->get();
+        $main_bookings = Booking::where('ticket_number', $ticket)->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->get();
+        $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->get();
         $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
       }else{
         if(!is_null($start_station))
@@ -554,24 +556,24 @@ class ReportsController extends Controller
                   $routes =Route::where('start_station',$start_station)->pluck('id');
                   $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                   $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                   $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
             }elseif(auth()->user()->hasAnyRole('BT Administrator')){
               $routes =Route::where('operator_id',auth()->user()->operator_id)->where('start_station',$start_station)->pluck('id');
               $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
               $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
               $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
             }else{
               $routes =Route::where('start_station',$start_station)->pluck('id');
               $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
               $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
               $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
             }
@@ -579,20 +581,20 @@ class ReportsController extends Controller
         }else{
           if(auth()->user()->hasAnyRole($this->role_cashier))
             {
-                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
                   $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
             }elseif(auth()->user()->hasAnyRole('BT Administrator')){
               $routes =Route::where('operator_id',auth()->user()->operator_id)->pluck('id');
               $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
               $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
               $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
             }else{
-              $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
-              $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+              $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
               $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
             }
 
@@ -615,8 +617,8 @@ class ReportsController extends Controller
         $ticket = request()->input('ticket') ?? null;
         $start_station = request()->input('start_station') ?? null;
         if (!is_null($ticket)) {
-          $main_bookings = Booking::where('ticket_number', $ticket)->where('route_type','main_route')->where('status',2)->get();
-          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where('route_type','stop_over_route')->where('status',2)->get();
+          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->route_type,$this->main_route)->where('status',2)->get();
+          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->route_type,$this->stop_over_route)->where('status',2)->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         } else {
            if(!is_null($start_station))
@@ -626,8 +628,8 @@ class ReportsController extends Controller
                 $routes_ids =Route::where('start_station',$start_station)->where('operator_id',auth()->user()->operator_id)->pluck('id');
                 $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id');
-                $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
                elseif(auth()->user()->hasAnyRole($this->role_cashier))
@@ -635,8 +637,8 @@ class ReportsController extends Controller
                  $routes =Route::where('start_station',$start_station)->pluck('id');
                  $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                 }else
@@ -644,8 +646,8 @@ class ReportsController extends Controller
                  $routes =Route::where('start_station',$start_station)->pluck('id');
                  $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id', $route_times)->pluck('id');
-                 $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereIn('routes_departure_time_id',$route_times)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                }
@@ -656,21 +658,21 @@ class ReportsController extends Controller
                  $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
                  $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id')->all();
-                 $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                }
                elseif(auth()->user()->hasAnyRole($this->role_cashier))
                {
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
                else
                {
-                 $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','main_route')->where('status',2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where('route_type','stop_over_route')->where('status',2)->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->main_route)->where('status',2)->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereBetween('created_at', [$from.' 00:00:00', $to.' 23:59:59'])->where($this->route_type,$this->stop_over_route)->where('status',2)->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
            }
