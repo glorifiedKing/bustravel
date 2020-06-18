@@ -17,6 +17,7 @@ use glorifiedking\BusTravel\VoidTicket;
 use glorifiedking\BusTravel\RouteTracking;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\ToastNotification;
+use glorifiedking\BusTravel\ListBookings;
 use glorifiedking\BusTravel\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -54,15 +55,22 @@ class BookingsController extends Controller
         {
          $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
          $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-         $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->orderBy('id', 'DESC')->whereNotIn('status',[2])->get();
+         $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id')->all();
+         $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+         $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+        $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
         elseif(auth()->user()->hasAnyRole('BT Cashier'))
         {
-         $bookings = Booking::where('user_id',auth()->user()->id)->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+          $main_bookings = Booking::where('user_id',auth()->user()->id)->where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+          $stop_over_bookings =Booking::where('user_id',auth()->user()->id)->where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+          $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
       else
         {
-           $bookings = Booking::orderBy('id', 'DESC')->whereNotIn('status',[2])->get();
+          $main_bookings = Booking::where('route_type','main_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+          $stop_over_bookings =Booking::where('route_type','stop_over_route')->whereNotIn('status',[2])->orderBy('id', 'DESC')->get();
+          $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
 
 

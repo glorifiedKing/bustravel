@@ -104,6 +104,7 @@ Route::get('report_traffic', 'ReportsController@traffic')->name('bustravel.repor
 Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic.period');
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
 Route::get('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings');
+Route::post('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings.search');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
 Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');

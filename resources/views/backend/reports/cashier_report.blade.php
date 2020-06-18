@@ -77,28 +77,21 @@
                         <tbody>
 
                         @foreach ($bookings as $booking)
-                            <tr>
-                              <td>@if($booking->status==1)
-                                    <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
-                                  @else
-                                  <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
+                        <td>@if($booking['status']==1)
+                              <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
+                            @else
+                            <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
-                                  @endif
-                               </td>
-                               <td>{{$booking->ticket_number}}</td>
-                               @if($booking->route_type=="main_route")
-                               <td>{{$booking->route_departure_time->route->operator->name??'None'}}</td>
-                               <td>{{$booking->route_departure_time->route->start->code??''}} - {{$booking->route_departure_time->route->end->code??'None'}} / {{$booking->route_departure_time->departure_time??'None'}}</td>
-                               @else
-                               <td>{{$booking->stop_over_route_departure_time->route->route->operator->name??'None'}}</td>
-                               <td>{{$booking->stop_over_route_departure_time->route->start_stopover_station->code??''}} - {{$booking->stop_over_route_departure_time->route->end_stopover_station->code??'None'}} / {{$booking->stop_over_route_departure_time->departure_time??'None'}}</td>
-                               @endif
-
-                                <td>{{number_format($booking->amount,2)}} </td>
-                                <td>{{Carbon\Carbon::parse($booking->date_paid)->format('d-m-Y')}}</td>
-                                <td>{{Carbon\Carbon::parse($booking->date_of_travel)->format('d-m-Y')}}</td>
-                                <td>{{Carbon\Carbon::parse($booking->created_at)->format('Y-m-d')}}</td>
-                            </tr>
+                            @endif
+                         </td>
+                         <td>{{$booking['ticket_number']}}</td>
+                          <td>{{$booking['operator']}}</td>
+                          <td>{{$booking['start']}} - {{$booking['end']}} / {{$booking['time']}}</td>
+                         <td>{{number_format($booking['amount'],2)}} </td>
+                          <td>{{Carbon\Carbon::parse($booking['date_paid'])->format('d-m-Y')}}</td>
+                          <td>{{Carbon\Carbon::parse($booking['date_of_travel'])->format('d-m-Y')}}</td>
+                          <td>{{Carbon\Carbon::parse($booking['created_at'])->format('d-m-Y')}}</td>
+                      </tr>
 
                         @endforeach
                     </tbody>
