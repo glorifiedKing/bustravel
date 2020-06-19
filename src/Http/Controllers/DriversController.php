@@ -12,8 +12,6 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use glorifiedking\BusTravel\ToastNotification;
-
-
 class DriversController extends Controller
 {
     public function __construct()

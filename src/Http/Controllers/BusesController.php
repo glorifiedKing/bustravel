@@ -32,8 +32,6 @@ class BusesController extends Controller
           {
            $buses = Bus::all();
           }
-
-
         return view('bustravel::backend.buses.index', compact('buses'));
     }
 

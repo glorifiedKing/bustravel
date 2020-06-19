@@ -44,7 +44,6 @@ class RouteController extends Controller
 
         return view('bustravel::backend.routes.index', compact('routes'));
     }
-
     //creating buses form route('bustravel.buses.create')
     public function create()
     {

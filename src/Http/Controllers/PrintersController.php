@@ -8,7 +8,6 @@ use Illuminate\Routing\Controller;
 use Auth;
 use glorifiedking\BusTravel\ToastNotification;
 use Illuminate\Http\Request;
-
 class PrintersController extends Controller
 {
     public function __construct()
@@ -20,13 +19,13 @@ class PrintersController extends Controller
 
     public function view_printers()
     {
-        
+
         $operator_id = Auth::user()->operator_id ?? 0;
-        
+
         $printers = Printer::where('operator_id',$operator_id)->get();
         $printers_latest_count = Printer::where('operator_id',$operator_id)->latest()->count();
         return view('bustravel::backend.printers.list',compact('printers','printers_latest_count'));
-    }    
+    }
 
     public function create_printer()
     {
@@ -45,7 +44,7 @@ class PrintersController extends Controller
 
         return view('bustravel::backend.printers.edit',compact('printer'));
 
-    }    
+    }
 
     public function save_printer(Request $request)
     {
@@ -57,7 +56,7 @@ class PrintersController extends Controller
             'printer_port' => 'required',
         ]);
 
-                 
+
         $printer = new Printer;
         $printer->printer_name = $request->printer_name;
         $printer->printer_url = $request->printer_url;
@@ -75,7 +74,7 @@ class PrintersController extends Controller
 
     }
 
-   
+
     public function update_printer(Request $request, $printer_id)
     {
         $validated = $request->validate([
@@ -92,7 +91,7 @@ class PrintersController extends Controller
             $error_message = "Could not find that email template";
             return back()->with(ToastNotification::toast("Error: $error_message",'Error Editing','error'));
         }
-         
+
         $printer->printer_name = $request->printer_name;
         $printer->printer_url = $request->printer_url;
         $printer->is_default = $request->is_default;
@@ -108,7 +107,7 @@ class PrintersController extends Controller
 
 
     }
-    
+
 
     public function delete_printer($printer_id)
     {
@@ -126,6 +125,6 @@ class PrintersController extends Controller
 
     }
 
-    
-   
+
+
 }

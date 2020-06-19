@@ -34,7 +34,6 @@ class RoutesDepartureTimesController extends Controller
         $this->middleware('auth');
           $this->middleware('can:Create BT Routes');
     }
-
     //fetching buses route('bustravel.buses')
     public function index()
     {

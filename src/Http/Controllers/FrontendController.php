@@ -24,7 +24,6 @@ use Auth;
 use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\Jobs\ProcessDebitCallback;
 use glorifiedking\BusTravel\Jobs\ProcessCreditCallback;
-
 class FrontendController extends Controller
 {
     public function __construct()
@@ -54,21 +53,21 @@ class FrontendController extends Controller
 
         //search
 
-        // get which day of the week it is for date 
+        // get which day of the week it is for date
         $travel_day_of_week = Carbon::parse($request->date_of_travel)->format('l');
         $travel_time = Carbon::parse($request->time_of_travel)->format('G:i');
         $no_of_tickets = $request->adults;
         //dd($travel_day_of_week);
-        $departure_time = RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get()->sortBy('departure_time');   
+        $departure_time = RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get()->sortBy('departure_time');
         //dd($departure_time);
-        // first search for main route 
+        // first search for main route
         $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
             $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
         }])->where([
             ['start_station', '=', $request->departure_station],
-            ['end_station', '=', $request->to_station],            
+            ['end_station', '=', $request->to_station],
         ])->get()->sortBy('departure_time');
-        //dd($route_results);  
+        //dd($route_results);
         if ($route_results->isEmpty()) {
 
             //check if bus is full
@@ -76,16 +75,16 @@ class FrontendController extends Controller
             //filter by time
         }
         $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
-            
+
             $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
                 $query->where('days_of_week', 'like', "%$travel_day_of_week%");
             });
             $query->whereTime('arrival_time','>',$travel_time);
         },
-        
+
         ])->where([
             ['start_station', '=', $request->departure_station],
-            ['end_station', '=', $request->to_station],            
+            ['end_station', '=', $request->to_station],
         ])->get()->sortBy('departure_time');
         $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
 
@@ -111,9 +110,9 @@ class FrontendController extends Controller
                     $stop_over_route_ids[] = (int)$c['id'];
                 }
             }
-            
+
         }
-        
+
         $main_route_departures = RoutesDepartureTime::whereIn('id', $main_route_ids)->get();
         $stop_over_route_departures = RoutesStopoversDepartureTime::whereIn('id',$stop_over_route_ids)->get();
 
@@ -126,7 +125,7 @@ class FrontendController extends Controller
         if($route_type == 'main_route')
         {
             $route_time = RoutesDepartureTime::findOrFail($route_departure_time_id);
-            
+
         }
         else if($route_type == 'stop_over_route')
         {
@@ -144,7 +143,7 @@ class FrontendController extends Controller
                          'amount'         => $route_time->route->price,
                          'date_of_travel' => $date_of_travel,
                          'route_type'     => $route_type,
-                         'operator_id'    => $operator_id,  
+                         'operator_id'    => $operator_id,
                     ]);
                 }
                 if (in_array($route_departure_time_id, array_column($request->session()->get('cart.items'), 'id'))) {
@@ -159,7 +158,7 @@ class FrontendController extends Controller
                     }
                     else if($new_quantity == 0)
                     {
-                        $request->session()->pull("cart.items.$session_key"); 
+                        $request->session()->pull("cart.items.$session_key");
                     }
                 }
             } elseif (!$request->session()->has('cart')) {
@@ -179,7 +178,7 @@ class FrontendController extends Controller
         {
             $this->clear_cart($request);
         }
-        
+
 
         return redirect()->route('bustravel.cart');
     }
@@ -205,7 +204,7 @@ class FrontendController extends Controller
     public function checkout(Request $request)
     {
         $cart = session()->get('cart.items');
-        //check for empty cart 
+        //check for empty cart
         if(!$cart)
         {
             return redirect()->route('bustravel.cart');
@@ -216,10 +215,10 @@ class FrontendController extends Controller
 
     public function bus_times(Request $request)
     {
-        $now = date('H:i');  
-        $travel_day_of_week = date('l');      
+        $now = date('H:i');
+        $travel_day_of_week = date('l');
         $routes_times =RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$now)->get()->sortBy('departure_time');
-        
+
         return view('bustravel::frontend.bus_times',compact('routes_times'));
     }
     public function stations(Request $request)
@@ -236,7 +235,7 @@ class FrontendController extends Controller
 
     public function process_payment(Request $request)
     {
-        //validate 
+        //validate
         $validated_data = $request->validate([
             'first_name'        => 'required|',
             'email'    => 'required_with:ticketdeliveryemail|nullable|email:filter',
@@ -248,13 +247,13 @@ class FrontendController extends Controller
 
         $language = $request->language ?? 'english';
 
-        // get amount to pay 
+        // get amount to pay
         $amount = 0;
         $main_routes = array();
         $stop_over_routes = array();
         $cart = session()->get('cart.items');
 
-        //check for empty cart 
+        //check for empty cart
         if(!$cart)
         {
             return redirect()->route('bustravel.cart');
@@ -265,7 +264,7 @@ class FrontendController extends Controller
             $operator_id = $item['operator_id'];
             $date_of_travel = $item['date_of_travel'];
             $no_of_tickets = $item['quantity'];
-            //get routes 
+            //get routes
             if($item['route_type'] == 'main_route')
             {
                 $main_routes[] = $item['id'];
@@ -274,7 +273,7 @@ class FrontendController extends Controller
             {
                 $stop_over_routes[] = $item['id'];
             }
-            //add amount 
+            //add amount
             $amount += $item['quantity']*$item['amount'];
         }
         $send_sms = (isset($request->ticketdeliverysms)) ? 1 : 0;
@@ -284,39 +283,39 @@ class FrontendController extends Controller
         if($send_sms == 1)
         {
 
-            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 9;   
+            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 9;
             $amount += $sms_cost;
-        }      
-        
-        //add payee details 
+        }
+
+        //add payee details
         $payee_reference = '';
         if($request->payment_method =="mobile_money")
         {
             $payee_reference = $request->phone_number ;
-            //add 250 if it is not 
+            //add 250 if it is not
             if(strlen($payee_reference) < 12)
             {
                 $payee_reference="250".substr($request->phone_number, -9);
             }
-            
+
         }
-        //purchasing user 
+        //purchasing user
         $paying_user = 0;
         if(Auth::check())
         {
             $paying_user = Auth::user()->id;
         }
-        
-        //get default payment method of operator 
+
+        //get default payment method of operator
         $default_payment_method = OperatorPaymentMethod::where([
             ['operator_id','=', $operator_id],
             ['is_default','=', '1'],
         ])->first();
 
         //abort if operator has no payment method
-        $phone_number = $no = "250".substr($request->phone_number, -9); 
+        $phone_number = $no = "250".substr($request->phone_number, -9);
 
-        // start transaction in trasaction table 
+        // start transaction in trasaction table
         $payment_transaction = new PaymentTransaction;
         $payment_transaction->payee_reference = $payee_reference;
         $payment_transaction->amount = $amount;
@@ -338,14 +337,14 @@ class FrontendController extends Controller
         $payment_transaction->language = $language;
         $payment_transaction->save();
 
-        // dd($payment_transaction);   
-        // send request if payment method is mtn mobile money 
-        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');    
-        // send json request 
+        // dd($payment_transaction);
+        // send request if payment method is mtn mobile money
+        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
+        // send json request
         $request_uri = $base_api_url."/makedebitrequest";
         $client = new \GuzzleHttp\Client(['decode_content' => false]);
-        $debit_request = $client->request('POST', $request_uri, [ 
-                              
+        $debit_request = $client->request('POST', $request_uri, [
+
                     'json'   => [
                         "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
                         "transaction_amount" => $amount,
@@ -360,56 +359,56 @@ class FrontendController extends Controller
                         "currency" => "RWF",
                     ]
                     ]);
-        $code = $debit_request->getStatusCode(); 
-        if($code == 200) 
-        { 
+        $code = $debit_request->getStatusCode();
+        if($code == 200)
+        {
            $response_body = json_decode($debit_request->getBody(),true);
                 // log request
            $status_variables = var_export($response_body,true);
            $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction->id." WITH:".$status_variables."";
-           //log the request 
-           \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log); 
+           //log the request
+           \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log);
             $new_transaction_status = $response_body['transaction_status'];
                 //for success create ticket add to email and sms queue
                 if($new_transaction_status == 'failed')
                 {
-                 // immediate failure 
+                 // immediate failure
                     $payment_transaction->status = 'failed';
                     $payment_transaction->payment_gateway_result = $response_body['status_code'];
                     $payment_transaction->save();
                     //$payment_transaction = $payment_transaction->refresh();
                     event(new TransactionStatusUpdated($payment_transaction));
-                    
+
                 }
         }
-        // clear cart 
+        // clear cart
         if ($request->session()->has('cart')) {
             $request->session()->forget('cart');
         }
 
-        // create notification 
-        $notification_type = 'error';  
-        $notification_message = 'Payment Error: Payment has not been successfull! Try again';            
-         
-        // wait 1 minute and call check status// for final result of payment  
-    
+        // create notification
+        $notification_type = 'error';
+        $notification_message = 'Payment Error: Payment has not been successfull! Try again';
+
+        // wait 1 minute and call check status// for final result of payment
+
             $notification = array(
                 'type' => $notification_type,
                 'message' => $notification_message
-            ); 
+            );
             $transactionId = $payment_transaction->id;
 
             return view('bustravel::frontend.notification',compact('notification','transactionId'));
-                   
 
-          
+
+
     }
 
     public function process_payment_callback(Request $request)
     {
-        
+
         ProcessDebitCallback::dispatch($request);
-        
+
 
         return response()->json([
             "status_code" => "200"
@@ -419,7 +418,7 @@ class FrontendController extends Controller
     public function credit_request_callback (Request $request)
     {
         ProcessCreditCallback::dispatch($request);
-        
+
         return response()->json([
             "status_code" => "200"
         ]);
