@@ -95,7 +95,6 @@ Route::get('users/changepassword', 'UsersController@changepassword')->name('bust
 Route::post('users/changepassword/save', 'UsersController@changepassword_save')->name('bustravel.users.changepassword.save');
 // errors
 Route::get('error/access_denied', 'ExceptionsController@accessDenied')->name('bustravel.errors.403');
-
 Route::get('report_sales', 'ReportsController@sales')->name('bustravel.reports.sales');
 Route::post('report_sales', 'ReportsController@sales')->name('bustravel.reports.sales.period');
 Route::get('report_routes', 'ReportsController@routes')->name('bustravel.reports.profitroute');
