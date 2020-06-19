@@ -11,12 +11,12 @@ class AddUserIdColumnRouteTrackingsTable extends Migration
      *
      * @return void
      */
-     public $tableName='route_trackings', $columnName='user_id';
+     public $trackingtableName='route_trackings', $trackingcolumnName='user_id';
     public function up()
     {
-        Schema::table($this->tableName, function (Blueprint $table) {
-            if (!Schema::hasColumn($this->tableName, $this->columnName)) {
-                $table->integer($this->columnName)->default(0);
+        Schema::table($this->trackingtableName, function (Blueprint $table) {
+            if (!Schema::hasColumn($this->trackingtableName, $this->trackingcolumnName)) {
+                $table->integer($this->trackingcolumnName)->default(0);
             }
         });
     }
@@ -28,8 +28,8 @@ class AddUserIdColumnRouteTrackingsTable extends Migration
      */
     public function down()
     {
-        Schema::table($this->tableName, function (Blueprint $table) {
-            $table->dropColumn($this->columnName);
+        Schema::table($this->trackingtableName, function (Blueprint $table) {
+            $table->dropColumn($this->trackingcolumnName);
         });
     }
 }
