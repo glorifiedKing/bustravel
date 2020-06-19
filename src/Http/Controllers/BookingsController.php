@@ -35,9 +35,9 @@ use glorifiedking\BusTravel\Http\Requests\CreateBookingRequest;
 class BookingsController extends Controller
 {
     public $travel_date='date_of_travel',
-    $on_board='On Board',$Status="status",$CreatedAt="created_at",
-    $route_type ="route_type", $main_route ="main_route", $stop_over_route="stop_over_route",
-    $route_manifest='bustravel.bookings.route.manifest';
+    $on_board='On Board',$Status='status',$CreatedAt='created_at',
+    $routeType ='route_type', $main_route ='main_route', $stop_over_route='stop_over_route',
+    $route_manifest='bustravel.bookings.route.manifest', $RoutesDepartureTimeId='routes_departure_time_id';
     public function __construct()
     {
         $this->middleware('web');
@@ -57,20 +57,20 @@ class BookingsController extends Controller
          $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
          $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
          $stover_times_ids =RoutesStopoversDepartureTime::whereIn('routes_times_id',$times_ids)->pluck('id')->all();
-         $main_bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->where('route_type','main_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-         $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stover_times_ids)->where('route_type','stop_over_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+         $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+         $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
         $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
         elseif(auth()->user()->hasAnyRole('BT Cashier'))
         {
-          $main_bookings = Booking::where('user_id',auth()->user()->id)->where('route_type','main_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $stop_over_bookings =Booking::where('user_id',auth()->user()->id)->where('route_type','stop_over_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+          $main_bookings = Booking::where('user_id',auth()->user()->id)->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+          $stop_over_bookings =Booking::where('user_id',auth()->user()->id)->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
       else
         {
-          $main_bookings = Booking::where('route_type','main_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $stop_over_bookings =Booking::where('route_type','stop_over_route')->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+          $main_bookings = Booking::where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+          $stop_over_bookings =Booking::where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
 
@@ -98,10 +98,10 @@ class BookingsController extends Controller
     public function store(CreateBookingRequest $request)
     {
         $route_id = $request->route_id;
-        $route_type = $request->route_type;
+        $route_type = $request->routeType;
         $payment_method = $request->payment_method;
 
-        $departure_time = ($route_type == 'main_route') ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
+        $departure_time = ($route_type == $this->main_route) ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
 
         $operator = $departure_time->route->operator ?? $departure_time->route->route->operator;
 
@@ -344,7 +344,7 @@ class BookingsController extends Controller
        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
        $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
        ->where('days_of_week', 'like', "%$travel_day_of_week%")->get();
-       $bookings = Booking::whereIn('routes_departure_time_id',$times_ids)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+       $bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
       }
     else
       {
@@ -364,10 +364,10 @@ class BookingsController extends Controller
       $today =date('Y-m-d');
       $times_id =RoutesDepartureTime::find($id);
       $route_stop_overs =$times_id->stopovers_times()->pluck('id');
-      $main_bookings = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-      $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-      $main_bookings_board = Booking::where('routes_departure_time_id',$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
-      $stop_over_bookings_board =Booking::whereIn('routes_departure_time_id',$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
+      $main_bookings = Booking::where($this->RoutesDepartureTimeId,$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+      $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+      $main_bookings_board = Booking::where($this->RoutesDepartureTimeId,$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
+      $stop_over_bookings_board =Booking::whereIn($this->RoutesDepartureTimeId,$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
 
       if(request()->isMethod('post'))
       {
@@ -376,8 +376,8 @@ class BookingsController extends Controller
           ]);
           $driver =Driver::where('user_id',auth()->user()->id)->first();
           $ticket = request()->input('ticket');
-          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->route_type,$this->main_route)->where($this->Status,2)->get();
-          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->get();
+          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->routeType,$this->main_route)->where($this->Status,2)->get();
+          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->routeType,$this->stop_over_route)->where($this->Status,2)->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
       else
@@ -486,7 +486,7 @@ class BookingsController extends Controller
                         'id' => $d_time->id,
                         'price' => $route->price,
                         'time' => $d_time->departure_time,
-                        'route_type' => 'main_route',
+                        'route_type' => $this->main_route,
                         'operator' => $route->operator->name,
                         'seats_left' => $seats_left
                     );
@@ -520,7 +520,7 @@ class BookingsController extends Controller
                             'id' => $d_time->id,
                             'price' => $route->price,
                             'time' => $d_time->departure_time,
-                            'route_type' => 'stop_over_route',
+                            'route_type' => $this->stop_over_route,
                             'operator' => $route->route->operator->name,
                             'seats_left' => $seats_left
                         );
