@@ -38,17 +38,17 @@
                     <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station">
                       <option value="">Select Station</option>
                       @foreach($stations as $station)
-                          <option value="{{$station->id}}" @php echo $start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
+                          <option value="{{$station->id}}" @php echo $c_start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
                       @endforeach
                     </select>
                   </div>
                   <div class="form-group col-md-3">
                     <label>From</label>
-                    <input type="date"  name="from" value="{{$from??""}}" class="form-control " id="exampleInputEmail1" >
+                    <input type="date"  name="from" value="{{$c_from??""}}" class="form-control " id="exampleInputEmail1" >
                   </div>
                   <div class="form-group col-md-3">
                     <label>To</label>
-                    <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
+                    <input type="date"  name="fto" value="{{$c_to??""}}" class="form-control " id="exampleInputEmail1"  >
                   </div>
                   <div class="form-group col-md-2">
                     <button type="submit" class="btn btn-primary">Search</button>
