@@ -130,7 +130,6 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             $now = \Carbon\Carbon::now();
-            //$monthStartDatestring = $now->startOfMonth();
             $startperiod = \Carbon\Carbon::now()->endOfMonth();
             $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(5);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
@@ -191,7 +190,6 @@ class ReportsController extends Controller
         }
         $route_times=$route->departure_times()->pluck('id');
         $route_departures=$route->departure_times()->get();
-      //  dd($route_time);
 
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
