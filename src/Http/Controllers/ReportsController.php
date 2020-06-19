@@ -1,7 +1,6 @@
 <?php
 
 namespace glorifiedking\BusTravel\Http\Controllers;
-
 use Carbon\CarbonPeriod;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
@@ -11,7 +10,6 @@ use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\ListBookings;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
 class ReportsController extends Controller
 {
     public $role_cashier ='BT Cashier',
