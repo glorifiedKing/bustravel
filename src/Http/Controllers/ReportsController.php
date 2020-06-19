@@ -17,7 +17,7 @@ class ReportsController extends Controller
     public $role_cashier ='BT Cashier',
      $userId='user_id', $route_type ="route_type", $main_route ="main_route", $stop_over_route="stop_over_route",
      $Status="status",$CreatedAt="created_at",$StartDayTime=' 00:00:00', $EndDayTime=' 23:59:59',$RoutesDepartureTimeId='routes_departure_time_id',
-     $RoutesTimesId='routes_times_id',$TicketNumber='ticket_number'
+     $RoutesTimesId='routes_times_id',$TicketNumber='ticket_number',$Amount='amount'
      ;
 
     public function __construct()
@@ -61,7 +61,7 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($weekdates as $wdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $daysales = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $daysalescount = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
@@ -82,7 +82,7 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $daysalescount = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
@@ -103,7 +103,7 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $daysalescount = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
@@ -122,7 +122,7 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
@@ -141,7 +141,7 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
@@ -159,7 +159,7 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum('amount');
+                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
                 $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
@@ -210,7 +210,7 @@ class ReportsController extends Controller
             foreach ($weekdates as $wdate) {
 
               foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->EndDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->EndDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                 $routeday[$route_departure->id] = $daysales11;
                 $weekarray[$wdate] =$routeday;
               }
@@ -231,7 +231,7 @@ class ReportsController extends Controller
             $weekarray=[];
             foreach ($monthdates as $wdate) {
               foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                 $routeday[$route_departure->id] = $daysales11;
                 $weekarray[$wdate] =$routeday;
               }
@@ -253,7 +253,7 @@ class ReportsController extends Controller
             $weekarray=[];
             foreach ($monthdates as $wdate) {
               foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                 $routeday[$route_departure->id] = $daysales11;
                 $weekarray[$wdate] =$routeday;
               }
@@ -273,7 +273,7 @@ class ReportsController extends Controller
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
                 foreach($route_departures as $route_departure){
-                 $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+                 $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                   $routeday[$route_departure->id] = $daysales11;
                   $weekarray[$month->format('M-y')] =$routeday;
                 }
@@ -293,7 +293,7 @@ class ReportsController extends Controller
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
                   foreach($route_departures as $route_departure){
-                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                     $routeday[$route_departure->id] = $daysales11;
                     $weekarray[$month->format('M-y')] =$routeday;
                   }
@@ -312,7 +312,7 @@ class ReportsController extends Controller
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
                   foreach($route_departures as $route_departure){
-                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum('amount');
+                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
                     $routeday[$route_departure->id] = $daysales11;
                     $weekarray[$month->format('M-y')] =$routeday;
                   }

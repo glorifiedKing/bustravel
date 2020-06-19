@@ -488,7 +488,7 @@ class BookingsController extends Controller
                         'id' => $d_time->id,
                         'price' => $route->price,
                         'time' => $d_time->departure_time,
-                        'route_type' => $this->main_route,
+                        $this->routeType => $this->main_route,
                         'operator' => $route->operator->name,
                         'seats_left' => $seats_left
                     );
@@ -522,7 +522,7 @@ class BookingsController extends Controller
                             'id' => $d_time->id,
                             'price' => $route->price,
                             'time' => $d_time->departure_time,
-                            'route_type' => $this->stop_over_route,
+                            $this->routeType => $this->stop_over_route,
                             'operator' => $route->route->operator->name,
                             'seats_left' => $seats_left
                         );
