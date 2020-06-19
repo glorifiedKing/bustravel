@@ -54,7 +54,6 @@ class RouteController extends Controller
 
         return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
     }
-
      function sort_order($a,$b) {
       return $a['order']>$b['order'];
     }

@@ -87,7 +87,6 @@ class DriversController extends Controller
         $driver->save();
         return redirect()->route('bustravel.drivers')->with(ToastNotification::toast('Driver '.$driver->name.' has successfully been saved','Driver Saving'));
     }
-
     //Bus Edit form route('bustravel.buses.edit')
     public function edit($id)
     {

@@ -32,7 +32,6 @@ class OperatorsController extends Controller
     {
         return view('bustravel::backend.operators.create');
     }
-
     // saving a new operator in the database  route('bustravel.operators.store')
     public function store(Request $request)
     {
