@@ -71,7 +71,6 @@ Route::get('driver/manifest', 'BookingsController@manifest')->name('bustravel.bo
 Route::get('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest');
 Route::post('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest.search');
 //users
-
 //permissions
 Route::get('users/permissions', 'UsersController@permissions')->name('bustravel.users.permissions');
 Route::post('users/permissions', 'UsersController@storepermissions')->name('bustravel.users.permissions.store');
@@ -102,8 +101,8 @@ Route::post('report_routes', 'ReportsController@routes')->name('bustravel.report
 Route::get('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic');
 Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic.period');
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
-Route::get('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings');
-Route::post('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings.search');
+Route::get('report_booking/void/', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings');
+Route::post('report_booking/void/', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings.search');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
 Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');
