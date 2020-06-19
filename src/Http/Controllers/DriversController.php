@@ -28,7 +28,7 @@ class DriversController extends Controller
     public function index()
     {
 
-      if(auth()->user()->hasAnyRole('BT Administrator') OR auth()->user()->hasAnyRole('BT Cashier'))
+      if(auth()->user()->hasAnyRole('BT Administrator') || auth()->user()->hasAnyRole('BT Cashier'))
         {
           $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();
         }
