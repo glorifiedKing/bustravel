@@ -26,7 +26,7 @@
                                 $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
-                                $duration = $end_time->diffInMinutes($start_time,true);
+                                $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
                                 $main_route_tickets += $cart[$key]['quantity'];
                             @endphp
                             <div class="col-md-12 ticket-card cart">
@@ -37,7 +37,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
-                                        <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
+                                        <h5 class="card-text">Est. Duration - {{$duration}} </h5>
                                         <h3 class="price">
                                             <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
@@ -62,7 +62,7 @@
                                 $total_amount += $cart[$key]['quantity']*$cart[$key]['amount'];
                                 $start_time = Carbon\Carbon::parse($route->departure_time);
                                 $end_time = Carbon\Carbon::parse($route->arrival_time);
-                                $duration = $end_time->diffInMinutes($start_time,true);
+                                $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
                                 $stop_over_route_tickets += $cart[$key]['quantity'];
                             @endphp
                             <div class="col-md-12 ticket-card cart">
@@ -73,7 +73,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h3 class="card-title">Departure: {{$route->departure_time}} hrs</h3>
-                                        <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
+                                        <h5 class="card-text">Est. Duration - {{$duration}} </h5>
                                         <h3 class="price">
                                             <span> RWF {{$cart[$key]['quantity']*$route->route->price}}</span>
                                             <span class="date">{{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} </span>
