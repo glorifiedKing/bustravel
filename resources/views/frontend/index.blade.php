@@ -1,6 +1,6 @@
 @extends('bustravel::frontend.layouts.app')
 @section('title', 'PalmKash Bus Ticketing Homepage')
-@section('page-heading','Bus Ticketing System')        
+@section('page-heading','Bus Ticketing System')
 @section('navigaton-bar')
 
 
@@ -17,7 +17,7 @@
                                             <h4>Where from?</h4>
                                             <select name="departure_station" type="text" class="form-control select_search @error('departure_station') is-invalid @enderror" >
                                                 <option value="">Select a station</option>
-                                                @foreach ($bus_stations as $station)                                                    
+                                                @foreach ($bus_stations as $station)
                                                     <option value="{{$station->id}}">{{$station->name.' ['.$station->code.']'}}</option>
                                                 @endforeach
                                             </select>
@@ -31,7 +31,7 @@
                                             <h4>Where to?</h4>
                                             <select name="to_station"  class="form-control select_search @error('to_station') is-invalid @enderror" id="inputEmail4" >
                                                 <option value="">Select a station</option>
-                                                @foreach ($bus_stations as $station)                                                    
+                                                @foreach ($bus_stations as $station)
                                                     <option value="{{$station->id}}">{{$station->name.' ['.$station->code.']'}}</option>
                                                 @endforeach
                                             </select>
@@ -41,15 +41,15 @@
                                             </span>
                                             @enderror
                                         </div>
-                                        
+
                                     </div>
-                                
+
                             </div>
                             <div class="col-md-12 scheduling-area border-b-color pad-top-bottom">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <h4 class="top">Scheduling</h4>
-                                        
+
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
                                                     <label for="inputEmail4">Date of travel</label>
@@ -70,24 +70,24 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                        
+
                                     </div>
                                     <div class="col-md-4 extras">
                                         <h4>Extras</h4>
-                                       
-                                            <div class="input-group mb-3">                                                
+
+                                            <div class="input-group mb-3">
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Adult</label>
                                                 <input type="number" name="adults" class="form-control" aria-label="Text input with checkbox" value="1">
                                             </div>
-                                            <div class="input-group mb-3">                                                
+                                            <div class="input-group mb-3">
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Child</label>
                                                 <input type="number" name="children" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
-                                            <div class="input-group mb-3">                                                
-                                                <label type="text" class="form-control" aria-label="Text input with checkbox">Luggage pieces</label>
+                                            <div class="input-group mb-3">
+                                                <label type="text" class="form-control" aria-label="Text input with checkbox">Luggage</label>
                                                 <input type="number" name="luggage" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +99,7 @@
                         <div>WE ACCEPT MTN MOMO</div>
                     </div>
                 </div>
-            @endsection   
+            @endsection
             @section('js')
             @parent
             <script>
@@ -111,8 +111,5 @@
                         format: 'HH:mm'
                     });
                 });
-            </script>     
-            @stop       
-    
-  
-
+            </script>
+            @stop

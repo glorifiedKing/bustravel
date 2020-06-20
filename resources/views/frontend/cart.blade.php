@@ -7,8 +7,9 @@
 @endsection
             @section('content')
                 <div class="row">
-                    <div class="col-md-8">
-                        <h3 class="h3-bottom">Your tickets <a class="btn btn-danger" href="{{route('bustravel.cart.clear')}}">Clear Cart</a></h3>
+                    <div class="col-md-8 ticket_dets">
+                        <h3 class="h3-cart">Your tickets</h3>
+                        <a class="btn btn-clear-cart" href="{{route('bustravel.cart.clear')}}">Clear Cart</a>
                         @php
                             $cart = session()->get('cart.items');
                             $total_amount = 0;
@@ -31,7 +32,7 @@
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
-                                <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
+                                <li class="ticket-number">Number of tickets: {{$cart[$key]['quantity']}}</li>
 
                                 </ul>
                                 <div class="card">
@@ -45,9 +46,13 @@
                                         <ul class="list-inline">
                                             <li class="list-inline-item">From: {{$route->route->start->name}}</li>
                                             <li class="list-inline-item">To: {{$route->route->end->name}}</li>
-                                            <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
-                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',1])}}"> +</a></li>
                                         </ul>
+                                        <div class="col-md-8">
+                                          <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <li class="list-inline-item btn add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',1])}}"> +</a></li>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -67,7 +72,7 @@
                             @endphp
                             <div class="col-md-12 ticket-card cart">
                                 <ul class="top-adjust-txt">
-                                    <li class="ticket-number">Tickets {{$cart[$key]['quantity']}}</li>
+                                    <li class="ticket-number">Tickets: {{$cart[$key]['quantity']}}</li>
 
                                 </ul>
                                 <div class="card">
@@ -82,9 +87,13 @@
                                             <li class="list-inline-item">From: {{$route->route->start_stopover_station->name}}</li>
                                             <li class="list-inline-item">To: {{$route->route->end_stopover_station->name}}</li>
                                             <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
-                                            
-                                            <li class="list-inline-item add-btn" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',-1])}}">- </a>Tickets {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',1])}}"> +</a></li>
                                         </ul>
+                                        <div class="col-md-8">
+                                          <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
+                                        </div>
+                                        <div class="col-md-4">
+                                          <li class="list-inline-item add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',1])}}"> +</a></li>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -96,7 +105,7 @@
                                 <table class="table" summary="Cart Details">
                                     <tbody>
                                         <tr>
-                                            <th scope="row">No of Tickets</th>
+                                            <th scope="row">No of Tickets:</th>
                                         <td> {{$main_route_tickets+$stop_over_route_tickets}}</td>
                                         </tr>
                                         <tr>
@@ -117,7 +126,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h3>Luggage Allowance</h3>
+                                <h4>Luggage Allowance</h4>
                                 <p>One piece of luggage up to 20kg and one small piece of hand luggage. <a>Find Out More</a></p>
                                 <button type="submit" class="btn btn-primary mb-2 btn-proceed"><a href="{{route('bustravel.cart.checkout')}}">Pay for Ticket</a></button>
                             </div>

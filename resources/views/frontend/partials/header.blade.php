@@ -11,14 +11,14 @@
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="{{route('bustravel.bus.times')}}" style="color:white !important">
-                    Bus Times / Tickets <span class="sr-only">(current)</span>
+                    Bus Times <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{route('bustravel.bus.stations')}}" style="color:white !important">Station / Bus Info</a>
+                <a class="nav-link" href="{{route('bustravel.bus.stations')}}" style="color:white !important">Stations </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{route('bustravel.bus.faqs')}}" style="color:white !important">Help</a>
+                <a class="nav-link" href="{{route('bustravel.bus.faqs')}}" style="color:white !important">Help </a>
             </li>
         </ul>
         @if (session('cart'))
@@ -48,7 +48,7 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @auth
 
-                    
+
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                          document.getElementById('logout-form').submit();">
@@ -58,8 +58,8 @@
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
-                    
-                
+
+
                 @else
                 <a class="dropdown-item" href="{{ route('login') }}">Login</a>
                 <a class="dropdown-item" href="{{ route('register') }}">Register</a>

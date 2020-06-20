@@ -7,16 +7,18 @@
 
             @section('content')
                 <div class="row">
-                    <div class="col-md-12">
-                        <h3 class="h3-bottom">Bus Times  for {{date('D M j Y')}} [<a  href="">Reload Routes</a>]</h3>
+                    <div class="col-md-12 bus-time-headings">
+                        <h4 class="h4-bottom">Bus Times  for {{date('D M j Y')}}</h4>
+                        <button type="button" name="button" class="reload-routes"><a  href="">Reload Routes</a></button>
+
                         @php
                             $cart = session()->get('cart.items');
                             $total_amount = 0;
                             $reserve_fee = 0;
                             $booking_fee = 0;
                         @endphp
+                    </div>
                 </div>
-            </div>
                         <div class="row">
                             <div class="col-md-12">
 
@@ -48,14 +50,14 @@
                                       @foreach($routes_times as $index => $route_time)
                                       <tr>
                                     <td>{{$route_time->route->start->name??'None'}} ( {{$route_time->route->start->code??'None'}} ) </td>
-                                      <td> {{$route_time->route->end->name??'None'}} ( {{$route_time->route->end->code??'None'}} ) <a class="btn" href="{{route('bustravel.add_to_basket',[$route_time->id,date('Y-m-d'),'main_route',1])}}">Book main route</a></td>
+                                      <td> {{$route_time->route->end->name??'None'}} ( {{$route_time->route->end->code??'None'}} ) <br> <a class="btn" href="{{route('bustravel.add_to_basket',[$route_time->id,date('Y-m-d'),'main_route',1])}}">Book main route</a></td>
                                       <td>{{$route_time->departure_time}}</td>
                                       <td>{{$route_time->arrival_time}}</td>
                                       <td>{{$route_time->number_of_seats_left(date('Y-m-d')) ?? 0}}</td>
                                       @php $stopoverstimes =$route_time->stopovers_times()->orderBy('id','ASC')->get(); @endphp
                                       <td>
                                          @foreach($stopoverstimes as $times)
-                                         {{$times->route_stopover->start_stopover_station->name??""}} to {{$times->route_stopover->end_stopover_station->name??""}}  - {{$times->departure_time??""}} <a class="btn" href="{{route('bustravel.add_to_basket',[$times->id,date('Y-m-d'),'stop_over_route',1])}}">Book</a><br>
+                                         {{$times->route_stopover->start_stopover_station->name??""}} to {{$times->route_stopover->end_stopover_station->name??""}}  - {{$times->departure_time??""}} <br> <a class="btn" href="{{route('bustravel.add_to_basket',[$times->id,date('Y-m-d'),'stop_over_route',1])}}">Book</a><br>
                                           <hr>
                                          @endforeach
                                       </td>
@@ -87,13 +89,13 @@ $(document).ready(function(){
                   $("#route_table thead tr:eq(1) th:eq(" + index + ") input").on("keyup change", function () {
                      if(index == 0)
                      {
-                      
+
                          table.search(this.value, false, false, true)
                              .draw();
-                      
+
 
                     }
-                    else 
+                    else
                     {
                       table.column($(this).parent().index() + ":visible")
                           .search(this.value)

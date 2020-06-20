@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="offset-1 col-md-3 area-extras">
-                        <div>AREA FOR ANY FUTURE INCLUSIONS</div>
+                        <div style="color: white;">AREA FOR ANY FUTURE INCLUSIONS</div>
                     </div>
                 </div>
 @endsection
