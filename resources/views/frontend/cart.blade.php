@@ -48,10 +48,14 @@
                                             <li class="list-inline-item">To: {{$route->route->end->name}}</li>
                                         </ul>
                                         <div class="col-md-8">
-                                          <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
+                                          <ul>
+                                            <li class="list-inline-item">Operator: {{$route->route->operator->name}}</li>
+                                          </ul>
                                         </div>
                                         <div class="col-md-4">
-                                          <li class="list-inline-item btn add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',1])}}"> +</a></li>
+                                          <ul>
+                                            <li class="list-inline-item btn add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'main_route',1])}}"> +</a></li>
+                                          </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -89,10 +93,14 @@
                                             <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
                                         </ul>
                                         <div class="col-md-8">
-                                          <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
+                                          <ul>
+                                            <li class="list-inline-item">Operator: {{$route->route->route->operator->name}}</li>
+                                          </ul>
                                         </div>
                                         <div class="col-md-4">
-                                          <li class="list-inline-item add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',1])}}"> +</a></li>
+                                          <ul>
+                                            <li class="list-inline-item add-btn add-btn-2" ><a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',-1])}}">- </a>Tickets: {{$cart[$key]['quantity']}}<a href="{{route('bustravel.add_to_basket',[$route->id,$date_of_travel,'stop_over_route',1])}}"> +</a></li>
+                                          </ul>
                                         </div>
                                     </div>
                                 </div>

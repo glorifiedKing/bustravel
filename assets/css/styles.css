@@ -94,7 +94,6 @@ main {
 .btn {
     background: #fccc04;
     outline: none;
-    border: none;
     padding: .2rem .5rem;
     border: 1px solid #fccc04;
     color: #ffffff;
