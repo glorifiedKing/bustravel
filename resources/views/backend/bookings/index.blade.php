@@ -64,27 +64,22 @@
 
                         @foreach ($bookings as $booking)
                             <tr>
-                              <td>@if($booking->status==1)
+                              <td>@if($booking['status']==1)
                                     <a href="#" class="btn btn-xs btn-success"> <i class="fas fa-check" aria-hidden="true"></i></a>
                                   @else
                                   <a href="#" class="btn btn-xs btn-danger"> <i class="fas fa-times" aria-hidden="true"></i></a>
 
                                   @endif
                                </td>
-                               <td>{{$booking->ticket_number}}</td>
-                                @if($booking->route_type=="main_route")
-                                <td>{{$booking->route_departure_time->route->operator->name??'None'}}</td>
-                                <td>{{$booking->route_departure_time->route->start->code??''}} - {{$booking->route_departure_time->route->end->code??'None'}} / {{$booking->route_departure_time->departure_time??'None'}}</td>
-                                @else
-                                <td>{{$booking->stop_over_route_departure_time->route->route->operator->name??'None'}}</td>
-                                <td>{{$booking->stop_over_route_departure_time->route->start_stopover_station->code??''}} - {{$booking->stop_over_route_departure_time->route->end_stopover_station->code??'None'}} / {{$booking->stop_over_route_departure_time->departure_time??'None'}}</td>
-                                @endif
-                               <td>{{number_format($booking->amount,2)}} </td>
-                                <td>{{$booking->date_paid}}</td>
-                                <td>{{$booking->date_of_travel}}</td>
-                                <td>{{Carbon\Carbon::parse($booking->created_at)->format('Y-m-d')}}</td>
-                                <td><a title="Edit" href="{{route('bustravel.bookings.edit',$booking->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Booking')" href="{{route('bustravel.bookings.delete',$booking->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                               <td>{{$booking['ticket_number']}}</td>
+                                <td>{{$booking['operator']}}</td>
+                                <td>{{$booking['start']}} - {{$booking['end']}} / {{$booking['time']}}</td>
+                               <td>{{number_format($booking['amount'],2)}} </td>
+                                <td>{{$booking['date_paid']}}</td>
+                                <td>{{$booking['date_of_travel']}}</td>
+                                <td>{{Carbon\Carbon::parse($booking['created_at'])->format('Y-m-d')}}</td>
+                                <td><a title="Edit" href="{{route('bustravel.bookings.edit',$booking['id'])}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Booking')" href="{{route('bustravel.bookings.delete',$booking['id'])}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 

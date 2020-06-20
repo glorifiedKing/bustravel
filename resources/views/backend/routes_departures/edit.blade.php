@@ -1,17 +1,17 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Route Departure Time')
+@section('title', 'Route Services')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.edit',$route_departure_time->route_id)}}" class="btn btn-info">Back</a></small> Routes Departure Times </h1>
+        <h1 class="m-0 text-dark"><small><a href="{{route('bustravel.routes.edit',$route_departure_time->route_id)}}" class="btn btn-info">Back</a></small> Route Services </h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">routes</li>
+          <li class="breadcrumb-item active">route services</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -36,7 +36,7 @@
       @endif
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">Edit {{$route_departure_time->route->start->name}} ( {{$route_departure_time->route->start->code}} )  - {{$route_departure_time->route->end->name}} ( {{$route_departure_time->route->end->code}} ) - {{$route_departure_time->departure_time}} Route</h5>
+            <h5 class="card-title">Edit {{$route_departure_time->route->start->name}} ( {{$route_departure_time->route->start->code}} )  - {{$route_departure_time->route->end->name}} ( {{$route_departure_time->route->end->code}} ) - {{$route_departure_time->departure_time}} Route Service</h5>
             </div>
             <!-- /.card-header -->
             <div class="card-body">

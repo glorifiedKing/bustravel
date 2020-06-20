@@ -24,7 +24,6 @@ class BusesController extends Controller
         if (!auth()->user()->can('View BT Buses')) {
             return redirect()->route('bustravel.errors.403');
         }
-
         if(auth()->user()->hasAnyRole('BT Administrator'))
           {
             $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
@@ -33,8 +32,6 @@ class BusesController extends Controller
           {
            $buses = Bus::all();
           }
-
-
         return view('bustravel::backend.buses.index', compact('buses'));
     }
 

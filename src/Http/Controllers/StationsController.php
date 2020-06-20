@@ -24,7 +24,6 @@ class StationsController extends Controller
             return redirect()->route('bustravel.errors.403');
         }
         $bus_stations = Station::all();
-
         return view('bustravel::backend.stations.index', compact('bus_stations'));
     }
 

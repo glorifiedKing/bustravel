@@ -33,7 +33,7 @@ class RouteController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-        if(auth()->user()->hasAnyRole('BT Administrator'))
+        if(auth()->user()->hasAnyRole('BT Administrator') || auth()->user()->hasAnyRole('BT Cashier'))
           {
             $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
           }
@@ -44,7 +44,6 @@ class RouteController extends Controller
 
         return view('bustravel::backend.routes.index', compact('routes'));
     }
-
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
@@ -54,7 +53,6 @@ class RouteController extends Controller
 
         return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
     }
-
      function sort_order($a,$b) {
       return $a['order']>$b['order'];
     }

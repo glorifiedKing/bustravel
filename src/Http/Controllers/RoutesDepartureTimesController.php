@@ -25,14 +25,15 @@ class RoutesDepartureTimesController extends Controller
     $time_error_departure ='StopOver Departure time should be between ',
     $R_departure_Time ='departure_time',
     $R_Arrival_Time ='arrival_time',
+    $OperatorId ='operator_id',
     $error ='error';
+
     public function __construct()
     {
         $this->middleware('web');
         $this->middleware('auth');
           $this->middleware('can:Create BT Routes');
     }
-
     //fetching buses route('bustravel.buses')
     public function index()
     {
@@ -47,8 +48,8 @@ class RoutesDepartureTimesController extends Controller
 
         $route =Route::find($id);
         $routes = Route::where('status', 1)->get();
-        $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
-        $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
+        $drivers = Driver::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->get();
 
         return view('bustravel::backend.routes_departures.create', compact('buses', 'routes', 'drivers','route'));
     }
@@ -117,8 +118,8 @@ class RoutesDepartureTimesController extends Controller
     public function edit($id)
     {
         $routes = Route::where('status', 1)->get();
-        $drivers = Driver::where('status', 1)->orderBy('name', 'ASC')->get();
-        $buses = Bus::where('status', 1)->get();
+        $drivers = Driver::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->get();
         $route_departure_time = RoutesDepartureTime::find($id);
         if (is_null($route_departure_time)) {
             return Redirect::route('bustravel.routes.departures');

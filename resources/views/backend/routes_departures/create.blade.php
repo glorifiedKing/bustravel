@@ -1,6 +1,6 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Routes Departure Times')
+@section('title', 'Route Services')
 
 @section('content_header')
 <div class="container-fluid">
@@ -11,7 +11,7 @@
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">routes departure times</li>
+          <li class="breadcrumb-item active">routes services</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -36,7 +36,7 @@
       @endif
         <div class="card">
             <div class="card-header">
-            <h5 class="card-title">Add Route {{$route->start->name}} [ {{$route->start->code}} ] - {{$route->end->name}} [ {{$route->end->code}} ]  Departure/Arrival  Time</h5>
+            <h5 class="card-title">Add Route {{$route->start->name}} [ {{$route->start->code}} ] - {{$route->end->name}} [ {{$route->end->code}} ]  Service</h5>
             </div>
             <!-- /.card-header -->
             <div class="card-body">

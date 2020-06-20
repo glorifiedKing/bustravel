@@ -15,7 +15,6 @@ class FaqsController extends Controller
         $this->middleware('auth');
         $this->middleware('can:Manage BT General Settings');
     }
-
     //fetching operators route('bustravel.operators')
     public function faqs()
     {
