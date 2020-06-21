@@ -14,7 +14,7 @@
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
-                            $duration = $end_time->diffInMinutes($start_time,true);
+                            $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
                             $seats_left = $result->number_of_seats_left($date_of_travel);
                         @endphp
                            @if($seats_left > 0)
@@ -31,7 +31,7 @@
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
-                                            <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
+                                            <h5 class="card-text">Est. Duration - {{$duration}}</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>
                                     </div>
@@ -46,7 +46,7 @@
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
-                            $duration = $end_time->diffInMinutes($start_time,true);
+                            $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
                             $seats_left = $result->main_route_departure_time->number_of_seats_left($date_of_travel);
                         @endphp
                             @if($seats_left > 0)
@@ -63,7 +63,7 @@
                                             </ul>
                                             <h3 class="card-title">departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
-                                            <h5 class="card-text">Est. Duration - {{round($duration/60,1)}} hrs</h5>
+                                            <h5 class="card-text">Est. Duration - {{$duration}}</h5>
                                             <h3 class="card-title">price: RWF {{$route->price}}</h3>
                                         </div>
                                     </div>
