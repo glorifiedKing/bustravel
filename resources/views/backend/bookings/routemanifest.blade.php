@@ -40,7 +40,7 @@
                   <th scope="row"><strong>Time: </strong></th>  <td>{{$times_id->departure_time}} - {{$times_id->arrival_time}}</td>
                   <tr>
                     <tr>
-                    <td><strong>Driver: </strong></td>  <td> {{$times_id->driver->name}}</td>
+                    <td><strong>Driver: </strong></td>  <td> {{$times_id->driver->name??'No Driver'}}</td>
                     <tr>
                 </table>
               </div>
@@ -50,7 +50,7 @@
                   <th scope="row"><strong>Bus : </strong> </th><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
                 <tr>
                   <tr>
-                  <th scope="row"><strong>Tickets: </strong></th>  <td>{{$bookings->count()}}</td>
+                  <th scope="row"><strong>Tickets: </strong></th>  <td>{{$bookings_no}}</td>
                   <tr>
                 </table>
               </div>
@@ -134,40 +134,28 @@
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="Bus Tickets">
                         <thead>
                             <tr>
-                                <th scope="col">Status</th>
                                 <th scope="col">On Board</th>
                                 <th scope="col">Ticket</th>
-                                <th scope="col">Paid Date</th>
-                                <th scope="col">Travel Date </th>
-                                <th scope="col">Created </th>
+                                <th scope="col">Boarding Station</th>
                             </tr>
                         </thead>
                         <tbody>
 
                         @foreach ($bookings as $booking)
                             <tr>
-                              <td>@if($booking->status==1)
-                                    <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> </span>
-                                  @else
-                                    <span class="badge badge-danger "> <i class="fas fa-check" aria-hidden="true"></i> </span>
-
-                                  @endif
-                               </td>
-                               <td>@if($booking->boarded==1)
+                               <td>@if($booking['boarded']==1)
                                      <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> Yes</span>
                                    @else
                                    @if(auth()->user()->hasAnyRole('BT Driver'))
-                                   <a href="{{route('bustravel.bookings.boarded',$booking->id)}}" onclick="return confirm('Are you sure  Ticket [{{$booking->ticket_number}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span></a>
+                                   <a href="{{route('bustravel.bookings.boarded',$booking['id'])}}" onclick="return confirm('Are you sure  Ticket [{{$booking['ticket_number']}}] is On Board')" ><span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span></a>
                                    @else
                                     <span class="badge badge-danger "> <i class="fas fa-times" aria-hidden="true"></i> No</span>
                                    @endif
 
                                    @endif
                                 </td>
-                               <td>{{$booking->ticket_number}}</td>
-                                <td>{{$booking->date_paid}}</td>
-                                <td>{{$booking->date_of_travel}}</td>
-                                <td>{{Carbon\Carbon::parse($booking->created_at)->format('d-m-Y')}}</td>
+                               <td>{{$booking['ticket_number']??''}}</td>
+                               <td>{{$booking['boarding_station']??''}}</td>
                             </tr>
 
                         @endforeach
@@ -221,32 +209,34 @@ var table = $('#example1').DataTable({
 
   var myChart = echarts.init(document.getElementById('pieChart2'));
   option = {
+    title:{text:'Capacity'},
       tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
       },
       legend: {
           type: 'scroll',
-          orient: 'horizontal',
+          orient: 'vertical',
           right: 10,
           top: 20,
           bottom: 20,
-          data: ['Booked', 'Not Booked',],
+          data: ['Booked {{$bookings_no}}', 'Empty {{$not_booked}}',],
 
           selected:  [
-            {value:{{$bookings->count()}},name:'Booked'},
-            {value:{{$not_booked}},name:'Not Booked'},
+            {value:{{$bookings_no}},name:'Booked {{$bookings_no}}'},
+            {value:{{$not_booked}},name:'Empty  {{$not_booked}}'},
           ],
       },
       series: [
           {
-              name: 'Seats',
+              name: 'Capacity',
               type: 'pie',
               radius: '45%',
               center: ['40%', '50%'],
+              label: {position: 'inner'},
               data: [
-               {value: {{$bookings->count()}}, name: 'Booked'},
-               {value: {{$not_booked}}, name: 'Not Booked'},
+               {value: {{$bookings_no}}, name: 'Booked {{$bookings_no}}'},
+               {value: {{$not_booked}}, name: 'Empty {{$not_booked}}'},
            ],
               emphasis: {
                   itemStyle: {
@@ -263,32 +253,34 @@ myChart.setOption(option);
 
 var myChart1 = echarts.init(document.getElementById('pieChart3'));
 option1 = {
+   title:{text:'Bookings'},
     tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'
     },
     legend: {
         type: 'scroll',
-        orient: 'horizontal',
+        orient: 'vertical',
         right: 10,
         top: 20,
         bottom: 50,
-        data: ['OnBoard', 'Not OnBoard',],
+        data: ['On ({{$onboard_tickets}})', 'Not ({{$notonboard_tickets}})',],
 
         selected:  [
-          {value:{{$onboard_tickets}},name:'OnBoard'},
-          {value:{{$notonboard_tickets}},name:'Not OnBoard'},
+          {value:{{$onboard_tickets}},name:'On ({{$onboard_tickets}})'},
+          {value:{{$notonboard_tickets}},name:'Not ({{$notonboard_tickets}})'},
         ],
     },
     series: [
         {
-            name: 'Board',
+            name: 'Bookings',
             type: 'pie',
             radius: '45%',
             center: ['40%', '50%'],
+            label: {position: 'inner'},
             data: [
-             {value: {{$onboard_tickets}}, name: 'OnBoard'},
-             {value: {{$notonboard_tickets}}, name: 'Not OnBoard'},
+             {value: {{$onboard_tickets}}, name: 'On ({{$onboard_tickets}})'},
+             {value: {{$notonboard_tickets}}, name: 'Not ({{$notonboard_tickets}})'},
          ],
             emphasis: {
                 itemStyle: {

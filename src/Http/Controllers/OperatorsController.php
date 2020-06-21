@@ -26,13 +26,11 @@ class OperatorsController extends Controller
 
         return view('bustravel::backend.operators.index', compact('bus_operators'));
     }
-
     //creating operator form route('bustravel.operators.create')
     public function create()
     {
         return view('bustravel::backend.operators.create');
     }
-
     // saving a new operator in the database  route('bustravel.operators.store')
     public function store(Request $request)
     {

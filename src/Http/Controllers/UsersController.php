@@ -22,7 +22,6 @@ class UsersController extends Controller
         //$this->middleware('can:View BT Stations');
         $this->middleware('can:Manage BT Permissions')->only('permissions','storepermissions','updatepermissions','deletepermissions','roles','createroles','storeroles','editroles','updateroles','deleteroles');
         $this->middleware('can:View BT Users')->only('users','createusers','storeusers','editusers','updateusers','deleteusers');
-
     }
 
     //fetching permissions

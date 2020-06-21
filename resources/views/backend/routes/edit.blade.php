@@ -139,8 +139,8 @@
                           <thead>
                             <tr>
                               <th scope="col" style="width: 30px"></th>
-                              <th scope="col">Start</th>
-                              <th scope="col">End</th>
+                              <th scope="col">From</th>
+                              <th scope="col">To</th>
                               <th scope="col">Price</th>
                               <th scope="col" style="width: 100px">Order</th>
                             </tr>
@@ -189,7 +189,7 @@
               <div class="box-footer">
                 <div class="form-group col-md-12">
                   <button type="submit" class="btn btn-primary">Submit</button>
-                  
+
                 </div>
               </div>
             </form>

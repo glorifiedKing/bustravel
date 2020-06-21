@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $this->middleware('web');
         $this->middleware('auth');
         $this->middleware('can:View BT Stations');
-        
+
     }
 
     public function index()

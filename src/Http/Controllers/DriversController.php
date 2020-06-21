@@ -12,8 +12,6 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use glorifiedking\BusTravel\ToastNotification;
-
-
 class DriversController extends Controller
 {
     public function __construct()
@@ -28,7 +26,7 @@ class DriversController extends Controller
     public function index()
     {
 
-      if(auth()->user()->hasAnyRole('BT Administrator'))
+      if(auth()->user()->hasAnyRole('BT Administrator') || auth()->user()->hasAnyRole('BT Cashier'))
         {
           $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();
         }
@@ -87,7 +85,6 @@ class DriversController extends Controller
         $driver->save();
         return redirect()->route('bustravel.drivers')->with(ToastNotification::toast('Driver '.$driver->name.' has successfully been saved','Driver Saving'));
     }
-
     //Bus Edit form route('bustravel.buses.edit')
     public function edit($id)
     {

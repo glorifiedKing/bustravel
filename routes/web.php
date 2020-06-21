@@ -71,7 +71,6 @@ Route::get('driver/manifest', 'BookingsController@manifest')->name('bustravel.bo
 Route::get('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest');
 Route::post('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest.search');
 //users
-
 //permissions
 Route::get('users/permissions', 'UsersController@permissions')->name('bustravel.users.permissions');
 Route::post('users/permissions', 'UsersController@storepermissions')->name('bustravel.users.permissions.store');
@@ -95,7 +94,6 @@ Route::get('users/changepassword', 'UsersController@changepassword')->name('bust
 Route::post('users/changepassword/save', 'UsersController@changepassword_save')->name('bustravel.users.changepassword.save');
 // errors
 Route::get('error/access_denied', 'ExceptionsController@accessDenied')->name('bustravel.errors.403');
-
 Route::get('report_sales', 'ReportsController@sales')->name('bustravel.reports.sales');
 Route::post('report_sales', 'ReportsController@sales')->name('bustravel.reports.sales.period');
 Route::get('report_routes', 'ReportsController@routes')->name('bustravel.reports.profitroute');
@@ -104,6 +102,7 @@ Route::get('report_traffic', 'ReportsController@traffic')->name('bustravel.repor
 Route::post('report_traffic', 'ReportsController@traffic')->name('bustravel.reports.traffic.period');
 Route::get('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings');
 Route::get('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings');
+Route::post('report_booking/void', 'ReportsController@void_booking')->name('bustravel.reports.void.bookings.search');
 Route::post('report_booking', 'ReportsController@booking')->name('bustravel.reports.bookings.search');
 Route::get('report_locations', 'ReportsController@locations')->name('bustravel.reports.locations');
 Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');
