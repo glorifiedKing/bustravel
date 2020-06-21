@@ -79,70 +79,116 @@ main {
     align-items: center;
     color: #f5f5f5;
     font-size: 220%;
-    text-align: center
+    text-align: center;
 }
 
 .border-b-color {
-    border-bottom: 1px solid #fccc04
+    border-bottom: 1px solid #fccc04;
 }
 
 .pad-top-bottom {
     padding-top: 25px;
-    padding-bottom: 25px
+    padding-bottom: 25px;
 }
 
 .btn {
     background: #fccc04;
     outline: none;
-    border: none
+    padding: .2rem .5rem;
+    border: 1px solid #fccc04;
+    color: #ffffff;
 }
 
-.h3-bottom {
-    margin-bottom: 30px
+.btn:hover,
+.btn:active,
+.btn:focus {
+    border: 1px solid #283E5D;
+    background: transparent;
+    color: #283E5D;
+}
+
+.btn.focus, .btn:focus {
+    box-shadow: none;
+}
+
+.h4-bottom {
+    margin-bottom: 30px;
 }
 
 .btn-proceed {
-    margin-top: 50px
+    margin-top: 30px;
+}
+
+.btn-primary.btn-proceed:hover,
+.btn-primary.btn-proceed:active,
+.btn-primary.btn-proceed:focus {
+    color: #283E5D;
+    background-color: #ffffff !important;
+    border-color: #283E5D !important;
+}
+
+.btn-proceed:not(:disabled):not(.disabled).active,
+.btn-proceed:not(:disabled):not(.disabled):active,
+.show > .btn-proceed.dropdown-toggle {
+    color: #fff;
+    background-color: #283E5D;
+    border-color: #283E5D;
+}
+
+.btn-proceed {
+  margin-top: 20px;
+}
+
+.btn-proceed a {
+  color: #ffffff;
+}
+
+.btn-proceed a:hover,
+.btn-proceed a:active,
+.btn-proceed a:focus {
+  color: #283E5D;
 }
 
 .scheduling-area h4.top {
-    margin-bottom: 25px
+    margin-bottom: 25px;
 }
 
 .scheduling-area .extras {
-    border-left: 1px solid #fccc04
+    border-left: 1px solid #fccc04;
 }
 
+.ticket-card {padding-bottom: 1em;}
+
 .ticket-card .card {
-    background: #fafafa;
-    border: none
+    background: transparent;
+    border: none;
 }
 
 .ticket-card .card-body {
-    position: relative
+    position: relative;
 }
 
 .ticket-card .card h3 {
-    font-size: 26px;
-    color: #fccc04;
+    font-size: 20px;
+    color: #116ED1;
     font-weight: 600;
-    margin-bottom: 5px
+    margin-bottom: 5px;
 }
 
 .ticket-card .card h5 {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 300;
     font-style: italic;
     margin-top: 0;
-    line-height: 1em
+    line-height: 1em;
 }
 
 .ticket-card .card .list-inline {
     margin-top: 10px;
     border-top: 1px solid #fccc04;
     padding-top: 15px;
-    font-size: 20px;
-    position: relative
+    font-size: 18px;
+    position: relative;
 }
 
 .ticket-card .card .list-inline li.add-btn {
@@ -150,77 +196,103 @@ main {
     background: #fccc04;
     border-radius: 5px;
     position: absolute;
-    right: 0
+    right: 0;
 }
 
 .ticket-card .card-body .price {
     position: absolute;
     right: 20px;
-    top: 20px
+    top: 20px;
+}
+
+.card-body .col-md-9, .card-body .col-md-3  {
+  padding-right: 0;
+  padding-left: 0;
+  float: left;
+  margin-top: 1em;
+}
+
+.card-body .col-md-3 {text-align: right;}
+
+.card-body .col-md-4 .add-btn {
+  float: right;
+  font-weight: 600;
 }
 
 .top-adjust-txt:after {
     content: "";
     display: block;
-    clear: both
+    clear: both;
 }
 
 .top-adjust-txt .ticket-number {
     float: left;
-    font-style: italic
+    font-style: italic;
 }
 
 .top-adjust-txt .ticket-remove {
     float: right;
     font-style: italic;
-    color: #fccc04
+    color: #fccc04;
 }
 
 .ticket-card.cart .price {
-    text-align: right
+    text-align: right;
 }
 
 .ticket-card.cart .list-inline {
-    margin-top: 50px
+    margin-top: 50px;
 }
 
 .ticket-card.cart .price span {
-    display: block
+    display: block;
 }
 
 .ticket-card.cart .price span.date {
-    font-size: 80%
+    font-size: 80%;
 }
 
 .ticket-card .table {
     margin-top: 25px;
-    font-size: 20px
+    margin-bottom: 2rem;
+    font-size: 16px;
 }
 
 .ticket-card .table tr td:last-child {
-    text-align: right
+    text-align: right;
 }
 
 .ticket-card .table tr.total-area {
     border-top-color: 1px solid #fccc04;
-    font-weight: 600
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.ticket-card h4 {
+  font-size: 16px
+}
+
+.ticket-card p {
+    font-size: 12px;
+    margin-top: 10px;
 }
 
 .navbar {
     background: #283e5d;
     color: #fff;
-    margin-top: 0
+    margin-top: 0;
 }
 
 .cart-items-number {
     display: inline-block;
-    color: #fccc04
+    color: #fccc04;
 }
 
 .header-title {
     background: #283e5d;
     margin-bottom: 0;
-    padding: 50px 0 0
+    padding: 50px 0 0;
+    padding-top: 5px;
 }
 
 .header-title h1 {
@@ -229,7 +301,8 @@ main {
     max-width: 1166px;
     margin: auto;
     border-bottom: 1px solid #fccc04;
-    padding: 20px 0
+    padding: 20px 0;
+    font-size: 40px;
 }
 
 @media (min-width: 992px) {
@@ -238,58 +311,58 @@ main {
         margin: auto;
         display: flex;
         justify-content: space-between;
-        align-items: center
+        align-items: center;
     }
 }
 
 .navbar a {
-    color: #fff
+    color: #fff;
 }
 
 .navbar .dropdown-menu a {
-    color: inherit
+    color: inherit;
 }
 
 .cart-ico-area a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 50px
+    width: 50px;
 }
 
 .account-ico,.cart-ico {
     width: 21px;
     height: 21px;
     display: inline-block;
-    fill: #fff
+    fill: #fff;
 }
 
 .accnt-area-menu,.accnt-area-menu .dropdown-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fccc04
+    background: #fccc04;
 }
 
 .accnt-area-menu span {
     display: block;
-    margin: 5px
+    margin: 5px;
 }
 
 .accnt-area-menu .btn {
     background: #fccc04;
-    border-radius: 0
+    border-radius: 0;
 }
 
 .form-signin {
     width: 100%;
     max-width: 330px;
     padding: 15px;
-    margin: 0 auto
+    margin: 0 auto;
 }
 
 .form-signin .checkbox {
-    font-weight: 400
+    font-weight: 400;
 }
 
 .form-signin .form-control {
@@ -297,32 +370,32 @@ main {
     box-sizing: border-box;
     height: auto;
     padding: 10px;
-    font-size: 16px
+    font-size: 16px;
 }
 
 .form-signin .form-control:focus {
-    z-index: 2
+    z-index: 2;
 }
 
 .form-signin input[type=email] {
     margin-bottom: -1px;
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0
+    border-bottom-left-radius: 0;
 }
 
 .form-signin input[type=password] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
-    border-top-right-radius: 0
+    border-top-right-radius: 0;
 }
 
 .line-hor {
     height: 1px;
-    background: #fccc04
+    background: #fccc04;
 }
 
 .sign-in-up {
-    padding-top: 15px
+    padding-top: 15px;
 }
 
 .form-header-custom {
@@ -359,7 +432,7 @@ li.divider-custom {
     bottom: -25px;
     right: 5px;
     font-style: italic;
-    color: #fccc04;
+    color: #283e5d;
     font-size: 14px
 }
 
@@ -368,8 +441,10 @@ li.divider-custom {
 }
 
 .cust-btn-link {
-    padding: 8px 50px;
-    margin-top: 25px
+    padding: 5px 15px;
+    margin-top: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .terms-link {
@@ -379,4 +454,282 @@ li.divider-custom {
 .terms-link a {
     font-style: italic;
     text-decoration: underline!important
+}
+
+.bootstrap-datetimepicker-widget a[data-action] {
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+    background-color: transparent;
+    color: #00B0DD;
+    box-shadow: none;
+}
+
+.bootstrap-datetimepicker-widget a[data-action]:hover span {
+    background-color: #eeeeee;
+    color: #00B0DD;
+}
+
+.bootstrap-datetimepicker-widget .btn.btn-primary {
+    color: #fff !important;
+    background-color: #9c27b0 !important;
+    border-color: #9c27b0;
+    box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+}
+
+.bootstrap-datetimepicker-widget .btn.btn-primary:hover {
+    box-shadow: 0 14px 26px -12px rgba(156, 39, 176, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(156, 39, 176, 0.2);
+}
+
+.bootstrap-datetimepicker-widget .timepicker-picker span,
+.bootstrap-datetimepicker-widget .timepicker-hours span,
+.bootstrap-datetimepicker-widget .timepicker-minutes span {
+    border-radius: 50% !important;
+}
+
+.bootstrap-datetimepicker-widget.usetwentyfour td.hour {
+    height: 27px;
+    line-height: 27px;
+}
+
+.bus-time-headings {text-align: center;}
+
+.bus-time-headings button {
+  background: none;
+  margin-bottom: 3em;
+}
+
+.reload-routes a {
+  padding: 5px 10px;
+  background: #FCCC04;
+  color: #283E5D;
+  font-size: 13px;
+  border-radius: 3px;
+}
+
+.reload-routes a:hover {
+  border: 1px solid #283E5D;
+  background: transparent;
+}
+
+.table-striped tbody tr:nth-of-type(2n+1) {
+    background-color: rgba(0,0,0,.02);
+}
+
+.table-hover tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0,0,0,.04);
+}
+
+.page-item.active .page-link {
+    color: #283E5D;
+    background-color: #FCCC04;
+    border-color: #FCCC04;
+}
+
+tbody td .btn {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.page-link {
+  color: #283E5D;
+}
+
+.page-link:focus {
+    box-shadow: none;
+}
+
+.list_price {
+  color: #2d3079;
+  font-weight: 300;
+}
+
+.operator_name {
+  color: #116ed1;
+  font-weight: 600;
+}
+
+.h3-cart {
+  display: inline;
+  font-size: 24px;
+}
+
+.btn-clear-cart, .add-btn{
+  float: right;
+  color: #fff;
+}
+
+.add-btn a {color: #283E5D;}
+
+.add-btn a:hover,
+.add-btn a:active,
+.add-btn a:focus {
+  color: #283E5D;
+}
+
+.list-inline-item.add-btn a {color: #ffffff;}
+
+.list-inline-item.add-btn a:hover,
+.list-inline-item.add-btn a:active,
+.list-inline-item.add-btn a:focus {
+  color: #283e5d;
+}
+
+.add-btn-2 a {color: #283E5D !important;}
+
+.ticket_dets .row {
+  display: block;
+}
+
+.ticket_dets .card .list-inline {
+  margin-top: 20px;
+}
+
+.ticket_dets .card h3 {
+  font-size: 18px;
+}
+
+.card-body .col-md-8, .card-body .col-md-4 {
+  float: left;
+}
+
+.modify_link {
+  background: transparent;
+}
+
+.modify_link a {
+  font-weight: 300;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #FCCC04;
+    background-color: #FCCC04;
+}
+
+/** ***************************** MEDIA QUERIES **************************** **/
+
+@media (max-width: 991px) {
+  .header-title h1 {
+    font-size: 1.8em;
+    padding-left: 15px;
+  }
+
+  .navbar-toggler {
+    padding: .25rem .5rem;
+  }
+
+  .accnt-area-menu, .accnt-area-menu .dropdown-toggle {
+    display: inline-flex;
+  }
+
+  .area-extras {
+    font-size: 1.5em;
+  }
+
+  main {
+    margin: 30px auto;
+  }
+
+}
+
+
+@media (max-width: 415px) {
+  .header-title h1 {
+    font-size: 1.3em;
+    text-align: center;
+  }
+
+  .header-title {padding-top:0;}
+
+  main {
+    margin: 10px auto;
+  }
+
+  .scheduling-area .extras {
+    border-left: none;
+  }
+
+  .area-extras {
+    border-left: none;
+  }
+
+  .offset-1.area-extras {
+    margin-left: 0;
+  }
+
+  .area-extras div {
+    font-size: 24px;
+    margin-top: 1em;
+  }
+
+  .navbar-toggler {
+    padding: 0.1rem 0.2rem;
+  }
+
+  .accnt-area-menu {
+    display: inline-flex;
+  }
+
+  .dataTables_info {
+    text-align: center;
+    font-size: 13px;
+  }
+
+  #route_table_paginate .pagination {
+    display: -webkit-inline-box;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  #route_table_paginate {
+    text-align: center;
+  }
+
+  .card-body {
+    padding: 0.1rem;
+  }
+
+  .h3-bottom {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .card-body .col-md-3 .add-btn {
+    float: none;
+  }
+
+  .card-body .col-md-3 {
+    text-align: left;
+  }
+
+  .h3-cart {
+    font-size: 20px;
+  }
+
+  .btn-clear-cart {
+    font-size: 14px;
+  }
+
+  .ticket-card.cart .price {
+    text-align: left;
+  }
+
+  .ticket-card .card-body .price {
+    position: initial;
+  }
+
+  .card-body .col-md-4 .add-btn {
+    float: left;
+    margin-top: 10px;
+  }
+
+  .card-body .col-md-8, .card-body .col-md-4 {
+    padding-left: 0;
+  }
+
+  .ticket_dets {
+    margin-top: 10px;
+  }
+
 }

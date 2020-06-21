@@ -1,6 +1,6 @@
 @extends('bustravel::frontend.layouts.app')
 @section('title', 'PalmKash Bus Ticketing Homepage')
-@section('page-heading','Bus Ticketing System')        
+@section('page-heading','Bus Ticketing System')
 @section('navigaton-bar')
 
 
@@ -10,7 +10,7 @@
                 <div class="col-md-4 order-md-2 mb-4">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Your cart</span>
-                    <span class="badge badge-secondary"><a href="{{route('bustravel.cart')}}">Modify Order</a></span>
+                    <span class="badge badge-secondary modify_link"><a href="{{route('bustravel.cart')}}">Modify Order</a></span>
                     </h4>
                     @php
                             $cart = session()->get('cart.items');
@@ -21,8 +21,8 @@
                         @endphp
                     <ul class="list-group mb-3">
                         @foreach($cart as $index=> $item)
-                        @php                                
-                                
+                        @php
+
                                 $total_amount += $item['quantity']*$item['amount'];
                                 $total_tickets += $item['quantity'];
                             @endphp
@@ -37,9 +37,9 @@
                                 <small class="text-muted">RWF {{$total_amount}}</small>
                             </div>
                         </li>
-                        
-                        
-                        
+
+
+
                         <li class="list-group-item d-flex justify-content-between bg-light">
                             <div class="text-success">
                                 <h6 class="my-0">Promo code</h6>
@@ -64,7 +64,7 @@
                 <div class="col-md-8 order-md-1">
                     <h4 class="mb-3">Billing address</h4>
                 <form class="needs-validation" method="POST" action="{{route('bustravel.cart.pay')}}">
-                    @csrf   
+                    @csrf
                     <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">Passenger's Name</label>
@@ -74,7 +74,7 @@
                                         {{ $message }}
                                     </div>
                                 @enderror
-                                
+
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="email">Email [for ticket delivery]</label>
@@ -85,9 +85,9 @@
                                 </div>
                             @enderror
                             </div>
-                            
+
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="address">Address</label>
                             <input type="text" name="address_1" class="form-control" id="address" placeholder="1234 Main St" value="{{ old('address_1') ?? 'kigali' }}" >
@@ -118,17 +118,17 @@
                                     <option value="Eastern">Eastern</option>
                                     <option value="Western">Western</option>
                                 </select>
-                                
+
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="zip">Zip</label>
                                 <input type="text" class="form-control" id="zip" placeholder="" >
-                                
+
                             </div>
                         </div>
                         <hr class="mb-4">
                         <h4 class="mb-3">Ticket Delivery</h4>
-                        <div class="d-block my-3">                            
+                        <div class="d-block my-3">
                             <div>
                                 <input  name="ticketdeliveryemail" type="checkbox" value="email" >
                                 <label for="paypal">Email</label><br>
@@ -148,14 +148,14 @@
                         </div>
                         <hr class="mb-4">
                         <h4 class="mb-3">Payment Details</h4>
-                        <div class="d-block my-3">                            
+                        <div class="d-block my-3">
                             <div class="custom-control custom-radio">
                                 <input id="momo" value="mobile_money" name="payment_method" type="radio" class="custom-control-input" checked required>
                                 <label class="custom-control-label" for="paypal">Mobile Money</label>
                             </div>
                         </div>
                         <div class="row">
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="cc-number">Phone Number</label>
                                 <input name="phone_number" type="text" class="form-control" id="cc-number" placeholder="250780123123" value="{{ old('phone_number') }}" required>
@@ -166,7 +166,7 @@
                                 @enderror
                             </div>
                         </div>
-                       
+
                         <hr class="mb-4">
                         <button class="btn btn-primary btn-lg btn-block" type="submit">Pay</button>
                     </form>
