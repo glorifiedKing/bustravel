@@ -31,6 +31,7 @@
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
 
                                             <h5 class="card-text">Est. Duration - {{$duration}} </h5>
+                                            <h5 class="card-text">Seats Left - {{$seats_left}} </h5>
 
                                             <div class="col-md-9">
                                               <h3 class="card-title"><span class="list_price">Price:</span> RWF {{$result->route->price}}</h3>
@@ -71,6 +72,7 @@
                                             <h3 class="card-title">Arrival : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->arrival_time}} hrs</h3>
 
                                             <h5 class="card-text">Est. Duration - {{$duration}} </h5>
+                                            <h5 class="card-text">Seats Left - {{$seats_left}} </h5>
                                             <div class="col-md-9">
                                               <h3 class="card-title"><span class="list_price">Price:</span> RWF {{$result->route->price}}</h3>
                                             </div>
