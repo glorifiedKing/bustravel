@@ -47,13 +47,13 @@ Route::get('drivers/{id}/edit', 'DriversController@edit')->name('bustravel.drive
 Route::any('drivers/{id}/update', 'DriversController@update')->name('bustravel.drivers.update');
 Route::any('drivers/{id}/delete', 'DriversController@delete')->name('bustravel.drivers.delete');
 //Route Departure Times
-Route::get('routes/departures', 'RoutesDepartureTimesController@index')->name('bustravel.routes.departures');
-Route::get('routes/departures/create/{id}/', 'RoutesDepartureTimesController@create')->name('bustravel.routes.departures.create');
-Route::post('routes/departures/create', 'RoutesDepartureTimesController@create')->name('bustravel.routes.departures.route_times');
-Route::post('routes/departures', 'RoutesDepartureTimesController@store')->name('bustravel.routes.departures.store');
-Route::get('routes/departures/{id}/edit', 'RoutesDepartureTimesController@edit')->name('bustravel.routes.departures.edit');
-Route::any('routes/departures/{id}/update', 'RoutesDepartureTimesController@update')->name('bustravel.routes.departures.update');
-Route::any('routes/departures/{id}/delete', 'RoutesDepartureTimesController@delete')->name('bustravel.routes.departures.delete');
+Route::get('routes/services', 'RoutesDepartureTimesController@index')->name('bustravel.routes.departures');
+Route::get('routes/services/create/{id}/', 'RoutesDepartureTimesController@create')->name('bustravel.routes.departures.create');
+Route::post('routes/services/create', 'RoutesDepartureTimesController@create')->name('bustravel.routes.departures.route_times');
+Route::post('routes/services', 'RoutesDepartureTimesController@store')->name('bustravel.routes.departures.store');
+Route::get('routes/services/{id}/edit', 'RoutesDepartureTimesController@edit')->name('bustravel.routes.departures.edit');
+Route::any('routes/services/{id}/update', 'RoutesDepartureTimesController@update')->name('bustravel.routes.departures.update');
+Route::any('routes/services/{id}/delete', 'RoutesDepartureTimesController@delete')->name('bustravel.routes.departures.delete');
 
 
 Route::get('bookings', 'BookingsController@index')->name('bustravel.bookings');
@@ -63,6 +63,7 @@ Route::any('bookings/boarded/{id}', 'BookingsController@boarded')->name('bustrav
 Route::get('bookings/{id}/edit', 'BookingsController@edit')->name('bustravel.bookings.edit');
 Route::any('bookings/{id}/update', 'BookingsController@update')->name('bustravel.bookings.update');
 Route::any('bookings/{id}/delete', 'BookingsController@delete')->name('bustravel.bookings.delete');
+Route::post('bookings/boarded_all', 'BookingsController@boarded_all')->name('bustravel.bookings.boarded.all');
 
 Route::get('route/tracking/{id}', 'BookingsController@route_tracking')->name('bustravel.bookings.route.tracking');
 Route::get('route/tracking/start/{id}', 'BookingsController@route_tracking_start')->name('bustravel.bookings.route.tracking.start');

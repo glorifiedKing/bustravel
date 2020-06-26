@@ -68,7 +68,7 @@
                                 <td>
                                     @can('Manage BT Stations')
                                     <a title="Edit" href="{{route('bustravel.stations.edit',$bus_station->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    <a title="Delete" onclick="return confirm('are you sure you want to delete this station')" href="{{route('bustravel.stations.delete',$bus_station->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                                    <a title="Delete" onclick="return confirm('are you sure you want to delete this station {{$bus_station->name}}')" href="{{route('bustravel.stations.delete',$bus_station->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                     @endcan
                                 </td>
                             </tr>

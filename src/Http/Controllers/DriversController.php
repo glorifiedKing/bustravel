@@ -7,6 +7,9 @@ use glorifiedking\BusTravel\Driver;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\User;
 use Spatie\Permission\Models\Role;
+use glorifiedking\BusTravel\Bus;
+use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\RoutesDepartureTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -14,8 +17,12 @@ use Illuminate\Support\Str;
 use glorifiedking\BusTravel\ToastNotification;
 class DriversController extends Controller
 {
+  public
+   $Status ='status',
+   $OperatorId='operator_id';
     public function __construct()
     {
+
         $this->middleware('web');
         $this->middleware('auth');
         $this->middleware('can:View BT Drivers')->only('index');
@@ -26,17 +33,26 @@ class DriversController extends Controller
     public function index()
     {
 
-      if(auth()->user()->hasAnyRole('BT Administrator') || auth()->user()->hasAnyRole('BT Cashier'))
+
+      if(auth()->user()->hasAnyRole('BT Super Admin'))
         {
-          $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();
+          $drivers = Driver::all();
+          $buses = Bus::all();
+          $routes = Route::all();
+          $services=RoutesDepartureTime::all()->count();
         }
       else
         {
-           $drivers = Driver::all();
+
+           $drivers =Driver::where('operator_id',auth()->user()->operator_id)->get();
+           $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+           $routes =Route::where($this->OperatorId,auth()->user()->operator_id)->get();
+           $route_ids =Route::where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+           $services=RoutesDepartureTime::whereIn('route_id',$route_ids)->count();
         }
 
 
-        return view('bustravel::backend.drivers.index', compact('drivers'));
+        return view('bustravel::backend.drivers.index', compact('drivers','buses','routes','services'));
     }
 
     //creating Driver form route('bustravel.buses.create')

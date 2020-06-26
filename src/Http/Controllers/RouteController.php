@@ -8,6 +8,7 @@ use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\StopoverRoute;
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Driver;
+use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\StopoverStation;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
@@ -21,7 +22,9 @@ class RouteController extends Controller
 {
    public $route_price='price',
     $route_return_price='return_price',
-    $route_updating='Route Updating';
+    $route_updating='Route Updating',
+    $Status ='status',
+    $OperatorId='operator_id';
     public function __construct()
     {
         $this->middleware('web');
@@ -33,22 +36,30 @@ class RouteController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-        if(auth()->user()->hasAnyRole('BT Administrator') || auth()->user()->hasAnyRole('BT Cashier'))
+        if(auth()->user()->hasAnyRole('BT Super Admin'))
           {
-            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
+               $routes = Route::all();
+               $services=RoutesDepartureTime::all()->count();
+               $drivers =Driver::where($this->Status,1)->count();
+               $buses =Bus::where($this->Status,1)->count();
           }
         else
           {
-             $routes = Route::all();
+            $routes =Route::where($this->OperatorId,auth()->user()->operator_id)->get();
+            $route_ids =Route::where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+            $services=RoutesDepartureTime::whereIn('route_id',$route_ids)->count();
+            $drivers =Driver::where($this->OperatorId,auth()->user()->operator_id)->where($this->Status,1)->count();
+            $buses =Bus::where($this->OperatorId,auth()->user()->operator_id)->where($this->Status,1)->count();
+
           }
 
-        return view('bustravel::backend.routes.index', compact('routes'));
+        return view('bustravel::backend.routes.index', compact('routes','services','drivers','buses'));
     }
     //creating buses form route('bustravel.buses.create')
     public function create()
     {
-        $drivers = Driver::where('status', 1)->where('operator_id',auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
-        $buses = Bus::where('status', 1)->where('operator_id',auth()->user()->operator_id)->get();
+        $drivers = Driver::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->orderBy('name', 'ASC')->get();
+        $buses = Bus::where('status', 1)->where($this->OperatorId,auth()->user()->operator_id)->get();
 
 
         return view('bustravel::backend.routes.create', compact('buses', 'drivers'));
@@ -221,26 +232,54 @@ class RouteController extends Controller
         $route->start_station = request()->input('start_station');
         $route->end_station = request()->input('end_station');
         $route->price = str_replace(',', '', request()->input($this->route_price));
-        $route->return_price = str_replace(',', '', request()->input($this->route_return_price));
+      //  $route->return_price = str_replace(',', '', request()->input($this->route_return_price))??0;
         $route->status = request()->input('status');
         $route->save();
 
         //clear stopover routes dba_firstke
-        $overs = $route->stopovers()->delete();
+         $stop_overs_routes =$route->stopovers()->get();
         //stop over routes
-        $stopovers = request()->input('stopover_startid') ?? 0;
+        $stopovers = request()->input('routes_from') ?? 0;
         if ($stopovers != 0) {
-          $endid = request()->input('stopover_endid');
-          $order = request()->input('stopover_order');
-          $price = request()->input('stopover_price');
+          $stop_route_id = request()->input('routes_id');
+          $endid = request()->input('routes_to');
+          $order = request()->input('routes_order');
+          $price = request()->input('routes_price');
+          foreach($stop_overs_routes as $stop_overs_route){
+            if(in_array($stop_overs_route->id,$stop_route_id)==false){
+              $stopover_route = StopoverStation::find($stop_overs_route->id);
+              $route_times =$stopover_route->departure_times()->pluck('id');
+              if(count($route_times)>0)
+              {
+               $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$route_times)->where('route_type','stop_over_route')->count();
+               if($stop_over_bookings==0){
+                $stopover_route->delete();
+               }
+             }else{
+               $stopover_route->delete();
+             }
+            }
+          }
+          $overs = $route->stopovers()->pluck('id')->all()??[];
           foreach ($stopovers as $index => $stopover_endid) {
-              $stopover = new StopoverStation();
-              $stopover->route_id = $route->id;
-              $stopover->start_station = $stopover_endid;
-              $stopover->end_station = $endid[$index];
-              $stopover->price = $price[$index];
-              $stopover->order = $order[$index];
-              $stopover->save();
+            if(in_array($stop_route_id[$index], $overs??[])){
+                $stopover = StopoverStation::find($stop_route_id[$index]);
+                $stopover->start_station = $stopover_endid;
+                $stopover->end_station = $endid[$index];
+                $stopover->price = $price[$index];
+                $stopover->order = $order[$index];
+                $stopover->save();
+
+              }else {
+                $stopover = new StopoverStation();
+                $stopover->route_id = $route->id;
+                $stopover->start_station = $stopover_endid;
+                $stopover->end_station = $endid[$index];
+                $stopover->price = $price[$index];
+                $stopover->order = $order[$index];
+                $stopover->save();
+
+              }
           }
         }
 
@@ -252,7 +291,10 @@ class RouteController extends Controller
     {
         $route = Route::find($id);
         $name = $route->start->name.' - '.$route->end->name;
-        $route->departure_times()->delete();
+        $services =$route->departure_times()->count();
+        if($services>0){
+        return Redirect::route('bustravel.routes')->with(ToastNotification::toast($name. ' cannot be Deleted , it has services','Route Deleting','error'));
+        }
         $route->stopovers()->delete();
         $route->delete();
         return Redirect::route('bustravel.routes')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting','error'));
