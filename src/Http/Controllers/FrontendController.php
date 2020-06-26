@@ -26,6 +26,11 @@ use glorifiedking\BusTravel\Jobs\ProcessDebitCallback;
 use glorifiedking\BusTravel\Jobs\ProcessCreditCallback;
 class FrontendController extends Controller
 {
+    const DAYS_OF_THE_WEEK_STRING = "days_of_week";
+    const START_STATION_STRING = "start_station";
+    const END_STATION_STRING = "end_station";
+    const DEPARTURE_TIME_STRING = "departure_time";
+
     public function __construct()
     {
         $this->middleware('web')->only('checkout','get_payment_status');
@@ -63,50 +68,25 @@ class FrontendController extends Controller
         //dd($travel_day_of_week);
         $departure_time = RoutesDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
             $q->where([
-                ['start_station', '=', $q_start_station],
-                ['end_station', '=', $q_end_station],
+                [self::START_STATION_STRING, '=', $q_start_station],
+                [self::END_STATION_STRING, '=', $q_end_station],
             ]);
-        })->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time)->get()->sortBy('departure_time');
-        
-        // first search for main route
-        $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
-            $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
-        }])->where([
-            ['start_station', '=', $request->departure_station],
-            ['end_station', '=', $request->to_station],
-        ])->get();
-        //dd($route_results);
-        if ($route_results->isEmpty()) {
-
-            //check if bus is full
-
-            //filter by time
-        }
-        $stop_over_routes = StopoverStation::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
-
-            $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
-                $query->where('days_of_week', 'like', "%$travel_day_of_week%");
-            });
-            $query->whereTime('arrival_time','>',$travel_time);
-        },
-
-        ])->where([
-            ['start_station', '=', $request->departure_station],
-            ['end_station', '=', $request->to_station],
-        ])->get()->sortBy('departure_time');
+        })->where(self::DAYS_OF_THE_WEEK_STRING, 'like', "%$travel_day_of_week%")->whereTime(self::DEPARTURE_TIME_STRING,'>',$travel_time)->get()->sortBy(self::DEPARTURE_TIME_STRING);
+              
+       
         $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
 
         $departure_time_stop_over = RoutesStopoversDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
             $q->where([
-                ['start_station', '=', $q_start_station],
-                ['end_station', '=', $q_end_station],
+                [self::START_STATION_STRING, '=', $q_start_station],
+                [self::END_STATION_STRING, '=', $q_end_station],
             ]);
         })->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
-            $query->where('days_of_week', 'like', "%$travel_day_of_week%");
-        })->whereTime('departure_time','>',$travel_time)->get()->sortBy('departure_time');
+            $query->where(self::DAYS_OF_THE_WEEK_STRING, 'like', "%$travel_day_of_week%");
+        })->whereTime(self::DEPARTURE_TIME_STRING,'>',$travel_time)->get()->sortBy(self::DEPARTURE_TIME_STRING);
         
 
-        return view('bustravel::frontend.route_search_results', compact('departure_time','departure_time_stop_over','route_results','stop_over_routes', 'date_of_travel','no_of_tickets'));
+        return view('bustravel::frontend.route_search_results', compact('departure_time','departure_time_stop_over','date_of_travel','no_of_tickets'));
     }
 
     public function cart(Request $request)
