@@ -66,7 +66,7 @@ class FrontendController extends Controller
         $q_start_station = $request->departure_station;
         $q_end_station = $request->to_station;
         //dd($travel_day_of_week);
-        $departure_time = RoutesDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
+        $departure_times = RoutesDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
             $q->where([
                 [self::START_STATION_STRING, '=', $q_start_station],
                 [self::END_STATION_STRING, '=', $q_end_station],
@@ -76,7 +76,7 @@ class FrontendController extends Controller
        
         $date_of_travel = Carbon::parse($request->date_of_travel)->format('Y-m-d');
 
-        $departure_time_stop_over = RoutesStopoversDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
+        $departure_times_stop_over = RoutesStopoversDepartureTime::whereHas('route',function($q)use($q_start_station,$q_end_station){
             $q->where([
                 [self::START_STATION_STRING, '=', $q_start_station],
                 [self::END_STATION_STRING, '=', $q_end_station],
@@ -86,7 +86,7 @@ class FrontendController extends Controller
         })->whereTime(self::DEPARTURE_TIME_STRING,'>',$travel_time)->get()->sortBy(self::DEPARTURE_TIME_STRING);
         
 
-        return view('bustravel::frontend.route_search_results', compact('departure_time','departure_time_stop_over','date_of_travel','no_of_tickets'));
+        return view('bustravel::frontend.route_search_results', compact('departure_times','departure_times_stop_over','date_of_travel','no_of_tickets'));
     }
 
     public function cart(Request $request)

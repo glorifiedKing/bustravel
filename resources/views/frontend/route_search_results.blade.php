@@ -10,7 +10,7 @@
                     <div class="col-md-8">
                         <h4 class="h3-bottom">Search Results</h4>                       
                        
-                        @foreach($departure_time as $result)
+                        @foreach($departure_times as $result)
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
@@ -50,7 +50,7 @@
                         
                         <!-- stop over routes -->                        
                         
-                        @foreach($departure_time_stop_over as $result)
+                        @foreach($departure_times_stop_over as $result)
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
