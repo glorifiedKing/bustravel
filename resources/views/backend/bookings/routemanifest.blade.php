@@ -28,6 +28,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+
           <div class="card">
             <div class="card-body">
             <div class="row">
@@ -90,6 +91,7 @@
             </div>
           </div>
         </div>
+
           <div class="card">
             <div class="card-body">
             <div class="row">
@@ -123,6 +125,18 @@
             </div>
           </div>
         </div>
+        @if ($errors->any())
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <ul>
+           @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+           @endforeach
+      </ul>
+     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+     <span aria-hidden="true">&times;</span>
+     </button>
+    </div>
+    @endif
         <div class="card">
             <div class="card-header">
             <h5 class="card-title">All Bookings</h5>
@@ -131,18 +145,23 @@
             <div class="card-body">
             <div class="row">
                <div class="col-md-12">
+
+                 <form action="{{route('bustravel.bookings.boarded.all')}}" method="POST">
+                 {{csrf_field() }}
+                 <input type="hidden" name="route_id" value="{{$times_id->id}}">
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="Bus Tickets">
                         <thead>
                             <tr>
+                                <th  scope="col" class="text-center info"><input type="checkbox" name="checkAll" class="checkAll"></th>
                                 <th scope="col">On Board</th>
                                 <th scope="col">Ticket</th>
                                 <th scope="col">Boarding Station</th>
                             </tr>
                         </thead>
                         <tbody>
-
                         @foreach ($bookings as $booking)
                             <tr>
+                               <td class="text-center"><input type="checkbox" name="tickets[]" class="checkboxes" value="{{$booking['id']}}" ></td>
                                <td>@if($booking['boarded']==1)
                                      <span class="badge badge-success "> <i class="fas fa-check" aria-hidden="true"></i> Yes</span>
                                    @else
@@ -159,8 +178,13 @@
                             </tr>
 
                         @endforeach
+
                     </tbody>
                     </table>
+                    <div class="form-group col-md-12">
+                      <button type="submit" class="btn btn-primary">Allow all</button>
+                    </div>
+                  </form>
                </div>
             </div>
             <!-- /.row -->
@@ -295,7 +319,19 @@ option1 = {
 
 myChart1.setOption(option1);
 
+$('.checkAll').click(function(){
 
+   if (this.checked) {
+
+      $(".checkboxes").prop("checked", true);
+
+   } else {
+
+      $(".checkboxes").prop("checked", false);
+
+   }
+
+});
 })
 </script>
 

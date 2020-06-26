@@ -84,7 +84,7 @@
 			                                @endif
                                 </td>
                                 <td><a title="Edit" href="{{route('bustravel.drivers.edit',$driver->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Driver')" href="{{route('bustravel.drivers.delete',$driver->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Driver {{$driver->name}}')" href="{{route('bustravel.drivers.delete',$driver->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -100,8 +100,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
+                  <h5 class="description-header">{{number_format($drivers->count(),0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>
                 <!-- /.description-block -->
@@ -109,27 +108,24 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
+                    <h5 class="description-header">{{number_format($routes->count(),0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
+                    <h5 class="description-header">{{number_format($services,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTES SERVICES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
+                    <h5 class="description-header">{{number_format($buses->count(),0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF BUS</span>
                 </div>
                 <!-- /.description-block -->
                 </div>

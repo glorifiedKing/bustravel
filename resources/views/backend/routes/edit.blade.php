@@ -51,129 +51,70 @@
               <form role="form" action="{{route('bustravel.routes.update',$route->id)}}" method="POST">
               {{csrf_field() }}
 
+
+
               <div class="box-body">
-                  <div class="row">
-                    <div class="form-group col-md-3 ">
-                      <label>Start Station</label>
-                      <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Operator">
-                        <option value="">Select Station</option>
-                        @foreach($stations as $station)
-                            <option value="{{$station->id}}" @php echo $route->start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
-                        @endforeach
-                      </select>
-                      @if ($errors->has('start_station'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('start_station') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>End Station</label>
-                      <select class="form-control select2 {{ $errors->has('end_station') ? ' is-invalid' : '' }}" name="end_station"  placeholder="Select Operator">
-                        <option value="">Select Station</option>
-                        @foreach($stations as $station)
-                            <option value="{{$station->id}}" @php echo $route->end_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
-                        @endforeach
-                      </select>
-                      @if ($errors->has('end_station'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('end_station') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Price</label>
-                      <input type="text"  name="price" value="{{number_format($route->price,2)}}" class="form-control {{ $errors->has('price') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Price" >
-                      @if ($errors->has('price'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('price') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                    <div class="form-group col-md-3 ">
-                      <label>Return Price</label>
-                      <input type="text"  name="return_price" value="{{number_format($route->return_price,2)}}" class="form-control {{ $errors->has('price') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Return Price" >
-                      @if ($errors->has('return_price'))
-                          <span class="invalid-feedback">
-                              <strong>{{ $errors->first('return_price') }}</strong>
-                          </span>
-                      @endif
-                    </div>
-                  <div class="form-group col-md-12">
-
-                    <div class="box-group" id="accordion">
-               <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-
-                   <h4 class="box-title">
-                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                       Stopovers  <span class="fa fa-mouse-pointer"></span>
-                     </a>
-                   </h4>
-                 <div id="collapseOne" class="panel-collapse collapse in">
-                     <div class="row">
-                       <div class="form-group col-md-3">
-                         <label>Start</label><br>
-                         <select id="item-selector" class="form-control select2" name="select_startitem_id" style="width:100%">
-                            @foreach($stations as $station_start)
-                                <option data-startitemid="{{$station_start->id}}" data-startitemname="{{$station_start->name}}"  value="{{$station_start->id}}">{{$station_start->name}} - {{$station_start->code}}</option>
-                            @endforeach
-                         </select>
-                       </div>
-                      <div class="form-group col-md-3">
-                        <label>End</label>
-                        <select id="item-selector2" class="form-control select2" name="select_enditem_id" style="width:100%">
-                            @foreach($stations as $station_end)
-                                <option data-enditemid="{{$station_end->id}}" data-enditemname="{{$station_end->name}}"  value="{{$station_end->id}}">{{$station_end->name}} - {{$station_end->code}}</option>
-                            @endforeach
-                        </select>
-                      </div>
-       @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
-                     <div class="form-group col-md-2"> <br> <button type="button" class="btn btn-success form-control" id="add_item" >Add</button></div>
-                     <div class="form-group col-md-2"> <br> <button type="button" class="delete-row btn btn-danger form-control">Delete</button></div>
-                   </div>
-
-                   <div class="form-group col-md-12">
-
-                     <table id="new-table" class="table table-striped table-hover">
-                      <caption>stops<caption>
-                          <thead>
-                            <tr>
-                              <th scope="col" style="width: 30px"></th>
-                              <th scope="col">From</th>
-                              <th scope="col">To</th>
-                              <th scope="col">Price</th>
-                              <th scope="col" style="width: 100px">Order</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            @foreach($stopovers as $stoverstation)
-                           <tr item-id='{{$stoverstation->stopover_id}}'>
-                             <td><input type='checkbox' name='checkeditem[]'></td>
-                             <td >
-                                 <input type='hidden' value='{{$stoverstation->start_station}}' name='stopover_startid[]'>
-                                 <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->start_stopover_station->name}}' readonly />
-                             </td>
-                             <td >
-                                 <input type='hidden' value='{{$stoverstation->end_station}}' name='stopover_endid[]'>
-                                 <input type='text' class='form-control' name='name1'size='4' value='{{$stoverstation->end_stopover_station->name}}' readonly />
-                             </td>
-                             <td><input type='text' class='form-control' name='stopover_price[]'size='4' value='{{$stoverstation->price}}' required /></td>
-                             <td><input type='text' class='form-control' name='stopover_order[]'size='4' value='{{$stoverstation->order}}' required /></td>
-                           </tr>
-                            @endforeach
-
-
-                          </tbody>
-                       </table>
-                   </div>
-
-                 </div>
-               </div>
-
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label>From</label><br>
+                    <select id="item-selector" class="form-control select2" name="select_startitem_id" style="width:100%">
+                          <option>Select Station</option>
+                       @foreach($stations as $station_start)
+                           <option data-startitemid="{{$station_start->id}}" data-startitemname="{{$station_start->name}}"  value="{{$station_start->id}}">{{$station_start->name}} - {{$station_start->code}}</option>
+                       @endforeach
+                    </select>
                   </div>
-                    <div class=" col-md-12 form-group">
-                    </div>
+                 <div class="form-group col-md-3">
+                   <label>To</label>
+                   <select id="item-selector2" class="form-control select2" name="select_enditem_id" style="width:100%">
+                           <option>Select Station</option>
+                       @foreach($stations as $station_end)
+                           <option data-enditemid="{{$station_end->id}}" data-enditemname="{{$station_end->name}}"  value="{{$station_end->id}}">{{$station_end->name}} - {{$station_end->code}}</option>
+                       @endforeach
+                   </select>
+                 </div>
+  @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
+                <div class="form-group col-md-2"> <br> <button type="button" class="btn btn-success form-control" id="add_item" >Add</button></div>
+              </div>
+                  <div class="row">
+                  <div class="form-group col-md-12">
+                    @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
+                                       <div class="responsive" id="routes">
+                                           <table class="table" id="routes-tbl">
+                                               <caption>generated routes</caption>
+                                               <thead>
+                                                   <tr>
+                                                       <th scope="col">#</th>
+                                                       <th scope="col">Type</th>
+                                                       <th scope="col">From</th>
+                                                       <th scope="col">To</th>
+                                                       <th scope="col">Price</th>
+                                                       <th scope="col">Order</th>
+                                                   </tr>
+                                               </thead>
+                                               <tbody>
+                                                 <tr item-id='bbb{{$route->id}}'>
+                                                   <th></th>
+                                                    <th>Main Route</th>
+                                                   <td><select class="form-control" name="start_station" required><option value="{{$route->start_station}}">{{$route->start->name}}</option></select></td>
+                                                   <td><select class="form-control" name="end_station" required><option value="{{$route->end_station}}">{{$route->end->name}}</option></select></td>
+                                                   <td><input type="text" class="form-control" name="price" value="{{$route->price}}" required></td>
+                                                   <td><input type="text" class="form-control" name="order" value="{{$route->order??''}}"></td>
+                                                 </tr>
+                                                 @foreach($stopovers as $key=> $stoverstation)
+                                                 <tr item-id='{{$stoverstation->stopover_id}}'>
+                                                   <th><i class="far fa-trash-alt text-danger" id="del_route"></i></th>
+                                                    <th>Stop Over</th>
+                                                   <td><input type="hidden" value="{{$stoverstation->id}}" name="routes_id[]"><select class="form-control" name="routes_from[]" required><option value="{{$stoverstation->start_station}}">{{$stoverstation->start_stopover_station->name}}</option></select></td>
+                                                   <td><select class="form-control" name="routes_to[]" required><option value="{{$stoverstation->end_station}}">{{$stoverstation->end_stopover_station->name}}</option></select></td>
+                                                   <td><input type="text" class="form-control" name="routes_price[]" value="{{$stoverstation->price}}" required></td>
+                                                   <td><input type="text" class="form-control" name="routes_order[]" value="{{$stoverstation->order}}" required></td>
+                                                 </tr>
+                                                 @endforeach
+                                               </tbody>
+                                           </table>
+                                       </div>
+                                     </div>
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Status</label>
                         <label class="radio-inline">
@@ -254,7 +195,7 @@
                          <td>{{$route_departure_time->departure_time}} - {{$route_departure_time->arrival_time}}</td>
                          <td>{{$route_departure_time->driver->name??'NONE'}}</td>
                          <td><a title="Edit" href="{{route('bustravel.routes.departures.edit',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                             <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                             <a title="Delete" onclick="return confirm('Are you sure you want to delete this Service')" href="{{route('bustravel.routes.departures.delete',$route_departure_time->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                          </td>
                      </tr>
 
@@ -287,7 +228,15 @@
          var startname = $('#item-selector').find(":selected").data('startitemname');
          var endname = $('#item-selector2').find(":selected").data('enditemname');
          var markup = "<tr item-id='"+uniqueid+"'><td><input type='checkbox' name='checkeditem[]'></td><td ><input type='hidden' value='"+routeid+"' name='stopover_startid[]'><input type='text' class='form-control' name='name1'size='4' value='"+startname+"' readonly /></td><td ><input type='hidden' value='"+endid+"' name='stopover_endid[]'><input type='text' class='form-control' name='name1'size='4' value='"+endname+"' readonly /></td><td><input type='text' class='form-control' name='stopover_price[]'size='4' value='0'  required /></td><td><input type='text' class='form-control' name='stopover_order[]'size='4' value='0'  required /></td></tr>";
-
+         var row = '';
+         row += '<tr item-id="'+uniqueid+'">';
+         row += '<th><i class="far fa-trash-alt text-danger" id="del_route"></i></th>';
+         row += '<th><input type="hidden" value="'+uniqueid+'" name="routes_id[]">Stop Over</th>';
+         row += '<td><select class="form-control" name="routes_from[]" required><option value="'+routeid+'">'+startname+'</option></select></td>';
+         row += '<td><select class="form-control" name="routes_to[]" required><option value="'+endid+'">'+endname+'</option></select></td>';
+         row += '<td><input type="text" class="form-control" name="routes_price[]" value="" required></td>';
+         row += '<td><input type="text" class="form-control" name="routes_order[]" value="0" required></td>';
+         row += '</tr>';
            var exists =  0;
           $("table tbody").find("tr").each(function () {
               var current_stock_id = $(this).attr('item-id');
@@ -298,7 +247,7 @@
             });
           if(exists == 0)
           {
-                  $("#new-table tbody").append(markup);
+                  $("#routes-tbl tbody").append(row);
           }
         });
        // Find and remove selected table rows
@@ -308,6 +257,11 @@
                     $(this).parents("tr").remove();
                 }
             });
+        });
+        $('table[id=routes-tbl] tbody').on('click', '#del_route', function() {
+            if(confirm("Are you sure?")) {
+                $(this).closest('tr').remove();
+            }
         });
 
         })

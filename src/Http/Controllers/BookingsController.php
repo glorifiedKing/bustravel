@@ -100,7 +100,8 @@ class BookingsController extends Controller
     public function store(CreateBookingRequest $request)
     {
         $route_id = $request->route_id;
-        $route_type = $request->routeType;
+        $routeT =$this->routeType;
+        $route_type = $request->$routeT;
         $payment_method = $request->payment_method;
 
         $departure_time = ($route_type == $this->main_route) ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
@@ -411,6 +412,20 @@ class BookingsController extends Controller
       $service_route =$booking->stop_over_route_departure_time->main_route_departure_time->id;
     }
      return redirect()->route($this->route_manifest,$service_route)->with(ToastNotification::toast($booking->ticket_number.' marked Onboard',$this->on_board));
+
+  }
+  public function boarded_all()
+  {
+    $validation = request()->validate(['tickets' => 'required|array'],['tickets.required'=>'No Ticket Selected']);
+    $tickets =request()->input('tickets');
+    $id = request()->input('route_id');
+    foreach($tickets as $ticket){
+      $booking =Booking::find($ticket);
+      $booking->boarded=1;
+      $booking->save();
+    }
+
+     return redirect()->route($this->route_manifest,$id)->with(ToastNotification::toast('Batch Process Completed',$this->on_board));
 
   }
   public function route_tracking($id)

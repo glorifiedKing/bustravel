@@ -79,7 +79,7 @@
                                 <td>{{$booking['date_of_travel']}}</td>
                                 <td>{{Carbon\Carbon::parse($booking['created_at'])->format('Y-m-d')}}</td>
                                 <td><a title="Edit" href="{{route('bustravel.bookings.edit',$booking['id'])}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Booking')" href="{{route('bustravel.bookings.delete',$booking['id'])}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this  Booking {{$booking['ticket_number']}}')" href="{{route('bustravel.bookings.delete',$booking['id'])}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 

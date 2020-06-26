@@ -50,12 +50,12 @@
                         <thead>
                             <tr>
                                 <th scope="col">Status</th>
-                                <th scope="col">Operator Name</th>
-                                <th scope="col">Start Station</th>
+                                <th scope="col">Operator </th>
+                                <th scope="col">Start</th>
                                 <th scope="col">Via</th>
-                                <th scope="col">End Station</th>
+                                <th scope="col">End </th>
                                 <th scope="col">Price</th>
-                                <th scope="col">Return Price</th>
+                                <th scope="col">Services</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -71,18 +71,18 @@
                                   @endif
                                </td>
                                 <td>{{$route->operator->name}}</td>
-                                <td>{{$route->start->name}} - {{$route->start->code}}</td>
+                                <td>{{$route->start->name}}</td>
                                 <td>
                                  @php $stopovers =$route->stopovers()->orderBy('order')->get(); @endphp
                                  @foreach($stopovers as $stopover)
-                                 {{$stopover->end_stopover_station->name}}, 
+                                 {{$stopover->end_stopover_station->name}},
                                  @endforeach
                                 </td>
-                                <td>{{$route->end->name}} - {{$route->end->code}}</td>
+                                <td>{{$route->end->name}}</td>
                                 <td>{{number_format($route->price,2)}}</td>
-                                <td>{{number_format($route->return_price,2)}}</td>
+                                <td>{{$route->departure_times()->count()}}</td>
                                 <td><a title="Edit" href="{{route('bustravel.routes.edit',$route->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
-                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route')" href="{{route('bustravel.routes.delete',$route->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
+                                    <a title="Delete" onclick="return confirm('Are you sure you want to delete this Route {{$route->start->name??''}}-{{$route->end->name??''}}')" href="{{route('bustravel.routes.delete',$route->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>
                             </tr>
 
@@ -98,35 +98,31 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
-                    <span class="description-text">TOTAL NUMBER OF BUSES</span>
+                    <h5 class="description-header">{{number_format($routes->count(),0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL NUMBER OF BUSES</span>
+                    <h5 class="description-header">{{number_format($services,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTE SERVICES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL NUMBER OF BUSES</span>
+                    <h5 class="description-header">{{number_format($drivers,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF DRIVERS</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
+                    <h5 class="description-header">{{number_format($buses,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF BUSES</span>
                 </div>
                 <!-- /.description-block -->
