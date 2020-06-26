@@ -94,8 +94,8 @@
                                                </thead>
                                                <tbody>
                                                  <tr item-id='bbb{{$route->id}}'>
-                                                   <th></th>
-                                                    <th>Main Route</th>
+                                                   <td></td>
+                                                    <td>Main Route</td>
                                                    <td><select class="form-control" name="start_station" required><option value="{{$route->start_station}}">{{$route->start->name}}</option></select></td>
                                                    <td><select class="form-control" name="end_station" required><option value="{{$route->end_station}}">{{$route->end->name}}</option></select></td>
                                                    <td><input type="text" class="form-control" name="price" value="{{$route->price}}" required></td>
@@ -103,8 +103,8 @@
                                                  </tr>
                                                  @foreach($stopovers as $key=> $stoverstation)
                                                  <tr item-id='{{$stoverstation->stopover_id}}'>
-                                                   <th><i class="far fa-trash-alt text-danger" id="del_route"></i></th>
-                                                    <th>Stop Over</th>
+                                                   <td><span class="far fa-trash-alt text-danger" id="del_route"></span></td>
+                                                    <td>Stop Over</td>
                                                    <td><input type="hidden" value="{{$stoverstation->id}}" name="routes_id[]"><select class="form-control" name="routes_from[]" required><option value="{{$stoverstation->start_station}}">{{$stoverstation->start_stopover_station->name}}</option></select></td>
                                                    <td><select class="form-control" name="routes_to[]" required><option value="{{$stoverstation->end_station}}">{{$stoverstation->end_stopover_station->name}}</option></select></td>
                                                    <td><input type="text" class="form-control" name="routes_price[]" value="{{$stoverstation->price}}" required></td>
