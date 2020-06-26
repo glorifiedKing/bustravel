@@ -3,6 +3,8 @@
 namespace glorifiedking\BusTravel\Http\Controllers;
 
 use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\StopoverStation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
@@ -102,6 +104,11 @@ class StationsController extends Controller
             return redirect()->route('bustravel.errors.403');
         }
         $station = Station::findOrFail($id);
+        $routes =Route::where('start_station',$id)->orWhere('end_station',$id)->count();
+        $stop_routes =StopoverStation::where('start_station',$id)->orWhere('end_station',$id)->count();
+        if($routes> 0 ||$stop_routes>0){
+          return redirect()->route('bustravel.stations')->with(ToastNotification::toast('Station '. $station->name. ' Cannot be Deleted,it has routes ','Station Error','error'));
+        }
 
         //confirm if it is used in route before deleting
         $station->delete();

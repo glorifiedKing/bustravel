@@ -4,6 +4,9 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Operator;
+use glorifiedking\BusTravel\Driver;
+use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\RoutesDepartureTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -11,6 +14,9 @@ use glorifiedking\BusTravel\ToastNotification;
 
 class BusesController extends Controller
 {
+  public
+   $Status ='status',
+   $OperatorId='operator_id';
     public function __construct()
     {
         $this->middleware('web');
@@ -24,15 +30,23 @@ class BusesController extends Controller
         if (!auth()->user()->can('View BT Buses')) {
             return redirect()->route('bustravel.errors.403');
         }
-        if(auth()->user()->hasAnyRole('BT Administrator'))
+        if(auth()->user()->hasAnyRole('BT Super Admin'))
           {
-            $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+          $buses = Bus::all();
+          $routes = Route::all();
+          $services=RoutesDepartureTime::all()->count();
+          $drivers =Driver::where($this->Status,1)->count();
           }
         else
           {
-           $buses = Bus::all();
+
+           $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+           $routes =Route::where($this->OperatorId,auth()->user()->operator_id)->get();
+           $route_ids =Route::where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+           $services=RoutesDepartureTime::whereIn('route_id',$route_ids)->count();
+           $drivers =Driver::where($this->OperatorId,auth()->user()->operator_id)->where($this->Status,1)->count();
           }
-        return view('bustravel::backend.buses.index', compact('buses'));
+        return view('bustravel::backend.buses.index', compact('buses','services','drivers','routes'));
     }
 
     //creating buses form route('bustravel.buses.create')

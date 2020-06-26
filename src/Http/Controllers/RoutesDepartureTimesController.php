@@ -4,6 +4,7 @@ namespace glorifiedking\BusTravel\Http\Controllers;
 
 use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Driver;
+use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\RoutesDepartureTime;
@@ -192,9 +193,17 @@ class RoutesDepartureTimesController extends Controller
     public function delete($id)
     {
         $routes_departure_time = RoutesDepartureTime::find($id);
+        $stopovers_service_times =$routes_departure_time->stopovers_times()->pluck('id');
+        $main_route_books =Booking::where('routes_departure_time_id',$routes_departure_time->id)->where('route_type','main_route')->count();
+        $stop_over_bookings =Booking::whereIn('routes_departure_time_id',$stopovers_service_times)->where('route_type','stop_over_route')->count();
         $name = $routes_departure_time->route->start->name.' - '.$routes_departure_time->route->end->name.' at '.$routes_departure_time->departure_time;
+        if($main_route_books>0 || $stop_over_bookings>0){
+
+        return Redirect::route('bustravel.routes.edit',$routes_departure_time->route_id)->with(ToastNotification::toast($name. ' Cannot be Deleted, it has bookings',$this->error,$this->error));
+        }
+        $routes_departure_time->stopovers_times()->delete();
         $routes_departure_time->delete();
 
-        return Redirect::route('bustravel.routes.departures')->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting',$this->error));
+        return Redirect::route('bustravel.routes.edit',$routes_departure_time->route_id)->with(ToastNotification::toast($name. ' has successfully been Deleted','Route Deleting',$this->error));
     }
 }
