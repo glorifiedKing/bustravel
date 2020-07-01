@@ -44,6 +44,30 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <form action="{{route('bustravel.bookings.search')}}" method="post" >
+                    {{ csrf_field() }}
+                    <div class="row">
+                    <div class="form-group col-md-3">
+                      <label>Ticket No</label>
+                      <input type="text"  name="b_ticket" value="{{$b_ticket??""}}" class="form-control " id="exampleInputEmail1" placeholder="Ticket No" >
+                    </div>
+                    <div class="form-group col-md-3">
+                      <label>From</label>
+                      <input type="date"  name="b_from" value="{{$b_from??""}}" class="form-control " id="exampleInputEmail1" >
+                    </div>
+                    <div class="form-group col-md-3">
+                      <label>To</label>
+                      <input type="date"  name="b_to" value="{{$b_to??""}}" class="form-control " id="exampleInputEmail1"  >
+                    </div>
+                    <div class="form-group col-md-6">
+                      <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                  </div>
+                  </form>
+                  </div>
+              </div>
             <div class="row">
                <div class="col-md-12">
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info">

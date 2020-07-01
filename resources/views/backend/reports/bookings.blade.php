@@ -26,7 +26,7 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-12">
-                <form action="{{route('bustravel.reports.bookings.search')}}" method="post" >
+                <form action="{{route('bustravel.bookings.search')}}" method="post" >
                   {{ csrf_field() }}
                   <div class="row">
                   <div class="form-group col-md-3">

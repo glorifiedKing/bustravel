@@ -57,6 +57,7 @@ Route::any('routes/services/{id}/delete', 'RoutesDepartureTimesController@delete
 
 
 Route::get('bookings', 'BookingsController@index')->name('bustravel.bookings');
+Route::post('bookings/search', 'BookingsController@index')->name('bustravel.bookings.search');
 Route::get('bookings/create', 'BookingsController@create')->name('bustravel.bookings.create');
 Route::post('bookings', 'BookingsController@store')->name('bustravel.bookings.store');
 Route::any('bookings/boarded/{id}', 'BookingsController@boarded')->name('bustravel.bookings.boarded');
@@ -69,6 +70,7 @@ Route::get('route/tracking/{id}', 'BookingsController@route_tracking')->name('bu
 Route::get('route/tracking/start/{id}', 'BookingsController@route_tracking_start')->name('bustravel.bookings.route.tracking.start');
 Route::get('route/tracking/end/{id}', 'BookingsController@route_tracking_end')->name('bustravel.bookings.route.tracking.end');
 Route::get('driver/manifest', 'BookingsController@manifest')->name('bustravel.bookings.manifest');
+Route::post('driver/manifest', 'BookingsController@manifest')->name('bustravel.bookings.manifest.search');
 Route::get('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest');
 Route::post('route/manifest/{id}', 'BookingsController@route_manifest')->name('bustravel.bookings.route.manifest.search');
 //users
