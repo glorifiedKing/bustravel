@@ -1,6 +1,6 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Bookings')
+@section('title', 'Driver Manifest')
 
 @section('content_header')
 <div class="container-fluid">
@@ -29,6 +29,53 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <form action="{{route('bustravel.bookings.manifest.search')}}" method="post" >
+                    {{ csrf_field() }}
+                    <div class="row">
+                      <div class="form-group col-md-3 ">
+                        <label>Start Station</label>
+                        <select class="form-control select2 {{ $errors->has('bus') ? ' is-invalid' : '' }}" name="bus"  placeholder="Select Station">
+                          <option value="">Select Bus</option>
+                          @foreach($buses as $bus)
+                              <option value="{{$bus->id}}" @php echo $bus->id == $bus_no ? 'selected' :  "" @endphp>{{$bus->number_plate}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                    <div class="form-group col-md-3">
+                      <label>From</label>
+
+                      <div class="input-group date timepicker" id="from"  data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('from') ? ' is-invalid' : '' }}" data-target="#from"  name="from" value="{{$from??''}}" required/>
+                          <div class="input-group-append" data-target="#from" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
+                          </div>
+                          @if ($errors->has('from'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('from') }}</strong>
+                            </span>
+                        @endif
+                      </div>
+
+                      </div>
+                    <div class="form-group col-md-3">
+                      <label>To</label>
+                      <div class="input-group date timepicker" id="to"  data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('to') ? ' is-invalid' : '' }}" data-target="#to"  name="to" value="{{$to??''}}" required/>
+                          <div class="input-group-append" data-target="#to" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
+                          </div>
+                    </div>
+                  </div>
+                    <div class="form-group col-md-6">
+                      <label><br></label>
+                      <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                  </div>
+                  </form>
+                  </div>
+              </div>
             <div class="row">
                <div class="col-md-12">
                  <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="My Routes">
@@ -155,6 +202,9 @@ var table = $('#example1').DataTable({
       ],
             });
   $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+  $('.timepicker').datetimepicker({
+             format: 'HH:mm'
+         });
 })
 </script>
 

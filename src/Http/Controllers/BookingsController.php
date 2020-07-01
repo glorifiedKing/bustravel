@@ -36,9 +36,10 @@ class BookingsController extends Controller
 {
     public $travel_date='date_of_travel',$userId='user_id',
     $on_board='On Board',$Status='status',$CreatedAt='created_at',
+    $b_StartDayTime=' 00:00:00', $b_EndDayTime=' 23:59:59',
     $routeType ='route_type', $main_route ='main_route', $stop_over_route='stop_over_route',
     $route_manifest='bustravel.bookings.route.manifest', $RoutesDepartureTimeId='routes_departure_time_id',
-    $RoutesTimesId='routes_times_id'
+    $RoutesTimesId='routes_times_id',$b_TicketNumber='ticket_number'
     ;
     public function __construct()
     {
@@ -54,30 +55,56 @@ class BookingsController extends Controller
     //fetching buses route('bustravel.buses')
     public function index()
     {
-      if(auth()->user()->hasAnyRole('BT Administrator'))
-        {
-         $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
-         $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-         $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id')->all();
-         $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-         $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+      if (request()->isMethod('post')) {
+      }
+      $b_from = request()->input('b_from') ?? date('Y-m-d');
+      $b_to = request()->input('b_to') ?? date('Y-m-d');
+      $b_ticket = request()->input('b_ticket') ?? null;
+      if (!is_null($b_ticket)) {
+        $main_bookings = Booking::where($this->b_TicketNumber, $b_ticket)->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->get();
+        $stop_over_bookings =Booking::where($this->b_TicketNumber, $b_ticket)->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->get();
         $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-        }
-        elseif(auth()->user()->hasAnyRole('BT Cashier'))
-        {
-          $main_bookings = Booking::where($this->userId,auth()->user()->id)->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-        }
-      else
-        {
-          $main_bookings = Booking::where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $stop_over_bookings =Booking::where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-          $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-        }
+      } else {
+              if(auth()->user()->hasAnyRole('BT Super Admin'))
+                {
+                  $main_bookings = Booking::where($this->routeType,$this->main_route)
+                  ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                  $stop_over_bookings =Booking::where($this->routeType,$this->stop_over_route)
+                  ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+
+                }
+                elseif(auth()->user()->hasAnyRole('BT Cashier'))
+                {
+                  $main_bookings = Booking::where($this->userId,auth()->user()->id)
+                  ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->where($this->routeType,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)
+                  ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+                }
+              else
+                {
+                  $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
+                  $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
+                  $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id')->all();
+                  $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->where($this->routeType,$this->main_route)
+                   ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                  $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->
+                  where($this->routeType,$this->stop_over_route)->whereNotIn($this->Status,[2])
+                  ->whereBetween($this->CreatedAt, [$b_from.$this->b_StartDayTime, $b_to.$this->b_EndDayTime])
+                  ->orderBy('id', 'DESC')->get();
+                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+
+                }
+      }
 
 
-        return view('bustravel::backend.bookings.index', compact('bookings'));
+        return view('bustravel::backend.bookings.index', compact('bookings','b_from','b_to','b_ticket'));
     }
 
     //creating buses form route('bustravel.buses.create')
@@ -339,28 +366,66 @@ class BookingsController extends Controller
 
   public function manifest()
   {
+    if (request()->isMethod('post')) {
+    }
+    $from = request()->input('from') ?? '00:00';
+    $to = request()->input('to') ?? '23:59';
+    $bus_no = request()->input('bus') ??'';
     $travel_day_of_week = date('l');
     if(auth()->user()->hasAnyRole('BT Driver'))
       {
        $driver =Driver::where($this->userId,auth()->user()->id)->first();
        $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-       $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
-       ->where('days_of_week', 'like', "%$travel_day_of_week%")->get();
+       if($bus_no==""){
+         $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
+         ->where('days_of_week', 'like', "%$travel_day_of_week%")
+         ->whereBetween('departure_time', [$from, $to])
+         ->get();
+       }else{
+         $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('driver_id',$driver->id)
+         ->where('days_of_week', 'like', "%$travel_day_of_week%")
+         ->whereBetween('departure_time', [$from, $to])->where('bus_id',$bus_no)
+         ->get();
+       }
        $bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-      }
-    else
+       $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+       }
+    elseif(auth()->user()->hasAnyRole('BT Super Admin'))
       {
-        $driver =Driver::where($this->userId,auth()->user()->id)->first();
-        $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
-        $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
-        $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('days_of_week', 'like', "%$travel_day_of_week%")->orderBy('departure_time','ASC')->get();
+        $driver =Driver::where($this->userId,auth()->user()->id)->first()??NULL;
+        if($bus_no==""){
+          $driver_routes= RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")
+          ->whereBetween('departure_time', [$from, $to])
+          ->orderBy('departure_time','ASC')->get();
+        }else{
+          $driver_routes= RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->
+           whereBetween('departure_time', [$from, $to])->where('bus_id',$bus_no)
+          ->orderBy('departure_time','ASC')->get();
+        }
         $bookings = Booking::whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-
+        $buses =Bus::where('status',1)->get();
       }
+      else
+        {
+          $driver =Driver::where($this->userId,auth()->user()->id)->first();
+          $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
+          $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id')->all();
+          if($bus_no==""){
+            $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('days_of_week', 'like', "%$travel_day_of_week%")->
+             whereBetween('departure_time', [$from, $to])
+            ->orderBy('departure_time','ASC')->get();
+          }else{
+            $driver_routes= RoutesDepartureTime::whereIn('route_id',$routes_ids)->where('days_of_week', 'like', "%$travel_day_of_week%")->
+             whereBetween('departure_time', [$from, $to])->where('bus_id',$bus_no)
+            ->orderBy('departure_time','ASC')->get();
+          }
+          $bookings = Booking::whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+          $buses =Bus::where('operator_id',auth()->user()->operator_id)->get();
+        }
 
 
-      return view('bustravel::backend.bookings.manifest', compact('bookings','driver_routes','driver'));
+      return view('bustravel::backend.bookings.manifest', compact('bookings','driver_routes','driver','from','to','buses','bus_no'));
   }
   public function route_manifest($id)
   {
