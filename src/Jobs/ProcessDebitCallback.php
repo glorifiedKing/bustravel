@@ -20,6 +20,7 @@ use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Mail\TicketEmail;
 use AfricasTalking\SDK\AfricasTalking;
+use Carbon\Carbon;
 
 class ProcessDebitCallback implements ShouldQueue
 {
@@ -152,7 +153,7 @@ class ProcessDebitCallback implements ShouldQueue
                         $ticket = Booking::find($ticket_id);
                         $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
                         //dd($departure_route);
-                        $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,$transaction->date_of_travel,$departure_route->arrival_time,$transaction->date_of_travel,$ticket->amount,$ticket->date_paid,$transaction->payment_method);
+                        $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
                         $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
                         $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
                         

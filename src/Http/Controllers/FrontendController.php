@@ -215,9 +215,35 @@ class FrontendController extends Controller
     {
         $now = date('H:i');
         $travel_day_of_week = date('l');
+        $start_station = $request->start_station;
+        $q_start_station = $start_station;
+        $stations = Station::all();
+        if(!$start_station)
+        {
+            $q_start_station = Station::where('code','KIG')->first()->id ?? 1;
+        }
+        $selected_station = Station::find($q_start_station);
+
         $routes_times =RoutesDepartureTime::where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$now)->get()->sortBy('departure_time');
 
-        return view('bustravel::frontend.bus_times',compact('routes_times'));
+        $departure_times = RoutesDepartureTime::whereHas('route',function($q)use($q_start_station){
+            $q->where([
+                [self::START_STATION_STRING, '=', $q_start_station],
+                
+            ]);
+        })->where(self::DAYS_OF_THE_WEEK_STRING, 'like', "%$travel_day_of_week%")->whereTime(self::DEPARTURE_TIME_STRING,'>',$now)->get()->sortBy(self::DEPARTURE_TIME_STRING);
+          
+
+        $departure_times_stop_over = RoutesStopoversDepartureTime::whereHas('route',function($q)use($q_start_station){
+            $q->where([
+                [self::START_STATION_STRING, '=', $q_start_station],
+                
+            ]);
+        })->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
+            $query->where(self::DAYS_OF_THE_WEEK_STRING, 'like', "%$travel_day_of_week%");
+        })->whereTime(self::DEPARTURE_TIME_STRING,'>',$now)->get()->sortBy(self::DEPARTURE_TIME_STRING);
+        
+        return view('bustravel::frontend.bus_times',compact('stations','routes_times','selected_station','departure_times','departure_times_stop_over'));
     }
     public function stations(Request $request)
     {
