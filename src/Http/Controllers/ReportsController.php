@@ -165,7 +165,6 @@ class ReportsController extends Controller
             $x_axis = [];
             $y_axis = [];
             $y_axis1 = [];
-            $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
             $startperiod = \Carbon\Carbon::now()->startOfMonth();
             $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
@@ -200,7 +199,6 @@ class ReportsController extends Controller
             $x_axis = [];
             $y_axis = [];
             $y_axis1 = [];
-            $now = \Carbon\Carbon::now();
             $startperiod = \Carbon\Carbon::now()->startOfMonth();
             $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(5);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
@@ -284,11 +282,8 @@ class ReportsController extends Controller
         if($r_route_id!='all')
         {
             $r_route =Route::find($r_route_id);
-            $r_route_name =$r_route->start->name.'['.$r_route->start->code.']-'.$r_route->end->name.'['.$r_route->end->code.']';
             $r_services=$r_route->departure_times()->get();
         }else{
-
-            $r_route_name ='All';
             $S_routes =Route::where($this->OperatorId,$r_Selected_OperatorId)->where($this->Status, 1)->pluck('id');
             $r_services =RoutesDepartureTime::whereIn('route_id',$S_routes)->limit(5)->get();
         }
@@ -388,7 +383,6 @@ class ReportsController extends Controller
         } elseif ($r_period == 4) {
             $r_x_axis = [];
             $r_now = \Carbon\Carbon::now();
-            //$monthStartDatestring = $now->startOfMonth();
             $r_startperiod = \Carbon\Carbon::now()->startOfMonth();
             $r_endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
             $r_daterange = CarbonPeriod::create($r_endperiod, '1 month', $r_startperiod);
@@ -803,20 +797,20 @@ class ReportsController extends Controller
         $v_from = request()->input('from') ?? date('Y-m-d');
         $v_to = request()->input('to') ?? date('Y-m-d');
         $v_ticket = request()->input('ticket') ?? null;
-        $Selected_OperatorId=request()->input($this->OperatorId)??auth()->user()->operator_id??0;
-        $sales_operator=Operator::find($Selected_OperatorId);
-        $operator_Name =$sales_operator->name??'';
+        $v_Selected_OperatorId=request()->input($this->OperatorId)??auth()->user()->operator_id??0;
+        $v_sales_operator=Operator::find($v_Selected_OperatorId);
+        $v_operator_Name =$v_sales_operator->name??'';
         $v_start_station = request()->input('start_station') ?? null;
         if (!is_null($v_ticket)) {
           $main_bookings = Booking::where($this->TicketNumber, $v_ticket)
           ->where($this->route_type,$this->main_route)->where($this->Status,2)->get();
-          $stop_over_bookings =Booking::where($this->TicketNumber, $V_ticket)
+          $stop_over_bookings =Booking::where($this->TicketNumber, $v_ticket)
           ->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         } else {
            if(!is_null($v_start_station))
            {
-             $v_routes_ids =Route::where('start_station',$v_start_station)->where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+             $v_routes_ids =Route::where('start_station',$v_start_station)->where($this->OperatorId,$v_Selected_OperatorId)->pluck('id');
              $v_times_ids =RoutesDepartureTime::whereIn('route_id',$v_routes_ids)->pluck('id');
              $v_stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$v_times_ids)->pluck('id');
              if(auth()->user()->hasAnyRole($this->role_cashier))
@@ -847,7 +841,7 @@ class ReportsController extends Controller
 
                }
            }else{
-             $v_routes_ids =Route::where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+             $v_routes_ids =Route::where($this->OperatorId,$v_Selected_OperatorId)->pluck('id');
              $v_times_ids =RoutesDepartureTime::whereIn('route_id',$v_routes_ids)->pluck('id');
              $v_stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$v_times_ids)->pluck('id');
 
@@ -880,10 +874,10 @@ class ReportsController extends Controller
            }
 
         }
-        $stations =Station::all();
-        $operators =Operator::where($this->Status,1)->get();
+        $v_stations =Station::all();
+        $v_operators =Operator::where($this->Status,1)->get();
 
-        return view('bustravel::backend.reports.void_bookings', compact('bookings', 'v_ticket', 'v_from', 'v_to','stations','v_start_station','operators','Selected_OperatorId','operator_Name'));
+        return view('bustravel::backend.reports.void_bookings', compact('bookings', 'v_ticket', 'v_from', 'v_to','v_stations','v_start_station','v_operators','v_Selected_OperatorId','v_operator_Name'));
     }
 
 }

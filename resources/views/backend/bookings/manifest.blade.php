@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark"> Services{{$driver->name??""}}</h1>
+        <h1 class="m-0 text-dark"> Services{{$m_driver->name??""}}</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -38,7 +38,7 @@
                         <label>Start Station</label>
                         <select class="form-control select2 {{ $errors->has('bus') ? ' is-invalid' : '' }}" name="bus"  placeholder="Select Station">
                           <option value="">Select Bus</option>
-                          @foreach($buses as $bus)
+                          @foreach($m_buses as $bus)
                               <option value="{{$bus->id}}" @php echo $bus->id == $bus_no ? 'selected' :  "" @endphp>{{$bus->number_plate}}</option>
                           @endforeach
                         </select>
@@ -47,7 +47,7 @@
                       <label>From</label>
 
                       <div class="input-group date timepicker" id="from"  data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('from') ? ' is-invalid' : '' }}" data-target="#from"  name="from" value="{{$from??''}}" required/>
+                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('from') ? ' is-invalid' : '' }}" data-target="#from"  name="from" value="{{$m_from??''}}" required/>
                           <div class="input-group-append" data-target="#from" data-toggle="datetimepicker">
                               <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
                           </div>
@@ -62,7 +62,7 @@
                     <div class="form-group col-md-3">
                       <label>To</label>
                       <div class="input-group date timepicker" id="to"  data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('to') ? ' is-invalid' : '' }}" data-target="#to"  name="to" value="{{$to??''}}" required/>
+                          <input type="text" class="form-control datetimepicker-input {{ $errors->has('to') ? ' is-invalid' : '' }}" data-target="#to"  name="to" value="{{$m_to??''}}" required/>
                           <div class="input-group-append" data-target="#to" data-toggle="datetimepicker">
                               <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
                           </div>
@@ -73,13 +73,13 @@
                  @if(auth()->user()->hasAnyRole('BT Super Admin'))
                  <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
                  <option ="0"> Select Operator</option>
-                 @foreach ($operators as $operator)
-                 <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                 @foreach ($m_operators as $operator)
+                 <option value="{{$operator->id}}" @php echo $operator->id == $m_Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
                  @endforeach
                  </select>
                  @else
                  <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
-                 <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+                 <option value="{{$m_Selected_OperatorId}}"> {{$m_operator_Name}}</option>
                  </select>
 
                  @endif
@@ -150,7 +150,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <h5 class="description-header">{{number_format($buses->count(),0)}}</h5>
+                    <h5 class="description-header">{{number_format($m_buses->count(),0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF BUSES</span>
                 </div>
                 <!-- /.description-block -->
@@ -158,7 +158,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <h5 class="description-header">{{number_format($drivers,0)}}</h5>
+                    <h5 class="description-header">{{number_format($m_drivers,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
                 <!-- /.description-block -->
@@ -166,7 +166,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <h5 class="description-header">{{number_format($routes,0)}}</h5>
+                    <h5 class="description-header">{{number_format($m_routes,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
                 <!-- /.description-block -->
@@ -174,7 +174,7 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                  <h5 class="description-header">{{number_format($services,0)}}</h5>
+                  <h5 class="description-header">{{number_format($m_services,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF SERVICES</span>
                 </div>
                 <!-- /.description-block -->

@@ -66,13 +66,13 @@
                    @if(auth()->user()->hasAnyRole('BT Super Admin'))
                    <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
                    <option ="0"> Select Operator</option>
-                   @foreach ($operators as $operator)
-                   <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                   @foreach ($b_operators as $operator)
+                   <option value="{{$operator->id}}" @php echo $operator->id == $b_Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
                    @endforeach
                    </select>
                    @else
                    <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
-                   <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+                   <option value="{{$b_Selected_OperatorId}}"> {{$b_operator_Name}}</option>
                    </select>
 
                    @endif
