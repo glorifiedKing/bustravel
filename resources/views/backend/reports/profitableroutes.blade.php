@@ -42,11 +42,27 @@
               </div>
               <div class="form-group col-md-6">
               <select  name="route" class="form-control select2"  onchange="this.form.submit()">
+              <option value="all">All Routes</option>
               @foreach ($routes as $main_route)
               <option value="{{$main_route->id}}" @php echo $main_route->id == $route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] </option>
               @endforeach
               </select>
             </div>
+            <div class="form-group col-md-3">
+           @if(auth()->user()->hasAnyRole('BT Super Admin'))
+           <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+           <option ="0"> Select Operator</option>
+           @foreach ($operators as $operator)
+           <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+           @endforeach
+           </select>
+           @else
+           <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+           <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+           </select>
+
+           @endif
+         </div>
           </div>
                 </form>
               </div>
@@ -86,8 +102,8 @@ option = {
     },
     legend: {
         data: [
-          @foreach($route_departures as $route_time)
-          '{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+          @foreach($services as $route_time)
+          '{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
         @endforeach
       ]
     },
@@ -122,9 +138,9 @@ option = {
     ],
     series: [
 
-      @foreach($route_departures as $route_time)
+      @foreach($services as $route_time)
      {
-         name:'{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+         name:'{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
          type:'bar',
          barGap: 0,
          data:[

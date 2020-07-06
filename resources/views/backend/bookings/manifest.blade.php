@@ -68,6 +68,22 @@
                           </div>
                     </div>
                   </div>
+                  <div class="form-group col-md-3">
+                  <label>Operator</label>
+                 @if(auth()->user()->hasAnyRole('BT Super Admin'))
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option ="0"> Select Operator</option>
+                 @foreach ($operators as $operator)
+                 <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                 @endforeach
+                 </select>
+                 @else
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+                 </select>
+
+                 @endif
+               </div>
                     <div class="form-group col-md-6">
                       <label><br></label>
                       <button type="submit" class="btn btn-primary">Search</button>
@@ -87,6 +103,7 @@
                                 <th scope="col">Price</th>
                                 <th scope="col">Bus </th>
                                 <th scope="col">times</th>
+                                <th scope="col">Bookings</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -95,6 +112,11 @@
                         @foreach ($driver_routes as $route_departure_time)
                         @php
                         $manage =$route_departure_time->route_times_tracking()->where('date_of_travel',date('Y-m-d'))->count();
+                        $stopover_service_ids =$route_departure_time->stopovers_times()->pluck('id');
+                        $booking_main=glorifiedking\BusTravel\Booking::where('routes_departure_time_id',$route_departure_time->id)
+                      ->where('date_of_travel',date('Y-m-d'))->where('route_type','main_route')->count();
+                        $booking_stop_overs=glorifiedking\BusTravel\Booking::whereIn('routes_departure_time_id',$stopover_service_ids)
+                        ->where('date_of_travel',date('Y-m-d'))->where('route_type','stop_over_route')->count();
                         @endphp
                             <tr>
                               <td>@if($route_departure_time->status==1)
@@ -109,6 +131,7 @@
                                 <td>{{number_format($route_departure_time->route->price,2)}} </td>
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
                                 <td>{{$route_departure_time->departure_time}}</td>
+                                <td>{{number_format($booking_main+$booking_stop_overs)}}</td>
                                 <td>  <a title="Manage" onclick="return confirm('Are you sure you want to Manage this Route')" href="{{route('bustravel.bookings.route.tracking',$route_departure_time->id)}}"><i class="fas fa-edit" aria-hidden="true"></i> Manage</a>
 
 
@@ -127,8 +150,15 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
+                    <h5 class="description-header">{{number_format($buses->count(),0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF BUSES</span>
+                </div>
+                <!-- /.description-block -->
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                    <h5 class="description-header">{{number_format($drivers,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
                 <!-- /.description-block -->
@@ -136,27 +166,16 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
-                </div>
-                <!-- /.description-block -->
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
+                    <h5 class="description-header">{{number_format($routes,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
+                  <h5 class="description-header">{{number_format($services,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF SERVICES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
@@ -205,6 +224,7 @@ var table = $('#example1').DataTable({
   $('.timepicker').datetimepicker({
              format: 'HH:mm'
          });
+  $('.select2').select2();
 })
 </script>
 

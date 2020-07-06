@@ -40,11 +40,27 @@
               </div>
               <div class="form-group col-md-6">
               <select  name="route" class="form-control select2"  onchange="this.form.submit()">
+              <option value="all">All Routes</option>
               @foreach ($routes as $main_route)
-              <option value="{{$main_route->id}}" @php echo $main_route->id == $route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] </option>
+              <option value="{{$main_route->id}}" @php echo $main_route->id == $route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] {{$main_route->operator->name??''}}</option>
               @endforeach
               </select>
             </div>
+             <div class="form-group col-md-3">
+            @if(auth()->user()->hasAnyRole('BT Super Admin'))
+            <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+            <option ="0"> Select Operator</option>
+            @foreach ($operators as $operator)
+            <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+            @endforeach
+            </select>
+            @else
+            <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+            <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+            </select>
+
+            @endif
+          </div>
           </div>
                 </form>
               </div>
@@ -76,8 +92,8 @@
                   text: 'Sales Report'
               },
               legend: {
-        data: ['{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]-Revenue',
-'{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]-Sales'
+        data: ['{{$route_name}}-Revenue',
+'{{$route_name}}-Sales'
       ]
     },
               tooltip: {
@@ -124,7 +140,7 @@
        ] ,
     series: [
             {
-            name:'{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]-Revenue',
+            name:'{{$route_name}}-Revenue',
         data: [
           @foreach($y_axis as $axis)
       {{$axis}},
@@ -132,7 +148,7 @@
         type: 'bar'
     },
     {
-                     name:'{{$route->start->name}}[{{$route->start->code}}]-{{$route->end->name}}[{{$route->end->code}}]-Sales',
+                     name:'{{$route_name}}-Sales',
                      type:'line',
                      yAxisIndex: 1,
                      data:[

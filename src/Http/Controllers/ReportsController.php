@@ -7,6 +7,7 @@ use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\Route;
 use glorifiedking\BusTravel\Station;
+use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\ListBookings;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -15,7 +16,8 @@ class ReportsController extends Controller
     public $role_cashier ='BT Cashier',
      $userId='user_id', $route_type ="route_type", $main_route ="main_route", $stop_over_route="stop_over_route",
      $Status="status",$CreatedAt="created_at",$StartDayTime=' 00:00:00', $EndDayTime=' 23:59:59',$RoutesDepartureTimeId='routes_departure_time_id',
-     $RoutesTimesId='routes_times_id',$TicketNumber='ticket_number',$Amount='amount'
+     $RoutesTimesId='routes_times_id',$TicketNumber='ticket_number',$Amount='amount',
+     $OperatorId='operator_id'
      ;
 
     public function __construct()
@@ -33,17 +35,23 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? null;
-        if(is_null($route_id))
+        $route_id=request()->input('route') ??'all';
+        $Selected_OperatorId=request()->input('operator_id')??auth()->user()->operator_id??0;
+        $sales_operator=Operator::find($Selected_OperatorId);
+        $operator_Name =$sales_operator->name??'';
+        if(($route_id!='all'))
         {
-          $route =Route::first();
-          $route_id=$route->id;
+            $route =Route::find($route_id);
+            $main_services=$route->departure_times()->pluck('id');
+            $stover_services =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$main_services)->pluck('id');
+            $route_name =$route->start->name.'['.$route->start->code.']-'.$route->end->name.'['.$route->end->code.']';
+
         }else{
-          $route =Route::find($route_id);
+
+            $route_name ='All';
+            $main_services =Route::where($this->OperatorId,$Selected_OperatorId)->pluck('id');
+            $stover_services =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$main_services)->pluck('id');
         }
-
-        $route_times=$route->departure_times()->pluck('id');
-
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
             $weekStartDate = $now->startOfWeek()->format('Y-m-d ');
@@ -59,9 +67,24 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($weekdates as $wdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $daysalescount = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
-                $y_axis[] = $daysales;
+                  // Main Routes Bookings
+                  $daysales_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                  ->where($this->route_type,$this->main_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $daysales_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $daysales = $daysales_main +$daysales_stover;
+                 $daysalescount = $daysalescount_main +$daysalescount_stover;
+                   $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
             }
         } elseif ($period == 2) {
@@ -80,8 +103,24 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $daysalescount = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+                // Main Routes Bookings
+                $daysales_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                ->where($this->route_type,$this->main_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->main_route)
+                ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                // Stop Overs Routes Bookings
+                $daysales_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                ->where($this->route_type,$this->stop_over_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->stop_over_route)
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+               $daysales = $daysales_main +$daysales_stover;
+               $daysalescount = $daysalescount_main +$daysalescount_stover;
+
                 $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
             }
@@ -101,9 +140,25 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $daysalescount = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
-                $y_axis[] = $daysales;
+                // Main Routes Bookings
+                $daysales_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                ->where($this->route_type,$this->main_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->main_route)
+                ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                // Stop Overs Routes Bookings
+                $daysales_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                ->where($this->route_type,$this->stop_over_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->stop_over_route)
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+               $daysales = $daysales_main +$daysales_stover;
+               $daysalescount = $daysalescount_main +$daysalescount_stover;
+
+              $y_axis[] = $daysales;
                 $y_axis1[] = $daysalescount;
             }
         } elseif ($period == 4) {
@@ -112,16 +167,32 @@ class ReportsController extends Controller
             $y_axis1 = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(2);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
             foreach ($daterange as $month) {
                 $x_axis[] = $month->format('M-y');
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+                  // Main Routes Bookings
+                  $monthsales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                  ->where($this->route_type,$this->main_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsales_main +$monthsales_stover;
+                 $monthsalescount = $monthsalescount_main +$monthsalescount_stover;
+
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
             }
@@ -130,16 +201,31 @@ class ReportsController extends Controller
             $y_axis = [];
             $y_axis1 = [];
             $now = \Carbon\Carbon::now();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(5);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(5);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
             foreach ($daterange as $month) {
                 $x_axis[] = $month->format('M-y');
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+                  // Main Routes Bookings
+                  $monthsales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                  ->where($this->route_type,$this->main_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsales_main +$monthsales_stover;
+                 $monthsalescount = $monthsalescount_main +$monthsalescount_stover;
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
             }
@@ -156,22 +242,33 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->sum($this->Amount);
-                $monthsalescount = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+                  // Main Routes Bookings
+                  $monthsales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$main_services)
+                  ->where($this->route_type,$this->main_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsales_main +$monthsales_stover;
+                 $monthsalescount = $monthsalescount_main +$monthsalescount_stover;
+
                 $y_axis[] = $monthsales;
                 $y_axis1[] = $monthsalescount;
             }
         }
-        if(auth()->user()->hasAnyRole('BT Administrator'))
-          {
-            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
-          }
-        else
-          {
-          $routes =Route::all();
-          }
 
-        return view('bustravel::backend.reports.sales', compact('x_axis', 'y_axis','y_axis1', 'period','routes','route_id','route'));
+          $routes =Route::where('operator_id',$Selected_OperatorId)->get();
+          $operators =Operator::where($this->Status,1)->get();
+
+        return view('bustravel::backend.reports.sales', compact('x_axis', 'y_axis','y_axis1', 'period','routes','route_id','route_name','operators','Selected_OperatorId','operator_Name'));
     }
 
     //Profitable Route Report
@@ -180,17 +277,21 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? null;
-        if(is_null($route_id))
+        $route_id=request()->input('route') ?? 'all';
+        $Selected_OperatorId=request()->input('operator_id')??auth()->user()->operator_id??0;
+        $sales_operator=Operator::find($Selected_OperatorId);
+        $operator_Name =$sales_operator->name??'';
+        if(($route_id!='all'))
         {
-          $route =Route::first();
-          $route_id=$route->id;
+            $route =Route::find($route_id);
+            $route_name =$route->start->name.'['.$route->start->code.']-'.$route->end->name.'['.$route->end->code.']';
+            $services=$route->departure_times()->get();
         }else{
-          $route =Route::find($route_id);
-        }
-        $route_times=$route->departure_times()->pluck('id');
-        $route_departures=$route->departure_times()->get();
 
+            $route_name ='All';
+            $S_routes =Route::where($this->OperatorId,$Selected_OperatorId)->where($this->Status, 1)->pluck('id');
+            $services =RoutesDepartureTime::whereIn('route_id',$S_routes)->limit(5)->get();
+        }
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
             $weekStartDate = $now->startOfWeek()->format('Y-m-d ');
@@ -203,12 +304,22 @@ class ReportsController extends Controller
                 $x_axis[] = $weekdate->format('D');
             }
             $weekarray=[];
-            foreach ($weekdates as $wdate) {
+            foreach ($weekdates as $wdates) {
 
-              foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->EndDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                $routeday[$route_departure->id] = $daysales11;
-                $weekarray[$wdate] =$routeday;
+              foreach($services as $route_departure){
+                // Main Routes Bookings
+                $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                $Psales_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                ->where($this->route_type,$this->main_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                // Stop Overs Routes Bookings
+                $Psales_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                ->where($this->route_type,$this->stop_over_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                  $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
+                $weekarray[$wdates] =$routeday;
               }
 
               }
@@ -225,11 +336,21 @@ class ReportsController extends Controller
                 $x_axis[] = $monthdate->format('d');
             }
             $weekarray=[];
-            foreach ($monthdates as $wdate) {
-              foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                $routeday[$route_departure->id] = $daysales11;
-                $weekarray[$wdate] =$routeday;
+            foreach ($monthdates as $wdates) {
+              foreach($services as $route_departure){
+                // Main Routes Bookings
+                $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                $Psales_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                ->where($this->route_type,$this->main_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                // Stop Overs Routes Bookings
+                $Psales_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                ->where($this->route_type,$this->stop_over_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                  $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
+                $weekarray[$wdates] =$routeday;
               }
               }
 
@@ -247,11 +368,21 @@ class ReportsController extends Controller
                 $x_axis[] = $monthdate->format('d');
             }
             $weekarray=[];
-            foreach ($monthdates as $wdate) {
-              foreach($route_departures as $route_departure){
-               $daysales11 = Booking::whereBetween($this->CreatedAt, [$wdate.$this->StartDayTime, $wdate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                $routeday[$route_departure->id] = $daysales11;
-                $weekarray[$wdate] =$routeday;
+            foreach ($monthdates as $wdates) {
+              foreach($services as $route_departure){
+                // Main Routes Bookings
+                $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                $Psales_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                ->where($this->route_type,$this->main_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                // Stop Overs Routes Bookings
+                $Psales_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+                ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                ->where($this->route_type,$this->stop_over_route)
+                ->where($this->Status, 1)->sum($this->Amount);
+                  $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
+                $weekarray[$wdates] =$routeday;
               }
               }
         } elseif ($period == 4) {
@@ -259,8 +390,8 @@ class ReportsController extends Controller
             $y_axis = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(2);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
                $weekarray=[];
             foreach ($daterange as $month) {
@@ -268,9 +399,19 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                foreach($route_departures as $route_departure){
-                 $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                  $routeday[$route_departure->id] = $daysales11;
+                foreach($services as $route_departure){
+                  // Main Routes Bookings
+                  $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                  $Psales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                  ->where($this->route_type,$this->main_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                  // Stop Overs Routes Bookings
+                  $Psales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->where($this->Status, 1)->sum($this->Amount);
+                    $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
                   $weekarray[$month->format('M-y')] =$routeday;
                 }
             }
@@ -279,8 +420,8 @@ class ReportsController extends Controller
             $y_axis = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(5);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(5);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
              $weekarray=[];
             foreach ($daterange as $month) {
@@ -288,9 +429,19 @@ class ReportsController extends Controller
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                  foreach($route_departures as $route_departure){
-                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                    $routeday[$route_departure->id] = $daysales11;
+                  foreach($services as $route_departure){
+                    // Main Routes Bookings
+                    $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                    $Psales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                    ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                    ->where($this->route_type,$this->main_route)
+                    ->where($this->Status, 1)->sum($this->Amount);
+                    // Stop Overs Routes Bookings
+                    $Psales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                    ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                    ->where($this->route_type,$this->stop_over_route)
+                    ->where($this->Status, 1)->sum($this->Amount);
+                      $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
                     $weekarray[$month->format('M-y')] =$routeday;
                   }
             }
@@ -307,24 +458,29 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                  foreach($route_departures as $route_departure){
-                   $daysales11 = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->where($this->Status, 1)->where($this->RoutesDepartureTimeId, $route_departure->id)->sum($this->Amount);
-                    $routeday[$route_departure->id] = $daysales11;
+                  foreach($services as $route_departure){
+                    // Main Routes Bookings
+                    $stopover_services_ids =RoutesStopoversDepartureTime::where($this->RoutesTimesId,$route_departure->id)->pluck('id');
+                    $Psales_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                    ->where($this->RoutesDepartureTimeId,$route_departure->id)
+                    ->where($this->route_type,$this->main_route)
+                    ->where($this->Status, 1)->sum($this->Amount);
+                    // Stop Overs Routes Bookings
+                    $Psales_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                    ->whereIn($this->RoutesDepartureTimeId,$stopover_services_ids)
+                    ->where($this->route_type,$this->stop_over_route)
+                    ->where($this->Status, 1)->sum($this->Amount);
+                      $routeday[$route_departure->id] = $Psales_main+$Psales_stover;
                     $weekarray[$month->format('M-y')] =$routeday;
                   }
             }
         }
-        if(auth()->user()->hasAnyRole('BT Administrator'))
-          {
-            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
-          }
-        else
-          {
-          $routes =Route::all();
-          }
+
+          $routes =Route::where('operator_id',$Selected_OperatorId)->get();
+          $operators =Operator::where($this->Status,1)->get();
 
 
-        return view('bustravel::backend.reports.profitableroutes', compact('x_axis', 'y_axis1', 'y_axis2', 'y_axis3', 'period', 'first', 'second', 'third','routes','route_id','weekarray','route_departures','route'));
+        return view('bustravel::backend.reports.profitableroutes', compact('x_axis',  'period','routes','route_id','weekarray','services','operators','Selected_OperatorId','operator_Name'));
     }
 
     //Traffic Report
@@ -333,15 +489,21 @@ class ReportsController extends Controller
         if (request()->isMethod('post')) {
         }
         $period = request()->input('period') ?? 1;
-        $route_id=request()->input('route') ?? null;
-        if(is_null($route_id))
+        $route_id=request()->input('route') ??'all';
+        $Selected_OperatorId=request()->input('operator_id')??auth()->user()->operator_id??0;
+        $sales_operator=Operator::find($Selected_OperatorId);
+        $operator_Name =$sales_operator->name??'';
+        if(($route_id!='all'))
         {
-          $route =Route::first();
-          $route_id=$route->id;
+            $route =Route::find($route_id);
+            $main_services=$route->departure_times()->pluck('id');
+            $stover_services =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$main_services)->pluck('id');
+            $route_name =$route->start->name.'['.$route->start->code.']-'.$route->end->name.'['.$route->end->code.']';
         }else{
-          $route =Route::find($route_id);
+            $route_name ='All';
+            $main_services =Route::where($this->OperatorId,$Selected_OperatorId)->pluck('id');
+            $stover_services =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$main_services)->pluck('id');
         }
-        $route_times=$route->departure_times()->pluck('id');
 
         if ($period == 1) {
             $now = \Carbon\Carbon::now();
@@ -357,7 +519,15 @@ class ReportsController extends Controller
             }
             $y_axis = [];
             foreach ($weekdates as $wdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+              // Main Routes Bookings
+              $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+              ->where($this->route_type,$this->main_route)
+              ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+              // Stop Overs Routes Bookings
+              $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
+              ->where($this->route_type,$this->stop_over_route)
+              ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+             $daysales = $daysalescount_main +$daysalescount_stover;
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 2) {
@@ -375,7 +545,15 @@ class ReportsController extends Controller
 
             $y_axis = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+              // Main Routes Bookings
+                $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->main_route)
+                ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                // Stop Overs Routes Bookings
+                $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->stop_over_route)
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+               $daysales = $daysalescount_main +$daysalescount_stover;
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 3) {
@@ -393,7 +571,15 @@ class ReportsController extends Controller
             }
             $y_axis = [];
             foreach ($monthdates as $mdates) {
-                $daysales = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+              // Main Routes Bookings
+                $daysalescount_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->main_route)
+                ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                // Stop Overs Routes Bookings
+                $daysalescount_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
+                ->where($this->route_type,$this->stop_over_route)
+                ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+               $daysales = $daysalescount_main +$daysalescount_stover;
                 $y_axis[] = $daysales;
             }
         } elseif ($period == 4) {
@@ -401,15 +587,24 @@ class ReportsController extends Controller
             $y_axis = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(2);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
             foreach ($daterange as $month) {
                 $x_axis[] = $month->format('M-y');
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+                // Main Routes Bookings
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsalescount_main +$monthsalescount_stover;
+
                 $y_axis[] = $monthsales;
             }
         } elseif ($period == 5) {
@@ -417,15 +612,24 @@ class ReportsController extends Controller
             $y_axis = [];
             $now = \Carbon\Carbon::now();
             //$monthStartDatestring = $now->startOfMonth();
-            $startperiod = \Carbon\Carbon::now()->endOfMonth();
-            $endperiod = \Carbon\Carbon::now()->endOfMonth()->subMonths(5);
+            $startperiod = \Carbon\Carbon::now()->startOfMonth();
+            $endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(5);
             $daterange = CarbonPeriod::create($endperiod, '1 month', $startperiod);
             foreach ($daterange as $month) {
                 $x_axis[] = $month->format('M-y');
                 $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+
+                // Main Routes Bookings
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsalescount_main +$monthsalescount_stover;
                 $y_axis[] = $monthsales;
             }
         } elseif ($period == 6) {
@@ -440,20 +644,23 @@ class ReportsController extends Controller
                 $startdate[] = $monthdatestring;
                 $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
                 $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-                $monthsales = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])->whereIn($this->RoutesDepartureTimeId,$route_times)->where($this->Status, 1)->count();
+
+                // Main Routes Bookings
+                  $monthsalescount_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$main_services)->where($this->Status, 1)->count();
+                  // Stop Overs Routes Bookings
+                  $monthsalescount_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
+                  ->where($this->route_type,$this->stop_over_route)
+                  ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
+                 $monthsales = $monthsalescount_main +$monthsalescount_stover;
                 $y_axis[] = $monthsales;
             }
         }
-        if(auth()->user()->hasAnyRole('BT Administrator'))
-          {
-            $routes =Route::where('operator_id',auth()->user()->operator_id)->get();
-          }
-        else
-          {
-          $routes =Route::all();
-          }
+        $routes =Route::where('operator_id',$Selected_OperatorId)->get();
+        $operators =Operator::where($this->Status,1)->get();
 
-        return view('bustravel::backend.reports.traffic', compact('x_axis', 'y_axis', 'period','route','route_id','routes'));
+        return view('bustravel::backend.reports.traffic', compact('x_axis', 'y_axis', 'period','route_id','routes','operators','Selected_OperatorId','operator_Name','route_name'));
     }
 
     public function booking()
@@ -463,7 +670,11 @@ class ReportsController extends Controller
         $from = request()->input('from') ?? date('Y-m-d');
         $to = request()->input('to') ?? date('Y-m-d');
         $ticket = request()->input('ticket') ?? null;
+        $Selected_OperatorId=request()->input('operator_id')??auth()->user()->operator_id??0;
+        $sales_operator=Operator::find($Selected_OperatorId);
+        $operator_Name =$sales_operator->name??'';
         $start_station = request()->input('start_station') ?? null;
+
         if (!is_null($ticket)) {
           $main_bookings = Booking::where($this->TicketNumber, $ticket)->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->get();
           $stop_over_bookings =Booking::where($this->TicketNumber, $ticket)->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->get();
@@ -471,47 +682,28 @@ class ReportsController extends Controller
         } else {
            if(!is_null($start_station))
            {
-             if(auth()->user()->hasAnyRole('BT Administrator'))
+                $routes =Route::where('start_station',$start_station)->where($this->OperatorId,$Selected_OperatorId)->pluck('id');
+                $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+                $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
+               if(auth()->user()->hasAnyRole($this->role_cashier))
                {
-                $routes_ids =Route::where('start_station',$start_station)->where('operator_id',auth()->user()->operator_id)->pluck('id');
-                $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
-                $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id');
-                $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-                $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-                $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-               }
-               elseif(auth()->user()->hasAnyRole($this->role_cashier))
-               {
-                 $routes =Route::where('start_station',$start_station)->pluck('id');
-                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn($this->RoutesDepartureTimeId,$route_times)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                 }else
                {
-                 $routes =Route::where('start_station',$start_station)->pluck('id');
-                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
                  $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$route_times)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
                  $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
 
                }
            }else{
+             $routes =Route::where($this->OperatorId,$Selected_OperatorId)->pluck('id');
+             $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
+             $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
 
-             if(auth()->user()->hasAnyRole('BT Administrator'))
-               {
-                 $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
-                 $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id')->all();
-                 $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-
-               }
-               elseif(auth()->user()->hasAnyRole($this->role_cashier))
+             if(auth()->user()->hasAnyRole($this->role_cashier))
                {
                  $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
                  $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
@@ -519,16 +711,23 @@ class ReportsController extends Controller
                }
                else
                {
-                 $main_bookings = Booking::whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+                 $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$route_times)
+                 ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                 ->where($this->route_type,$this->main_route)->whereNotIn($this->Status,[2])
+                 ->orderBy('id', 'DESC')->get();
+                 $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)
+                 ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                 ->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])
+                 ->orderBy('id', 'DESC')->get();
                  $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
                }
            }
 
         }
         $stations =Station::all();
+        $operators =Operator::where($this->Status,1)->get();
 
-        return view('bustravel::backend.reports.bookings', compact('bookings', 'ticket', 'from', 'to','stations','start_station'));
+        return view('bustravel::backend.reports.bookings', compact('bookings', 'ticket', 'from', 'to','stations','start_station','operators','Selected_OperatorId','operator_Name'));
     }
 
     public function cashier_report()
@@ -548,6 +747,7 @@ class ReportsController extends Controller
       }else{
         if(!is_null($c_start_station))
         {
+
           if(auth()->user()->hasAnyRole($this->role_cashier))
             {
                   $c_routes =Route::where('start_station',$c_start_station)->pluck('id');
@@ -594,8 +794,6 @@ class ReportsController extends Controller
               $c_stop_over_bookings =Booking::whereBetween($this->CreatedAt, [$c_from.$this->StartDayTime, $c_to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
               $bookings = ListBookings::list($c_main_bookings,$c_stop_over_bookings);
             }
-
-
       }
 
 
@@ -609,75 +807,88 @@ class ReportsController extends Controller
     {
         if (request()->isMethod('post')) {
         }
-        $from = request()->input('from') ?? date('Y-m-d');
-        $to = request()->input('to') ?? date('Y-m-d');
-        $ticket = request()->input('ticket') ?? null;
-        $start_station = request()->input('start_station') ?? null;
-        if (!is_null($ticket)) {
-          $main_bookings = Booking::where($this->TicketNumber, $ticket)->where($this->route_type,$this->main_route)->where($this->Status,2)->get();
-          $stop_over_bookings =Booking::where($this->TicketNumber, $ticket)->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->get();
+        $v_from = request()->input('from') ?? date('Y-m-d');
+        $v_to = request()->input('to') ?? date('Y-m-d');
+        $v_ticket = request()->input('ticket') ?? null;
+        $Selected_OperatorId=request()->input('operator_id')??auth()->user()->operator_id??0;
+        $sales_operator=Operator::find($Selected_OperatorId);
+        $operator_Name =$sales_operator->name??'';
+        $v_start_station = request()->input('start_station') ?? null;
+        if (!is_null($v_ticket)) {
+          $main_bookings = Booking::where($this->TicketNumber, $v_ticket)->where($this->route_type,$this->main_route)->where($this->Status,2)->get();
+          $stop_over_bookings =Booking::where($this->TicketNumber, $V_ticket)->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         } else {
-           if(!is_null($start_station))
+           if(!is_null($v_start_station))
            {
-             if(auth()->user()->hasAnyRole('BT Administrator'))
+             $v_routes_ids =Route::where('start_station',$v_start_station)->where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+             $v_times_ids =RoutesDepartureTime::whereIn('route_id',$v_routes_ids)->pluck('id');
+             $v_stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$v_times_ids)->pluck('id');
+             if(auth()->user()->hasAnyRole($this->role_cashier))
                {
-                $routes_ids =Route::where('start_station',$start_station)->where('operator_id',auth()->user()->operator_id)->pluck('id');
-                $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
-                $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id');
-                $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-               }
-               elseif(auth()->user()->hasAnyRole($this->role_cashier))
-               {
-                 $routes =Route::where('start_station',$start_station)->pluck('id');
-                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereIn($this->RoutesDepartureTimeId,$route_times)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+                 $v_main_bookings = Booking::where($this->userId,auth()->user()->id)
+                 ->whereIn($this->RoutesDepartureTimeId,$v_times_ids )
+                 ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                 ->where($this->route_type,$this->main_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $v_stop_over_bookings =Booking::where($this->userId,auth()->user()->id)
+                 ->whereIn($this->RoutesDepartureTimeId,$v_stover_times_ids)
+                 ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                 ->where($this->route_type,$this->stop_over_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $bookings = ListBookings::list($v_main_bookings,$v_stop_over_bookings);
 
                 }else
                {
-                 $routes =Route::where('start_station',$start_station)->pluck('id');
-                 $route_times=RoutesDepartureTime::whereIn('route_id',$routes)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId, $route_times)->pluck('id');
-                 $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$route_times)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+                  $v_main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$v_times_ids)
+                  ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                  ->where($this->route_type,$this->main_route)->where($this->Status,2)
+                  ->orderBy('id', 'DESC')->get();
+                 $v_stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$v_stover_times_ids)
+                 ->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])
+                 ->where($this->route_type,$this->stop_over_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $bookings = ListBookings::list($v_main_bookings,$v_stop_over_bookings);
 
                }
            }else{
+             $v_routes_ids =Route::where($this->OperatorId,auth()->user()->operator_id)->pluck('id');
+             $v_times_ids =RoutesDepartureTime::whereIn('route_id',$v_routes_ids)->pluck('id');
+             $v_stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$v_times_ids)->pluck('id');
 
-             if(auth()->user()->hasAnyRole('BT Administrator'))
+              if(auth()->user()->hasAnyRole($this->role_cashier))
                {
-                 $routes_ids =Route::where('operator_id',auth()->user()->operator_id)->pluck('id')->all();
-                 $times_ids =RoutesDepartureTime::whereIn('route_id',$routes_ids)->pluck('id');
-                 $stover_times_ids =RoutesStopoversDepartureTime::whereIn($this->RoutesTimesId,$times_ids)->pluck('id')->all();
-                 $main_bookings = Booking::whereIn($this->RoutesDepartureTimeId,$times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$stover_times_ids)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
-
-               }
-               elseif(auth()->user()->hasAnyRole($this->role_cashier))
-               {
-                 $main_bookings = Booking::where($this->userId,auth()->user()->id)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::where($this->userId,auth()->user()->id)->whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+                 $v_main_bookings = Booking::where($this->userId,auth()->user()->id)
+                 ->whereBetween($this->CreatedAt, [$v_from.$this->StartDayTime, $v_to.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$v_times_ids)
+                 ->where($this->route_type,$this->main_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $v_stop_over_bookings =Booking::where($this->userId,auth()->user()->id)
+                 ->whereIn($this->RoutesDepartureTimeId,$v_stover_times_ids)
+                 ->whereBetween($this->CreatedAt, [$v_from.$this->StartDayTime, $v_to.$this->EndDayTime])
+                 ->where($this->route_type,$this->stop_over_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $bookings = ListBookings::list($v_main_bookings,$v_stop_over_bookings);
                }
                else
                {
-                 $main_bookings = Booking::whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->main_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $stop_over_bookings =Booking::whereBetween($this->CreatedAt, [$from.$this->StartDayTime, $to.$this->EndDayTime])->where($this->route_type,$this->stop_over_route)->where($this->Status,2)->orderBy('id', 'DESC')->get();
-                 $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+                 $v_main_bookings = Booking::whereBetween($this->CreatedAt, [$v_from.$this->StartDayTime, $v_to.$this->EndDayTime])
+                  ->whereIn($this->RoutesDepartureTimeId,$v_times_ids)
+                 ->where($this->route_type,$this->main_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $v_stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$v_stover_times_ids)
+                 ->whereBetween($this->CreatedAt, [$v_from.$this->StartDayTime, $v_to.$this->EndDayTime])
+                 ->where($this->route_type,$this->stop_over_route)->where($this->Status,2)
+                 ->orderBy('id', 'DESC')->get();
+                 $bookings = ListBookings::list($v_main_bookings,$v_stop_over_bookings);
                }
            }
 
         }
         $stations =Station::all();
+        $operators =Operator::where($this->Status,1)->get();
 
-        return view('bustravel::backend.reports.void_bookings', compact('bookings', 'ticket', 'from', 'to','stations','start_station'));
+        return view('bustravel::backend.reports.void_bookings', compact('bookings', 'v_ticket', 'v_from', 'v_to','stations','v_start_station','operators','Selected_OperatorId','operator_Name'));
     }
 
 }

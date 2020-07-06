@@ -26,7 +26,7 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-12">
-                <form action="{{route('bustravel.bookings.search')}}" method="post" >
+                <form action="{{route('bustravel.reports.bookings.search')}}" method="post" >
                   {{ csrf_field() }}
                   <div class="row">
                   <div class="form-group col-md-3">
@@ -35,7 +35,7 @@
                   </div>
                   <div class="form-group col-md-3 ">
                     <label>Start Station</label>
-                    <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station">
+                    <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station" onchange="this.form.submit()">
                       <option value="">Select Station</option>
                       @foreach($stations as $station)
                           <option value="{{$station->id}}" @php echo $start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
@@ -50,6 +50,21 @@
                     <label>To</label>
                     <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
                   </div>
+                  <div class="form-group col-md-3">
+                 @if(auth()->user()->hasAnyRole('BT Super Admin'))
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option ="0"> Select Operator</option>
+                 @foreach ($operators as $operator)
+                 <option value="{{$operator->id}}" @php echo $operator->id == $Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                 @endforeach
+                 </select>
+                 @else
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option value="{{$Selected_OperatorId}}"> {{$operator_Name}}</option>
+                 </select>
+
+                 @endif
+               </div>
                   <div class="form-group col-md-2">
                     <button type="submit" class="btn btn-primary">Search</button>
                   </div>
