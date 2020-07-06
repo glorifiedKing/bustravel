@@ -386,12 +386,12 @@ class BookingsController extends Controller
       {
        $m_driver =Driver::where($this->userId,auth()->user()->id)->first();
        if($bus_no==""){
-         $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$driver->id)
+         $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$m_driver->id)
          ->where('days_of_week', 'like', "%$travel_day_of_week%")
          ->whereBetween('departure_time', [$m_from, $m_to])
          ->get();
        }else{
-         $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$driver->id)
+         $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$m_driver->id)
          ->where('days_of_week', 'like', "%$travel_day_of_week%")
          ->whereBetween('departure_time', [$m_from, $m_to])->where('bus_id',$bus_no)
          ->get();
