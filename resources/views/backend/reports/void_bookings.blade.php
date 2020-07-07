@@ -1,12 +1,12 @@
 @extends('bustravel::backend.layouts.app')
 
-@section('title', 'Bookings')
+@section('title', 'Void Bookings')
 
 @section('content_header')
 <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Bookings</h1>
+        <h1 class="m-0 text-dark"> Void Bookings</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -31,25 +31,40 @@
                   <div class="row">
                   <div class="form-group col-md-3">
                     <label>Ticket No</label>
-                    <input type="text"  name="ticket" value="{{$ticket??""}}" class="form-control " id="exampleInputEmail1" placeholder="Ticket No" >
+                    <input type="text"  name="ticket" value="{{$v_ticket??""}}" class="form-control " id="exampleInputEmail1" placeholder="Ticket No" >
                   </div>
                   <div class="form-group col-md-3 ">
                     <label>Start Station</label>
-                    <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station">
+                    <select class="form-control select2 {{ $errors->has('start_station') ? ' is-invalid' : '' }}" name="start_station"  placeholder="Select Station" onchange="this.form.submit()">
                       <option value="">Select Station</option>
-                      @foreach($stations as $station)
-                          <option value="{{$station->id}}" @php echo $start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
+                      @foreach($v_stations as $station)
+                          <option value="{{$station->id}}" @php echo $v_start_station == $station->id ? 'selected' :  "" @endphp>{{$station->name}} - {{$station->code}}</option>
                       @endforeach
                     </select>
                   </div>
                   <div class="form-group col-md-3">
                     <label>From</label>
-                    <input type="date"  name="from" value="{{$from??""}}" class="form-control " id="exampleInputEmail1" >
+                    <input type="date"  name="from" value="{{$v_from??""}}" class="form-control " id="exampleInputEmail1" >
                   </div>
                   <div class="form-group col-md-3">
                     <label>To</label>
-                    <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
+                    <input type="date"  name="fto" value="{{$v_to??""}}" class="form-control " id="exampleInputEmail1"  >
                   </div>
+                  <div class="form-group col-md-3">
+                 @if(auth()->user()->hasAnyRole('BT Super Admin'))
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option ="0"> Select Operator</option>
+                 @foreach ($v_operators as $operator)
+                 <option value="{{$operator->id}}" @php echo $operator->id == $v_Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                 @endforeach
+                 </select>
+                 @else
+                 <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                 <option value="{{$v_Selected_OperatorId}}"> {{$v_operator_Name}}</option>
+                 </select>
+
+                 @endif
+               </div>
                   <div class="form-group col-md-2">
                     <button type="submit" class="btn btn-primary">Search</button>
                   </div>

@@ -61,6 +61,22 @@
                       <label>To</label>
                       <input type="date"  name="b_to" value="{{$b_to??""}}" class="form-control " id="exampleInputEmail1"  >
                     </div>
+                    <div class="form-group col-md-3">
+                    <label>Operator</label>
+                   @if(auth()->user()->hasAnyRole('BT Super Admin'))
+                   <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                   <option ="0"> Select Operator</option>
+                   @foreach ($b_operators as $operator)
+                   <option value="{{$operator->id}}" @php echo $operator->id == $b_Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+                   @endforeach
+                   </select>
+                   @else
+                   <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+                   <option value="{{$b_Selected_OperatorId}}"> {{$b_operator_Name}}</option>
+                   </select>
+
+                   @endif
+                 </div>
                     <div class="form-group col-md-6">
                       <button type="submit" class="btn btn-primary">Search</button>
                     </div>
@@ -119,8 +135,7 @@
             <div class="row">
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
+                    <h5 class="description-header">{{number_format($total_bookings,0)}}</h5>
                     <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
                 </div>
                 <!-- /.description-block -->
@@ -128,27 +143,24 @@
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left" aria-hidden="true"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
+                    <h5 class="description-header">{{number_format($total_bookings_amount,0)}}</h5>
+                    <span class="description-text">TOTAL  BOOKINGS AMOUNT</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up" aria-hidden="true"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
+                    <h5 class="description-header">{{number_format($total_number_of_routes,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF ROUTES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-3 col-6">
                 <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down" aria-hidden="true"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">TOTAL NUMBER OF BOOKINGS</span>
+                    <h5 class="description-header">{{number_format($total_number_of_services,0)}}</h5>
+                    <span class="description-text">TOTAL NUMBER OF SERVICES</span>
                 </div>
                 <!-- /.description-block -->
                 </div>
@@ -194,6 +206,7 @@ var table = $('#example1').DataTable({
       ],
             });
   $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
+  $('.select2').select2();
 })
 </script>
 

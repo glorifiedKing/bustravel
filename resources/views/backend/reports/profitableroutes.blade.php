@@ -32,21 +32,37 @@
                 <div class="row">
                 <div class="form-group col-md-3">
                 <select  name="period" class="form-control select2" onchange="this.form.submit()" >
-                <option value="1" @php echo $period == 1 ? 'selected' :  "" @endphp>This Week </option>
-                <option value="2" @php echo $period == 2 ? 'selected' :  "" @endphp>This Month </option>
-                <option value="3" @php echo $period == 3 ? 'selected' :  "" @endphp>Last Month</option>
-                <option value="4" @php echo $period == 4 ? 'selected' :  "" @endphp>Last 3 Months </option>
-                <option value="5" @php echo $period == 5 ? 'selected' :  "" @endphp>Last 6 Months </option>
-                <option value="6" @php echo $period == 6 ? 'selected' :  "" @endphp>This Year </option>
+                <option value="1" @php echo $r_period == 1 ? 'selected' :  "" @endphp>This Week </option>
+                <option value="2" @php echo $r_period == 2 ? 'selected' :  "" @endphp>This Month </option>
+                <option value="3" @php echo $r_period == 3 ? 'selected' :  "" @endphp>Last Month</option>
+                <option value="4" @php echo $r_period == 4 ? 'selected' :  "" @endphp>Last 3 Months </option>
+                <option value="5" @php echo $r_period == 5 ? 'selected' :  "" @endphp>Last 6 Months </option>
+                <option value="6" @php echo $r_period == 6 ? 'selected' :  "" @endphp>This Year </option>
                 </select>
               </div>
               <div class="form-group col-md-6">
               <select  name="route" class="form-control select2"  onchange="this.form.submit()">
-              @foreach ($routes as $main_route)
-              <option value="{{$main_route->id}}" @php echo $main_route->id == $route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] </option>
+              <option value="all">All Routes</option>
+              @foreach ($r_routes as $main_route)
+              <option value="{{$main_route->id}}" @php echo $main_route->id == $r_route_id ? 'selected' :  "" @endphp>{{$main_route->start->name}} [ {{$main_route->start->code}} ] - {{$main_route->end->name}} [ {{$main_route->end->code}} ] </option>
               @endforeach
               </select>
             </div>
+            <div class="form-group col-md-3">
+           @if(auth()->user()->hasAnyRole('BT Super Admin'))
+           <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+           <option ="0"> Select Operator</option>
+           @foreach ($r_operators as $operator)
+           <option value="{{$operator->id}}" @php echo $operator->id == $r_Selected_OperatorId ? 'selected' :  "" @endphp>{{$operator->name}}</option>
+           @endforeach
+           </select>
+           @else
+           <select  name="operator_id" class="form-control select2"  onchange="this.form.submit()">
+           <option value="{{$r_Selected_OperatorId}}"> {{$r_operator_Name}}</option>
+           </select>
+
+           @endif
+         </div>
           </div>
                 </form>
               </div>
@@ -86,8 +102,8 @@ option = {
     },
     legend: {
         data: [
-          @foreach($route_departures as $route_time)
-          '{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+          @foreach($r_services as $route_time)
+          '{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
         @endforeach
       ]
     },
@@ -109,7 +125,7 @@ option = {
             type: 'category',
             axisTick: {show: false},
             data: [
-              @foreach($x_axis as $axis)
+              @foreach($r_x_axis as $axis)
                  '{{$axis}}',
               @endforeach
             ]
@@ -122,13 +138,13 @@ option = {
     ],
     series: [
 
-      @foreach($route_departures as $route_time)
+      @foreach($r_services as $route_time)
      {
-         name:'{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+         name:'{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
          type:'bar',
          barGap: 0,
          data:[
-           @foreach($weekarray as $arrayd)
+           @foreach($r_weekarray as $arrayd)
 
              {{$arrayd[$route_time->id]}},
            @endforeach
