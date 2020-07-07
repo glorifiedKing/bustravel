@@ -10,6 +10,7 @@ use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\ListBookings;
 use Illuminate\Http\Request;
+use glorifiedking\BusTravel\ReportsRoutesTraffic;
 use Illuminate\Routing\Controller;
 class ReportsController extends Controller
 {
@@ -241,7 +242,6 @@ class ReportsController extends Controller
                   ->whereIn($this->RoutesDepartureTimeId,$stover_services)->where($this->Status, 1)->count();
                  $year_sales = $year_sales_main +$year_sales_stover;
                  $year_sales_count = $year_sales_count_main +$year_sales_count_stover;
-
                 $y_axis[] = $year_sales;
                 $y_axis1[] = $year_sales_count;
             }
@@ -335,7 +335,6 @@ class ReportsController extends Controller
             $r_monthStartDatestring = $r_now->startOfMonth()->subMonth();
             $r_monthStartDate = $r_monthStartDatestring->startOfMonth()->format('Y-m-d');
             $r_monthEndDate = $r_monthStartDatestring->endOfMonth()->format('Y-m-d');
-
             $r_daterange = CarbonPeriod::create($r_monthStartDate, $r_monthEndDate);
             $r_monthdates = [];
             foreach ($r_daterange as $r_monthdate) {
@@ -470,141 +469,33 @@ class ReportsController extends Controller
         $t_x_axis = [];
         $t_y_axis = [];
         if ($t_period == 1) {
-            $t_now = \Carbon\Carbon::now();
-            $t_weekStartDate = $t_now->startOfWeek()->format('Y-m-d ');
-            $t_weekEndDate = $t_now->endOfWeek()->format('Y-m-d');
-
-            $t_daterange = CarbonPeriod::create($t_weekStartDate, $t_weekEndDate);
-            $t_weekdates = [];
-            foreach ($t_daterange as $weekdate) {
-                $t_weekdates[] = $weekdate->format('Y-m-d');
-                $t_x_axis[] = $weekdate->format('D');
-            }
-            foreach ($t_weekdates as $wdates) {
-              // Main Routes Bookings
-              $traffic_count_main = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
-              ->where($this->route_type,$this->main_route)
-              ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-              // Stop Overs Routes Bookings
-              $traffic_count_stover = Booking::whereBetween($this->CreatedAt, [$wdates.$this->StartDayTime, $wdates.$this->EndDayTime])
-              ->where($this->route_type,$this->stop_over_route)
-              ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-             $day_traffic= $traffic_count_main +$traffic_count_stover;
-                $t_y_axis[] = $day_traffic;
-            }
+           $this_week_traffic =ReportsRoutesTraffic::week($t_main_services,$t_stover_services);
+            $t_x_axis=$this_week_traffic[1];
+            $t_y_axis=$this_week_traffic[0];
         } elseif ($t_period == 2) {
-            $t_now = \Carbon\Carbon::now();
-            $t_monthStartDate = $t_now->startOfMonth()->format('Y-m-d ');
-            $t_monthEndDate = $t_now->endOfMonth()->format('Y-m-d');
+          $this_month_traffic =ReportsRoutesTraffic::Thismonth($t_main_services,$t_stover_services);
+           $t_x_axis=$this_month_traffic[1];
+           $t_y_axis=$this_month_traffic[0];
 
-            $t_daterange = CarbonPeriod::create($t_monthStartDate, $t_monthEndDate);
-            $t_monthdates = [];
-            foreach ($t_daterange as $monthdate) {
-                $t_monthdates[] = $monthdate->format('Y-m-d');
-                $t_x_axis[] = $monthdate->format('d');
-            }
-            foreach ($t_monthdates as $mdates) {
-              // Main Routes Bookings
-                $month_traffic_count_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
-                ->where($this->route_type,$this->main_route)
-                ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-                // Stop Overs Routes Bookings
-                $month_traffic_count_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
-                ->where($this->route_type,$this->stop_over_route)
-                ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-               $month_traffic = $month_traffic_count_main +$month_traffic_count_stover;
-                $t_y_axis[] = $month_traffic;
-            }
         } elseif ($t_period == 3) {
-            $t_now = \Carbon\Carbon::now();
-            $t_monthStartDatestring = $t_now->startOfMonth()->subMonth();
-            $t_monthStartDate = $t_monthStartDatestring->startOfMonth()->format('Y-m-d');
-            $t_monthEndDate = $t_monthStartDatestring->endOfMonth()->format('Y-m-d');
+          $last_month_traffic =ReportsRoutesTraffic::Lastmonth($t_main_services,$t_stover_services);
+           $t_x_axis=$last_month_traffic[1];
+           $t_y_axis=$last_month_traffic[0];
 
-            $t_daterange = CarbonPeriod::create($t_monthStartDate, $t_monthEndDate);
-            $t_monthdates = [];
-            foreach ($t_daterange as $monthdate) {
-                $t_monthdates[] = $monthdate->format('Y-m-d');
-                $t_x_axis[] = $monthdate->format('d');
-            }
-            foreach ($t_monthdates as $mdates) {
-              // Main Routes Bookings
-                $lastmonth_traffic_count_main = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
-                ->where($this->route_type,$this->main_route)
-                ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-                // Stop Overs Routes Bookings
-                $lastmonth_traffic_count_stover = Booking::whereBetween($this->CreatedAt, [$mdates.$this->StartDayTime, $mdates.$this->EndDayTime])
-                ->where($this->route_type,$this->stop_over_route)
-                ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-               $last_month_traffic = $lastmonth_traffic_count_main +$lastmonth_traffic_count_stover;
-                $t_y_axis[] = $last_month_traffic;
-            }
         } elseif ($t_period == 4) {
-            //$monthStartDatestring = $now->startOfMonth();
-            $t_startperiod = \Carbon\Carbon::now()->startOfMonth();
-            $t_endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(2);
-            $t_daterange = CarbonPeriod::create($t_endperiod, '1 month', $t_startperiod);
-            foreach ($t_daterange as $month) {
-                $t_x_axis[] = $month->format('M-y');
-                $t_monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
-                $t_monthStartDate = $t_monthdatestring->startOfMonth()->format('Y-m-d');
-                $t_monthEndDate = $t_monthdatestring->endOfMonth()->format('Y-m-d');
-                // Main Routes Bookings
-                  $traffic_3months_count_main = Booking::whereBetween($this->CreatedAt, [$t_monthStartDate.$this->StartDayTime, $t_monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->main_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-                  // Stop Overs Routes Bookings
-                  $traffic_3months_count_stover = Booking::whereBetween($this->CreatedAt, [$t_monthStartDate.$this->StartDayTime, $t_monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->stop_over_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-                 $month_traffic = $traffic_3months_count_main +$traffic_3months_count_stover;
+          $last_3month_traffic =ReportsRoutesTraffic::last3months($t_main_services,$t_stover_services);
+           $t_x_axis=$last_3month_traffic[1];
+           $t_y_axis=$last_3month_traffic[0];
 
-                $t_y_axis[] = $month_traffic;
-            }
         } elseif ($t_period == 5) {
-            //$monthStartDatestring = $now->startOfMonth();
-            $t_startperiod = \Carbon\Carbon::now()->startOfMonth();
-            $t_endperiod = \Carbon\Carbon::now()->startOfMonth()->subMonths(5);
-            $t_daterange = CarbonPeriod::create($t_endperiod, '1 month', $t_startperiod);
-            foreach ($t_daterange as $month) {
-                $t_x_axis[] = $month->format('M-y');
-                $t_monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
-                $t_monthStartDate = $t_monthdatestring->startOfMonth()->format('Y-m-d');
-                $t_monthEndDate = $t_monthdatestring->endOfMonth()->format('Y-m-d');
+          $last_6month_traffic =ReportsRoutesTraffic::last6months($t_main_services,$t_stover_services);
+          $t_x_axis=$last_6month_traffic[1];
+          $t_y_axis=$last_6month_traffic[0];
 
-                // Main Routes Bookings
-                  $traffic_6months_main = Booking::whereBetween($this->CreatedAt, [$t_monthStartDate.$this->StartDayTime, $t_monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->main_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-                  // Stop Overs Routes Bookings
-                  $traffic_6months_stover = Booking::whereBetween($this->CreatedAt, [$t_monthStartDate.$this->StartDayTime, $t_monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->stop_over_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-                 $traffic_6month_count = $traffic_6months_main +$traffic_6months_stover;
-                $t_y_axis[] = $traffic_6month_count;
-            }
         } elseif ($t_period == 6) {
-            $yearStartDate = \Carbon\Carbon::parse('first day of January');
-            $yearEndDate = \Carbon\Carbon::parse('last day of December');
-            $daterange = CarbonPeriod::create($yearStartDate, '1 month', $yearEndDate);
-            foreach ($daterange as $month) {
-                $t_x_axis[] = $month->format('M-y');
-                $monthdatestring = \Carbon\Carbon::createFromDate($month->format('Y'), $month->format('m'), 01);
-                $startdate[] = $monthdatestring;
-                $monthStartDate = $monthdatestring->startOfMonth()->format('Y-m-d');
-                $monthEndDate = $monthdatestring->endOfMonth()->format('Y-m-d');
-
-                // Main Routes Bookings
-                  $year_traffic_main = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->main_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_main_services)->where($this->Status, 1)->count();
-                  // Stop Overs Routes Bookings
-                  $year_traffic_stover = Booking::whereBetween($this->CreatedAt, [$monthStartDate.$this->StartDayTime, $monthEndDate.$this->EndDayTime])
-                  ->where($this->route_type,$this->stop_over_route)
-                  ->whereIn($this->RoutesDepartureTimeId,$t_stover_services)->where($this->Status, 1)->count();
-                 $year_traffic = $year_traffic_main +$year_traffic_stover;
-                $t_y_axis[] = $year_traffic;
-            }
+          $this_year_traffic =ReportsRoutesTraffic::ThisYear($t_main_services,$t_stover_services);
+          $t_x_axis=$this_year_traffic[1];
+          $t_y_axis=$this_year_traffic[0];
         }
         $t_routes =Route::where($this->OperatorId,$t_Selected_OperatorId)->get();
         $t_operators =Operator::where($this->Status,1)->get();
