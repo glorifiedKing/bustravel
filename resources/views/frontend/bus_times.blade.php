@@ -17,7 +17,7 @@
                                 <div class="col-md-3">
                                     <select class="form-control select_search" name="start_station">
                                         @foreach ($stations as $item)
-                                            <option value="{{$item->id}}">{{$item->name}}</option>
+                                            <option value="{{$item->id}}" @if($selected_station->id == $item->id) selected @endif>{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
