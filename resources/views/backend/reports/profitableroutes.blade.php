@@ -102,8 +102,8 @@ option = {
     },
     legend: {
         data: [
-          @foreach($r_services as $route_time)
-          '{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+          @foreach($service_detials as $route_time)
+          '{{$route_time}}',
         @endforeach
       ]
     },
@@ -138,15 +138,15 @@ option = {
     ],
     series: [
 
-      @foreach($r_services as $route_time)
+      @foreach($service_detials as $key=> $route_time)
      {
-         name:'{{$route_time->route->start->code??"None"}}-{{$route_time->route->end->code??"None"}}/{{str_replace(' ', '', $route_time->departure_time)}}-{{str_replace(' ', '', $route_time->arrival_time)}}',
+         name:'{{$route_time}}',
          type:'bar',
          barGap: 0,
          data:[
            @foreach($r_weekarray as $arrayd)
 
-             {{$arrayd[$route_time->id]}},
+             {{$arrayd[$key]}},
            @endforeach
 //dd($empty);
 
