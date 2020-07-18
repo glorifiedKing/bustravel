@@ -6,18 +6,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Http\Request;
 use glorifiedking\BusTravel\PaymentTransaction;
-use glorifiedking\BusTravel\Booking;
-use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
-use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\SmsTemplate;
 use glorifiedking\BusTravel\EmailTemplate;
-use glorifiedking\BusTravel\OperatorPaymentMethod;
-use glorifiedking\BusTravel\CreditTransaction;
-use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use glorifiedking\BusTravel\GeneralSetting;
-use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Mail\TicketEmail;
 use AfricasTalking\SDK\AfricasTalking;
 use Carbon\Carbon;
@@ -38,7 +30,7 @@ class ResendTicket implements ShouldQueue
 
     public function handle()
     {
-        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');        
+               
         
         $transaction = PaymentTransaction::find($this->transaction_id);
 
@@ -63,7 +55,7 @@ class ResendTicket implements ShouldQueue
             {
    
                 $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time : $ticket->stop_over_route_departure_time;
-               // $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : [];//$ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
+               
                 $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");   
                 $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
                 $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
@@ -87,7 +79,7 @@ class ResendTicket implements ShouldQueue
                     }
                     catch(\Exception $e)
                     {
-                        $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                        $error_log = Carbon::now()->toDateTimeString()." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
                         \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
                     }
@@ -101,10 +93,7 @@ class ResendTicket implements ShouldQueue
 
                     \Mail::to($transaction->email)->send(new TicketEmail($data));
 
-                    // $notification_type = 'success';
-                    //$notification_message .= 'An Email has been sent to you with your ticket details!';
-
-
+                   
                 }
             }
         
