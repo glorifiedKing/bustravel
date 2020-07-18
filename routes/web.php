@@ -146,7 +146,8 @@ Route::post('api/getBusServices/{operatorId}','BookingsController@get_route_time
 
 // payment reports
 Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');
-
+Route::any('transactions','SupportController@show_transactions')->name('bustravel.reports.transactions');
+Route::get('transactions/resend_ticket/{id}','SupportController@resend_ticket')->name('bustravel.transaction.resend_ticket');
 //dashboard
 Route::get('dashboard','DashboardController@index')->name('bustravel.dashboard');
 

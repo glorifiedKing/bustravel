@@ -172,10 +172,10 @@ class BusTravelBaseServiceProvider extends ServiceProvider
 
                     ],
                     [
-                        'text' => 'Payments Report',
-                        'url'  => route('bustravel.reports.payments'),
+                        'text' => 'Transactions',
+                        'url'  => route('bustravel.reports.transactions'),
                         'icon' => 'fa fa-money-check',
-                        'can' => 'View BT Payment Reports'
+                        'can' => 'View BT Customer Transactions'
 
                     ],
 

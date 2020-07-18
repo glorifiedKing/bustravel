@@ -56,6 +56,7 @@ class PermissionSeeder extends Seeder
         $permission37 = factory(Permission::class)->create(['name' => 'Update BT Users']);
         $permission38 = factory(Permission::class)->create(['name' => 'Delete BT Users']);
         $permission39 = factory(Permission::class)->create(['name' => 'View BT Driver Manifest']);
+        $permission40 = factory(Permission::class)->create(['name' => 'View BT Customer Transactions']);
 
         $role1 = factory(Role::class)->create(['name' => 'BT Super Admin']);
         $role1->givePermissionTo([
@@ -65,7 +66,7 @@ class PermissionSeeder extends Seeder
           $permission19, $permission20, $permission21, $permission22, $permission23, $permission24,
           $permission25, $permission26, $permission27, $permission28, $permission29, $permission30,
           $permission31, $permission32, $permission33, $permission34, $permission35, $permission36,
-          $permission37, $permission38,$permission39,
+          $permission37, $permission38,$permission39,$permission40,
         ]);
         $role2 = factory(Role::class)->create(['name' => 'BT Administrator']);
         $role2->givePermissionTo([
