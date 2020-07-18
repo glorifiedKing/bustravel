@@ -1,23 +1,24 @@
 <?php
 namespace glorifiedking\BusTravel\Jobs;
 
-use Illuminate\Bus\Queueable;
+use AfricasTalking\SDK\AfricasTalking;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use glorifiedking\BusTravel\PaymentTransaction;
+use Illuminate\Foundation\Bus\Dispatchable;
 use glorifiedking\BusTravel\SmsTemplate;
 use glorifiedking\BusTravel\EmailTemplate;
 use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\Mail\TicketEmail;
-use AfricasTalking\SDK\AfricasTalking;
+use Illuminate\Bus\Queueable;
+
 use Carbon\Carbon;
 
 class ResendTicket implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    const RWANDA_DATE_FORMAT = "d/m/Y";
     
     private $transaction_id;
     
@@ -40,13 +41,13 @@ class ResendTicket implements ShouldQueue
             $send_sms = $transaction->send_sms;
             $africas_talking_username = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
             $africas_talking_apikey = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
-            $sms_template = SmsTemplate::where([
+            $operator_sms_template = SmsTemplate::where([
                 ['operator_id','=',$transaction->operator->id],
                 ['purpose','=','TICKET'],
                 ['language','=',$transaction->language]
             ])->first();
             // 2 email 
-            $email_template = EmailTemplate::where([
+            $operator_email_template = EmailTemplate::where([
                 ['operator_id','=',$transaction->operator->id],
                 ['purpose','=','TICKET'],
                 ['language','=',$transaction->language]
@@ -57,11 +58,11 @@ class ResendTicket implements ShouldQueue
                 $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time : $ticket->stop_over_route_departure_time;
                
                 $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");   
-                $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
-                $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
+                $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format(self::RWANDA_DATE_FORMAT),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format(self::RWANDA_DATE_FORMAT),$ticket->amount,Carbon::parse($ticket->date_paid)->format(self::RWANDA_DATE_FORMAT),$transaction->payment_method);
+                $sms_text = str_replace($search_for, $replace_with, $operator_sms_template->message ?? '');
+                $email_message = str_replace($search_for, $replace_with, $operator_email_template->message ?? '');
                 
-                if($sms_template && $send_sms == 1)
+                if($operator_sms_template && $send_sms == 1)
                 {
                     // send sms 
                     try{
@@ -85,7 +86,7 @@ class ResendTicket implements ShouldQueue
                     }
                 }                    
 
-                if($email_template && $transaction->email)
+                if($operator_email_template && $transaction->email)
                 {
                     //send email 
                     

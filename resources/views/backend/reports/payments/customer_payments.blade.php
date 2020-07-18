@@ -113,8 +113,9 @@
                                 <td>{{$payment_report->amount}}</td>
                                 <td>
                                     <ul>
+                                        <li>Operator: {{$payment_report->operator->name ?? ''}}</li>
                                     @foreach ($payment_report->services() as $service)
-                                            <li>From: {{$service['from']}} To: {{$service['to']}} At: {{$service['time']}}</li>
+                                    <li> From: {{$service['from']}} To: {{$service['to']}} At: {{$service['time']}}</li>
                                     @endforeach
                                     </ul>
                                 </td>
