@@ -81,7 +81,7 @@ class DriversController extends Controller
             $user = new $user_class();
             $user->name= request()->input('name');
             $user->email= request()->input('email');
-            $user->password=bcrypt('password');
+            $user->password=bcrypt($request->password);
             $user->phone_number = request()->input('phone_number');
             $user->status=1;
             $user->operator_id = auth()->user()->operator_id;
@@ -148,7 +148,7 @@ class DriversController extends Controller
           $user1 = new $user_class();
           $user1->name= request()->input('name');
           $user1->email= request()->input('email');
-          $user1->password=bcrypt('password');
+          $user1->password=bcrypt($request->password);
           $user1->phone_number = request()->input('phone_number');
           $user1->status=1;
           $user1->operator_id = auth()->user()->operator_id;
@@ -160,6 +160,9 @@ class DriversController extends Controller
           $user->name= request()->input('name');
           $user->email= request()->input('email');
           $user->phone_number = request()->input('phone_number');
+          if(isset($request->password)){
+            $user->password = bcrypt($request->password);
+          }
           $user->save();
           $user->syncRoles('BT Driver');
           $user_id = $user->id;

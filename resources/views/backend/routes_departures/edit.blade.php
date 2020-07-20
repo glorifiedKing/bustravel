@@ -90,8 +90,8 @@
                              <th scope="col" > Type</th>
                              <th scope="col" > From</th>
                              <th scope="col" > To</th>
-                             <th scope="col" >In</th>
-                             <th scope="col" >Out</th>
+                             <th scope="col" >In(at departure)</th>
+                             <th scope="col" >Out(at destination)</th>
                            </tr>
                          </thead>
 

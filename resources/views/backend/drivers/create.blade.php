@@ -80,12 +80,21 @@
                             </span>
                         @endif
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         <label for="exampleInputEmail1">Email</label>
                         <input type="text" name="email" value="{{old('email')}}"  class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" id="exampleInputEmail1" placeholder="Enter Email">
                         @if ($errors->has('email'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('email') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="examplePassword">Password</label>
+                        <input type="password" name="password"   class="form-control {{ $errors->has('password') ? ' is-invalid' : '' }}" id="exampleInputPassword" placeholder="**">
+                        @if ($errors->has('password'))
+                            <span class="invalid-feedback">
+                                <strong>{{ $errors->first('password') }}</strong>
                             </span>
                         @endif
                     </div>
