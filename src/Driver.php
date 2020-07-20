@@ -17,6 +17,7 @@ class Driver extends Model
     'driving_permit_no' => 'required|unique:drivers',
     'phone_number'      => 'required',
     'address'           => 'required',
+    'password'          => 'required',
   ];
 
     public function operator()
