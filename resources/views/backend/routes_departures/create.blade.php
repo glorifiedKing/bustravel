@@ -136,6 +136,16 @@
                               <td >
                                   {{$stoverstation->end_stopover_station->name}}
                               </td>
+                              <td>
+                                <div class="form-group">
+                                 <div class="input-group date timepicker" id="departure_time{{$stoverstation->id}}" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#departure_time{{$stoverstation->id}}"  name="stopover_departure_time[]" value="" required/>
+                                    <div class="input-group-append" data-target="#departure_time{{$stoverstation->id}}" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
+                                    </div>
+                                 </div>
+                                </div>
+                              </td>
                               <td >
                                 <div class="form-group">
                                  <div class="input-group date timepicker" id="arrival_time{{$stoverstation->id}}" data-target-input="nearest">
@@ -150,16 +160,6 @@
                                   @endif
                                  </div>
                                </div>
-                              </td>
-                              <td>
-                                <div class="form-group">
-                                 <div class="input-group date timepicker" id="departure_time{{$stoverstation->id}}" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" data-target="#departure_time{{$stoverstation->id}}"  name="stopover_departure_time[]" value="" required/>
-                                    <div class="input-group-append" data-target="#departure_time{{$stoverstation->id}}" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
-                                    </div>
-                                 </div>
-                                </div>
                               </td>
                             </tr>
                              @endforeach

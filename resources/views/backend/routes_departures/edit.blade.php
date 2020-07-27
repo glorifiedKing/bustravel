@@ -143,16 +143,6 @@
                                                  <input type='hidden' value='{{$stoverstation->id}}' name='stopover_routeid[]'>
                                              </td>
                                              <td>{{$stoverstation->end_stopover_station->name}}</td>
-                                             <td >
-                                              <div class="form-group">
-                                               <div class="input-group date timepicker" id="arrival_time{{$stoverstation->id}}" data-target-input="nearest">
-                                                  <input type="text" class="form-control datetimepicker-input" data-target="#arrival_time{{$stoverstation->id}}"  name="stopover_arrival_time[]" value="{{$times->arrival_time??""}}" required/>
-                                                  <div class="input-group-append" data-target="#arrival_time{{$stoverstation->id}}" data-toggle="datetimepicker">
-                                                      <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
-                                                  </div>
-                                               </div>
-                                             </div>
-                                             </td>
                                              <td>
                                                 <div class="form-group">
                                                  <div class="input-group date timepicker" id="departure_time{{$stoverstation->id}}" data-target-input="nearest">
@@ -162,6 +152,16 @@
                                                     </div>
                                                  </div>
                                                </div>
+                                             </td>
+                                             <td >
+                                              <div class="form-group">
+                                               <div class="input-group date timepicker" id="arrival_time{{$stoverstation->id}}" data-target-input="nearest">
+                                                  <input type="text" class="form-control datetimepicker-input" data-target="#arrival_time{{$stoverstation->id}}"  name="stopover_arrival_time[]" value="{{$times->arrival_time??""}}" required/>
+                                                  <div class="input-group-append" data-target="#arrival_time{{$stoverstation->id}}" data-toggle="datetimepicker">
+                                                      <div class="input-group-text"><i class="fa fa-clock" aria-hidden="true"></i></div>
+                                                  </div>
+                                               </div>
+                                             </div>
                                              </td>
                                            </tr>
                                        @endif
