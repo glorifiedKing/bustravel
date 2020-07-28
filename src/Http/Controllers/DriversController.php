@@ -91,12 +91,12 @@ class DriversController extends Controller
         $driver = new Driver();
         $driver->user_id = $user->id;
         $driver->name = request()->input('name');
-        $driver->nin = strtoupper(request()->input('nin'));
-        $driver->date_of_birth = request()->input('date_of_birth');
-        $driver->driving_permit_no = strtoupper(request()->input('driving_permit_no'));
+        $driver->nin = strtoupper(request()->input('nin') ?? '000000');
+        $driver->date_of_birth = request()->input('date_of_birth') ?? '1900-01-01';
+        $driver->driving_permit_no = strtoupper(request()->input('driving_permit_no') ?? '000000');
         $driver->picture = $photoname ?? null;
         $driver->phone_number = request()->input('phone_number');
-        $driver->address = request()->input('address');
+        $driver->address = request()->input('address') ?? 'NO ADDRESS';
         $driver->status = request()->input('status');
         $driver->save();
         return redirect()->route('bustravel.drivers')->with(ToastNotification::toast('Driver '.$driver->name.' has successfully been saved','Driver Saving'));
@@ -121,11 +121,11 @@ class DriversController extends Controller
         $validation = request()->validate([
         'email'             => 'required|unique:users,email,'.$driver->user_id,
         'name'              => 'required',
-        'nin'               => 'required|unique:drivers,nin,'.$id,
-        'date_of_birth'     => 'required',
-        'driving_permit_no' => 'required|unique:drivers,driving_permit_no,'.$id,
+      //  'nin'               => 'required|unique:drivers,nin,'.$id,
+      //  'date_of_birth'     => 'required',
+      //  'driving_permit_no' => 'required|unique:drivers,driving_permit_no,'.$id,
         'phone_number'      => 'required',
-        'address'           => 'required',
+      //  'address'           => 'required',
       ]);
 
         if ($request->hasFile('newpicture')) {

@@ -12,11 +12,11 @@ class Driver extends Model
     public static $rules = [
     'email'              => 'required|unique:users',
     'name'              => 'required',
-    'nin'               => 'required|unique:drivers',
-    'date_of_birth'     => 'required',
-    'driving_permit_no' => 'required|unique:drivers',
+   // 'nin'               => 'required|unique:drivers',
+   // 'date_of_birth'     => 'required',
+  //  'driving_permit_no' => 'required|unique:drivers',
     'phone_number'      => 'required',
-    'address'           => 'required',
+  //  'address'           => 'required',
     'password'          => 'required',
   ];
 
