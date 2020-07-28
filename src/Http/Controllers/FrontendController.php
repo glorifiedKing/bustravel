@@ -48,6 +48,8 @@ class FrontendController extends Controller
     public function search_routes(Request $request)
     {
         $last_date = Carbon::now()->addWeeks(2)->toDateString();
+        $now = Carbon::now()->addMinutes(5);
+        $now_string = $now->toDateTimeString();
         $validated_data = $request->validate([
             'to_station'        => 'required|numeric|different:departure_station',
             'departure_station' => 'required|numeric',
@@ -56,7 +58,16 @@ class FrontendController extends Controller
             'adults'            => 'numeric|min:1',
         ]);
 
-        //search
+        $selected_date_time = Carbon::parse($request->date_of_travel." ".$request->time_of_travel);
+        if($selected_date_time < $now){
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'date_of_travel' => ["date of travel must be after $now_string"],
+                'time_of_travel' => ["you need to book at least 5min before departure"],
+                
+            ]);
+            throw $error;
+        }
+    
 
         // get which day of the week it is for date
         $travel_day_of_week = Carbon::parse($request->date_of_travel)->format('l');
