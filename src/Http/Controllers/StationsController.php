@@ -81,7 +81,7 @@ class StationsController extends Controller
         //validate
         $station = (!empty($request->station_id)) ? Station::findOrFail($request->station_id) : new Station();
         $validated_data = $request->validate([
-            'station_name' => 'required|alpha_num',
+            'station_name' => 'required|',
             'code'         => 'required|size:3|unique:stations,code,'.$station->id,
         ]);
 
