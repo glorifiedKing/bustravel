@@ -2,7 +2,9 @@
 
 namespace glorifiedking\BusTravel\Http\Controllers;
 
+use glorifiedking\BusTravel\Booking;
 use glorifiedking\BusTravel\Bus;
+use glorifiedking\BusTravel\DeviceScanLog;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\StopoverStation;
@@ -13,6 +15,7 @@ use glorifiedking\BusTravel\OperatorPaymentMethod;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use glorifiedking\BusTravel\GeneralSetting;
+use glorifiedking\BusTravel\TicketScanner;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -24,7 +27,7 @@ class ApiController extends Controller
     {
         //$this->middleware('web');
         //$this->middleware('auth');
-        $this->middleware('bt_key')->except('index','show_debit_test_form','get_station_by_name','get_route_times');
+        $this->middleware('bt_key')->except('index','show_debit_test_form','get_station_by_name','get_route_times','ticket_scan');
     }
 
     public function show_debit_test_form()
@@ -347,6 +350,105 @@ class ApiController extends Controller
             'status' => 'invalid data',
             'result' => 'unknown method or method not specified'
         ]);
+    }
+
+    public function ticket_scan(Request $request)
+    {
+        if(!isset($request->device_id))
+        {
+            return response()->json([
+                'status_code' => 401,
+                'message' => 'Unauthorized'
+            ],401);
+        }
+        $device = TicketScanner::where('device_id',$request->device_id)->first();
+        if(!$device)
+        {
+            return response()->json([
+                'status_code' => 401,
+                'message' => 'Unauthorized'
+            ],401); 
+        }
+        if($device->active == 0) {
+            return response()->json([
+                'status_code' => 403,
+                'message' => 'Forbidden Device Not Active'
+            ],403); 
+        }
+
+        if(!isset($request->ticket_number))
+        {
+            return response()->json([
+                'status_code' => 422,
+                'message' => 'Missing ticket_number'
+            ],422); 
+        }
+
+        // search for tickets 
+        $ticket = Booking::where('ticket_number',$request->ticket_number)->first();
+        if(!$ticket)
+        {
+            $log = new DeviceScanLog;
+            $log->device_id = $device->id;
+            $log->ticket_number = $request->ticket_number;
+            $log->result = "Ticket Not Found";
+            $log->ip_address = $request->ip();
+            $log->request_attributes = $request->all();
+            $log->save();
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Ticket Not Found'
+            ],404); 
+        }
+        if($ticket->boarded == 1)
+        {
+            
+            $log = new DeviceScanLog;
+            $log->device_id = $device->id;
+            $log->ticket_number = $request->ticket_number;
+            $log->result = "Ticket Already Used";
+            $log->ip_address = $request->ip();
+            $log->request_attributes = $request->all();
+            $log->save();
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Ticket Already Used'
+            ],404); 
+        }
+
+        // check if date of ticket is still on 
+        $now = Carbon::now();
+        $ticket_travel_time = Carbon::parse($ticket->date_of_travel." ".$ticket->time_of_travel);
+        if($now > $ticket_travel_time)
+        {
+            $log = new DeviceScanLog;
+            $log->device_id = $device->id;
+            $log->ticket_number = $request->ticket_number;
+            $log->result = "Ticket Time Passed";
+            $log->ip_address = $request->ip();
+            $log->request_attributes = $request->all();
+            $log->save();
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'Ticket Time Passed'
+            ],404);
+        }
+
+        $ticket->boarded = 1;
+        $ticket->save();
+        $log = new DeviceScanLog;
+        $log->device_id = $device->id;
+        $log->ticket_number = $request->ticket_number;
+        $log->result = "Ticket Boarded";
+        $log->ip_address = $request->ip();
+        $log->request_attributes = $request->all();
+        $log->save();
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Ticket Boarded'
+        ],200);
+
+
     }
 
     
