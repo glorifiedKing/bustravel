@@ -36,7 +36,9 @@ class ProcessDebitCallback implements ShouldQueue
 
     public function __construct(Request $request)
     {
-        $this->transaction_id = $request->get('transaction_reference_number');
+        $gateway_prefix = env("default_gateway_prefix","");
+        $chars = strlen($gateway_prefix);
+        $this->transaction_id = substr($request->get('transaction_reference_number'),$chars);
         $this->transaction_status = $request->get('transaction_status');
         $this->status_code = $request->get('status_code');
         $this->url = $request->fullUrl();
