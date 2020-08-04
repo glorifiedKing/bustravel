@@ -24,6 +24,8 @@ use Auth;
 use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\Jobs\ProcessDebitCallback;
 use glorifiedking\BusTravel\Jobs\ProcessCreditCallback;
+use Illuminate\Support\Facades\Log;
+
 class FrontendController extends Controller
 {
     const DAYS_OF_THE_WEEK_STRING = "days_of_week";
@@ -348,7 +350,8 @@ class FrontendController extends Controller
         ])->first();
 
         //abort if operator has no payment method
-        $phone_number = $no = "250".substr($request->phone_number, -9);
+        $country_code = GeneralSetting::where('setting_prefix','country_code')->first()->setting_value ?? '250';
+        $phone_number = $no = $country_code.substr($request->phone_number, -9);
 
         // start transaction in trasaction table
         $payment_transaction = new PaymentTransaction;
@@ -363,7 +366,7 @@ class FrontendController extends Controller
         $payment_transaction->email = $request->email;
         $payment_transaction->address_1 = $request->address_1;
         $payment_transaction->address_2 = $request->address_2;
-        $payment_transaction->country = 'RW';
+        $payment_transaction->country =  GeneralSetting::where('setting_prefix','default_country')->first()->setting_value ?? 'RW';
         $payment_transaction->send_sms = $send_sms;
         $payment_transaction->send_email = $send_email;
         $payment_transaction->date_of_travel = $date_of_travel;
@@ -372,55 +375,110 @@ class FrontendController extends Controller
         $payment_transaction->language = $language;
         $payment_transaction->save();
 
-        // dd($payment_transaction);
-        // send request if payment method is mtn mobile money
-        $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
-        // send json request
-        $request_uri = $base_api_url."/makedebitrequest";
-        $client = new \GuzzleHttp\Client(['decode_content' => false]);
-        $debit_request = $client->request('POST', $request_uri, [
+        $payment_gateway = GeneralSetting::where('setting_prefix','payment_gateway')->first()->setting_value ?? "default";
+        $system_currency = GeneralSetting::where('setting_prefix','default_currency')->first()->setting_value ?? "RWF";
 
-                    'json'   => [
-                        "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
-                        "transaction_amount" => $amount,
-                        "account_number" => "100023",
-                        "payment_operator" => 1001,
-                        "transaction_account" => $payee_reference,
-                        "transaction_reference_number" => $payment_transaction->id,
-                        "merchant_account" => "RW002",
-                        "transaction_source" => "web",
-                        "transaction_destination" => "web",
-                        "transaction_reason" => "Bus Ticket payment",
-                        "currency" => "RWF",
-                    ]
-                    ]);
-        $code = $debit_request->getStatusCode();
-        if($code == 200)
+        if($payment_gateway == "flutterwave")
         {
-           $response_body = json_decode($debit_request->getBody(),true);
-                // log request
-           $status_variables = var_export($response_body,true);
-           $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction->id." WITH:".$status_variables."";
-           //log the request
-           \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log);
-            $new_transaction_status = $response_body['transaction_status'];
-                //for success create ticket add to email and sms queue
-                if($new_transaction_status == 'failed')
-                {
-                 // immediate failure
-                    $payment_transaction->status = 'failed';
-                    $payment_transaction->payment_gateway_result = $response_body['status_code'];
-                    $payment_transaction->save();
-                    //$payment_transaction = $payment_transaction->refresh();
-                    event(new TransactionStatusUpdated($payment_transaction));
+            $request_uri = env("FLUTTERWAVE_URL","http://localhost");
+            $redirect_url = env("FLUTTERWAVE_REDIRECT_URL","http://localhost");
+            $token = env("FLUTTERWAVE_KEY","1234542");
+            $flutter_logo = env("FLUTTERWAVE_LOGO","https://transport.palmkash.com/vendor/glorifiedking/docs/images/logo_full.png");
+            $flutter_transaction_prefix = env("FLUTTERWAVE_TRANSACTION_PREFIX","flutter");
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,        
+                'Accept'        => 'application/json',
+            ];
+            $client = new \GuzzleHttp\Client(['decode_content' => false]);
+            $debit_request = $client->request('POST', $request_uri, [
+                    'headers' => $headers,
+                    'json'   => [
+                        "tx_ref"=>$flutter_transaction_prefix.$payment_transaction->id,
+                        "amount"=>"100",
+                        "currency"=>$system_currency,
+                        "redirect_url"=>$redirect_url,
+                        "payment_options"=>"card",
+                        "meta"=>[
+                           "consumer_id"=>$paying_user,
+                           "consumer_mac"=>"92a3-912ba-1192a"
+                        ],
+                        "customer"=>[
+                           "email"=>$request->email,
+                           "phonenumber"=>$phone_number,
+                           "name"=>$request->first_name
+                        ],
+                        "customizations"=>[
+                           "title"=>"Bus Ticket Payment",
+                           "description"=>"Travel With us",
+                           "logo"=>$flutter_logo
+                        ]
+                    ]
+            ]);
 
-                }
+            if ($request->session()->has('cart')) {
+                $request->session()->forget('cart');
+            }
+            $response_body = json_decode($debit_request->getBody(),true);
+            Log::info(['flutterwave' => $response_body]);
+            $data_link = $response_body['data']['link'];
+            return redirect()->to($data_link);
         }
-        // clear cart
-        if ($request->session()->has('cart')) {
-            $request->session()->forget('cart');
-        }
+        else if($payment_gateway == "default")
+        {
+             // send request if payment method is mtn mobile money
+            $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
+            $payment_operator = env('default_payment_operator',"1002");
+            $merchant_account = env('default_merchant_account',"RW002");
+            $gateway_token = env("default_gateway_token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3");
+            $gateway_prefix = env("default_gateway_prefix","");
+            // send json request
+            $request_uri = $base_api_url."/makedebitrequest";
+            $client = new \GuzzleHttp\Client(['decode_content' => false]);
+            $debit_request = $client->request('POST', $request_uri, [
 
+                        'json'   => [
+                            "token" => $gateway_token,
+                            "transaction_amount" => $amount,
+                            "account_number" => "100023",
+                            "payment_operator" => 1001,
+                            "transaction_account" => $payee_reference,
+                            "transaction_reference_number" => $gateway_prefix.$payment_transaction->id,
+                            "merchant_account" => "RW002",
+                            "transaction_source" => "web",
+                            "transaction_destination" => "web",
+                            "transaction_reason" => "Bus Ticket payment",
+                            "currency" => "RWF",
+                        ]
+                        ]);
+            $code = $debit_request->getStatusCode();
+            if($code == 200)
+            {
+            $response_body = json_decode($debit_request->getBody(),true);
+                    // log request
+            $status_variables = var_export($response_body,true);
+            $status_log = date('Y-m-d H:i:s')." transaction_id: ".$payment_transaction->id." WITH:".$status_variables."";
+            //log the request
+            \Storage::disk('local')->append('payment_debit_request_log.txt',$status_log);
+                $new_transaction_status = $response_body['transaction_status'];
+                    //for success create ticket add to email and sms queue
+                    if($new_transaction_status == 'failed')
+                    {
+                    // immediate failure
+                        $payment_transaction->status = 'failed';
+                        $payment_transaction->payment_gateway_result = $response_body['status_code'];
+                        $payment_transaction->save();
+                        //$payment_transaction = $payment_transaction->refresh();
+                        event(new TransactionStatusUpdated($payment_transaction));
+
+                    }
+            }
+            // clear cart
+            if ($request->session()->has('cart')) {
+                $request->session()->forget('cart');
+            }
+
+        }
+       
         // create notification
         $notification_type = 'error';
         $notification_message = 'Payment Error: Payment has not been successfull! Try again';
@@ -474,5 +532,16 @@ class FrontendController extends Controller
             'result' => $transaction->payment_gateway_result
         ],200);
 
+    }
+
+    public function checkout_result(Request $request)
+    {
+        $notification = array(
+            'type' => 'success',
+            'message' => "payment processing"
+        );
+        $transactionId = $request->id;
+
+        return view('bustravel::frontend.notification',compact('notification','transactionId'));
     }
 }
