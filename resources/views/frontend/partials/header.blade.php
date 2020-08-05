@@ -11,7 +11,7 @@
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="{{route('bustravel.bus.times')}}" style="color:white !important">
-                    Bus Times <span class="sr-only">(current)</span>
+                    Today's Travel Tickets <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
