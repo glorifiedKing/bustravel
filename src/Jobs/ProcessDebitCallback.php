@@ -21,6 +21,7 @@ use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\Mail\TicketEmail;
 use AfricasTalking\SDK\AfricasTalking;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ProcessDebitCallback implements ShouldQueue
 {
@@ -33,18 +34,22 @@ class ProcessDebitCallback implements ShouldQueue
     private $client_ip;
     private $method;
     private $variables;
+    private $flutter_reference;
 
     public function __construct(Request $request)
     {
-        $gateway_prefix = env("default_gateway_prefix","");
-        $chars = strlen($gateway_prefix);
-        $this->transaction_id = substr($request->get('transaction_reference_number'),$chars);
-        $this->transaction_status = $request->get('transaction_status');
+        $palm_kash_prefix = env("default_gateway_prefix","");
+        $flutter_transaction_prefix = env("FLUTTERWAVE_TRANSACTION_PREFIX","flutter");
+        $chars_palm = strlen($palm_kash_prefix);
+        $chars_flutter = strlen($flutter_transaction_prefix);
+        $this->transaction_id = (isset($request->transaction_reference_number)) ? substr($request->get('transaction_reference_number'),$chars_palm) : substr($request->get('tx_ref'),$chars_flutter);
+        $this->transaction_status = (isset($request->transaction_reference_number)) ? $request->get('transaction_status') : $request->get('status');
         $this->status_code = $request->get('status_code');
         $this->url = $request->fullUrl();
         $this->client_ip = $request->ip();
         $this->method = $request->method();
         $this->variables = $request->all();
+        $this->flutter_reference = $request->transaction_id ?? 0;
     }
 
     public function handle()
@@ -52,7 +57,7 @@ class ProcessDebitCallback implements ShouldQueue
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
         
         $variables_to_string = http_build_query($this->variables);//implode(":",$variables);
-        $log = date('Y-m-d H:i:s')." transaction_id: ".$this->transaction_id." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
+        $log = date('Y-m-d H:i:s')." transaction_id: ".$this->transaction_id." transaction_status ".$this->transaction_status." FROM:".$this->client_ip." BY:".$this->method." WITH:".$variables_to_string."";
         //log the request 
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
         \Storage::disk('local')->append('payment_callback_log.txt',$log);
@@ -66,207 +71,230 @@ class ProcessDebitCallback implements ShouldQueue
                 //get new status 
                 $new_transaction_status = $this->transaction_status;
                 
+                
                 //for success create ticket add to email and sms queue
-                if($new_transaction_status == 'completed')
+                if($new_transaction_status == 'completed' || $new_transaction_status == 'successful')
                 {
-                    // create tickets
-                    $no_of_tickets = $transaction->no_of_tickets;
-                    $tickets_bought = array();
-                    $paid_main_routes = $transaction->main_routes;
-                    $paid_stop_over_routes = $transaction->stop_over_routes;
-                    $operator = Operator::find($transaction->transport_operator_id);
-                    $pad_length = 6;
-                    $pad_char = 0;
-                    $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
-                    $send_sms = $transaction->send_sms;
-                    $africas_talking_username = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
-                    $africas_talking_apikey = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
-                    $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
-                    foreach($paid_main_routes as $departure_id)
+                    // check flutter
+                    $flutter_result = "successful";
+                    if($this->flutter_reference != 0)
                     {
-                        for($i=0;$i<$no_of_tickets;$i++)
-                        {
-                            $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
-                            $booking = new Booking;
-                            $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
-                            $booking->routes_departure_time_id = $departure_id;
-                            $booking->amount = $departure_time->route->price;
-                            $booking->date_paid = date('Y-m-d');
-                            $booking->date_of_travel = $transaction->date_of_travel;
-                            $booking->time_of_travel = $departure_time->departure_time;
-                            $booking->ticket_number = $ticket_number;
-                            $booking->user_id = $transaction->user_id;
-                            $booking->route_type = 'main_route';
-                            $booking->payment_source = $transaction->payment_source;
-                            $booking->payment_transaction_id = $transaction->id;
-                            $booking->save();
-
-                            $tickets_bought[] = $booking->id;
-                        }
-                        
-
-                    } 
-                    foreach($paid_stop_over_routes as $departure_id)
-                    {
-                        for($i=0;$i<$no_of_tickets;$i++)
-                        {
-                            $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
-                            $booking = new Booking;
-                            $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
-                            $booking->routes_departure_time_id = $departure_id;
-                            $booking->amount = $departure_time->route->price;
-                            $booking->date_paid = date('Y-m-d');
-                            $booking->date_of_travel = $transaction->date_of_travel;
-                            $booking->time_of_travel = $departure_time->departure_time;
-                            $booking->ticket_number = $ticket_number;
-                            $booking->route_type = 'stop_over_route';
-                            $booking->user_id = $transaction->user_id;
-                            $booking->payment_source = $transaction->payment_source;
-                            $booking->payment_transaction_id = $transaction->id;
-                            $booking->save();
-
-                            $tickets_bought[] = $booking->id;
-                        }
-
-                        
+                        $flutter_reference = $this->flutter_reference;                        
+                        $request_uri = env("FLUTTERWAVE_API_URL","http://localhost")."transactions/$flutter_reference/verify";                        
+                        $token = env("FLUTTERWAVE_KEY","1234542");                        
+                        $headers = [
+                            'Authorization' => 'Bearer ' . $token,        
+                            'Accept'        => 'application/json',
+                        ];
+                        $client = new \GuzzleHttp\Client(['headers' => $headers]);
+                        $verification_request = $client->request('GET', $request_uri);
+                        $response_body = json_decode($verification_request->getBody(),true);
+                        $flutter_result = $response_body['data']['status'];
 
                     }
 
-                    // update transaction status
-                    $transaction->status = 'completed';
-                    $transaction->save();
-
-                    //send notifications 
-                    // 1 Sms 
-                    $sms_template = SmsTemplate::where([
-                        ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET'],
-                        ['language','=',$transaction->language]
-                    ])->first();
-                    // 2 email 
-                    $email_template = EmailTemplate::where([
-                        ['operator_id','=',$operator->id],
-                        ['purpose','=','TICKET'],
-                        ['language','=',$transaction->language]
-                    ])->first();
-                    $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
-                    foreach($tickets_bought as $ticket_id)
+                    if($flutter_result == "successful")
                     {
-                        $ticket = Booking::find($ticket_id);
-                        $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
-                        //dd($departure_route);
-                        $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
-                        $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                        $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
-                        
-                        //send credit merchant 
-                        //get default payment method of operator 
-                        $default_payment_method = OperatorPaymentMethod::where([
-                            ['operator_id','=', $operator->id],
-                            ['is_default','=', '1'],
-                        ])->first();
-                        $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
-
-                        // remove sms_cost from amount 
-                       $merchant_credit = ($transaction->send_sms == 1) ? $transaction->amount - $sms_cost : $transaction->amount;
-                        $credit_transaction = new CreditTransaction;
-                        $credit_transaction->amount = $merchant_credit;
-                        $credit_transaction->transaction_id = $transaction->id;
-                        $credit_transaction->status = 'pending';
-                        $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
-                        $credit_transaction->save();
-                        // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
-                        $request_uri = $base_api_url."/makecreditrequest";
-                        try{
-                            $client = new \GuzzleHttp\Client(['decode_content' => false]);
-                            $checkstatus = $client->request('POST', $request_uri, [                    
-                                    'json'   => [
-                                        "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                        "transaction_account" => $default_payment_method->sp_phone_number,
-                                        "transaction_reference_number" => "1$transaction->id", 
-                                        "transaction_amount"=>$merchant_credit,
-                                        "account_number" => "100023",
-                                        "payment_operator" => 1001,                                        
-                                        "merchant_account" => "RW002",
-                                        "transaction_source" => "web",
-                                        "transaction_destination" => "web",
-                                        "transaction_reason" => "Bus Ticket Payment",
-                                        "currency" => "RWF",
-                                        "first_name" => $operator->name,
-                                        "last_name" => $operator->name
-                                    ]
-                                    ]); 
-                        
-                        
-                       
-                        
-                        $code = $checkstatus->getStatusCode(); 
-                        $request_log = date('Y-m-d H:i:s')." code:".$code."";
-                        \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
-                        if($code == 200) 
+                    // create tickets
+                        $no_of_tickets = $transaction->no_of_tickets;
+                        $tickets_bought = array();
+                        $paid_main_routes = $transaction->main_routes;
+                        $paid_stop_over_routes = $transaction->stop_over_routes;
+                        $operator = Operator::find($transaction->transport_operator_id);
+                        $pad_length = 6;
+                        $pad_char = 0;
+                        $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
+                        $send_sms = $transaction->send_sms;
+                        $africas_talking_username = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
+                        $africas_talking_apikey = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
+                        $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
+                        foreach($paid_main_routes as $departure_id)
                         {
-                            $response_body = json_decode($checkstatus->getBody(),true);
-                            // log request
-                             $status_variables = var_export($response_body,true);
-                             $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
-                            //save the request 
-                            \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
-                            $new_transaction_status = $response_body['transaction_status'];
-                            //for failed 
-                            if($new_transaction_status == 'failed')
+                            for($i=0;$i<$no_of_tickets;$i++)
                             {
-                             // immediate failure 
-                                $credit_transaction->status = 'failed';
-                                $credit_transaction->payment_gateway_result = $response_body['status_code'];
-                                $credit_transaction->save();                                                               
+                                $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
+                                $booking = new Booking;
+                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $booking->routes_departure_time_id = $departure_id;
+                                $booking->amount = $departure_time->route->price;
+                                $booking->date_paid = date('Y-m-d');
+                                $booking->date_of_travel = $transaction->date_of_travel;
+                                $booking->time_of_travel = $departure_time->departure_time;
+                                $booking->ticket_number = $ticket_number;
+                                $booking->user_id = $transaction->user_id;
+                                $booking->route_type = 'main_route';
+                                $booking->payment_source = $transaction->payment_source;
+                                $booking->payment_transaction_id = $transaction->id;
+                                $booking->save();
 
+                                $tickets_bought[] = $booking->id;
                             }
-                        }
-                        }
-                        catch(\Exception $e)
+                            
+
+                        } 
+                        foreach($paid_stop_over_routes as $departure_id)
                         {
-                            $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
-                            \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
+                            for($i=0;$i<$no_of_tickets;$i++)
+                            {
+                                $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
+                                $booking = new Booking;
+                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $booking->routes_departure_time_id = $departure_id;
+                                $booking->amount = $departure_time->route->price;
+                                $booking->date_paid = date('Y-m-d');
+                                $booking->date_of_travel = $transaction->date_of_travel;
+                                $booking->time_of_travel = $departure_time->departure_time;
+                                $booking->ticket_number = $ticket_number;
+                                $booking->route_type = 'stop_over_route';
+                                $booking->user_id = $transaction->user_id;
+                                $booking->payment_source = $transaction->payment_source;
+                                $booking->payment_transaction_id = $transaction->id;
+                                $booking->save();
+
+                                $tickets_bought[] = $booking->id;
+                            }
+
+                            
 
                         }
-                        
-                        if($sms_template && $send_sms == 1)
+
+                        // update transaction status
+                        $transaction->status = 'completed';
+                        $transaction->save();
+
+                        //send notifications 
+                        // 1 Sms 
+                        $sms_template = SmsTemplate::where([
+                            ['operator_id','=',$operator->id],
+                            ['purpose','=','TICKET'],
+                            ['language','=',$transaction->language]
+                        ])->first();
+                        // 2 email 
+                        $email_template = EmailTemplate::where([
+                            ['operator_id','=',$operator->id],
+                            ['purpose','=','TICKET'],
+                            ['language','=',$transaction->language]
+                        ])->first();
+                        $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
+                        foreach($tickets_bought as $ticket_id)
                         {
-                          // send sms 
+                            $ticket = Booking::find($ticket_id);
+                            $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
+                            //dd($departure_route);
+                            $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
+                            $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
+                            $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
+                            
+                            //send credit merchant 
+                            //get default payment method of operator 
+                            $default_payment_method = OperatorPaymentMethod::where([
+                                ['operator_id','=', $operator->id],
+                                ['is_default','=', '1'],
+                            ])->first();
+                            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
+
+                            // remove sms_cost from amount 
+                        $merchant_credit = ($transaction->send_sms == 1) ? $transaction->amount - $sms_cost : $transaction->amount;
+                            $credit_transaction = new CreditTransaction;
+                            $credit_transaction->amount = $merchant_credit;
+                            $credit_transaction->transaction_id = $transaction->id;
+                            $credit_transaction->status = 'pending';
+                            $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
+                            $credit_transaction->save();
+                            // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
+                            $request_uri = $base_api_url."/makecreditrequest";
                             try{
-                            	 $from = "PalmKash";
-                                $AT       = new AfricasTalking($africas_talking_username, $africas_talking_apikey);                                
-                                $sms      = $AT->sms();                                
-                                $result   = $sms->send([
-                                    "to"      => $transaction->phone_number,
-                                    "message" => $sms_text,
-                                    "from" => $from,
-                                ]);
-                                $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
-                                \Storage::disk('local')->append('sms_log.txt',$sms_log);
+                                $client = new \GuzzleHttp\Client(['decode_content' => false]);
+                                $checkstatus = $client->request('POST', $request_uri, [                    
+                                        'json'   => [
+                                            "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
+                                            "transaction_account" => $default_payment_method->sp_phone_number,
+                                            "transaction_reference_number" => "1$transaction->id", 
+                                            "transaction_amount"=>$merchant_credit,
+                                            "account_number" => "100023",
+                                            "payment_operator" => 1001,                                        
+                                            "merchant_account" => "RW002",
+                                            "transaction_source" => "web",
+                                            "transaction_destination" => "web",
+                                            "transaction_reason" => "Bus Ticket Payment",
+                                            "currency" => "RWF",
+                                            "first_name" => $operator->name,
+                                            "last_name" => $operator->name
+                                        ]
+                                        ]); 
+                            
+                            
+                        
+                            
+                            $code = $checkstatus->getStatusCode(); 
+                            $request_log = date('Y-m-d H:i:s')." code:".$code."";
+                            \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
+                            if($code == 200) 
+                            {
+                                $response_body = json_decode($checkstatus->getBody(),true);
+                                // log request
+                                $status_variables = var_export($response_body,true);
+                                $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
+                                //save the request 
+                                \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
+                                $new_transaction_status = $response_body['transaction_status'];
+                                //for failed 
+                                if($new_transaction_status == 'failed')
+                                {
+                                // immediate failure 
+                                    $credit_transaction->status = 'failed';
+                                    $credit_transaction->payment_gateway_result = $response_body['status_code'];
+                                    $credit_transaction->save();                                                               
 
+                                }
+                            }
                             }
                             catch(\Exception $e)
                             {
-                                $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
                                 \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
                             }
-                        }                    
+                            
+                            if($sms_template && $send_sms == 1)
+                            {
+                            // send sms 
+                                try{
+                                    $from = "PalmKash";
+                                    $AT       = new AfricasTalking($africas_talking_username, $africas_talking_apikey);                                
+                                    $sms      = $AT->sms();                                
+                                    $result   = $sms->send([
+                                        "to"      => $transaction->phone_number,
+                                        "message" => $sms_text,
+                                        "from" => $from,
+                                    ]);
+                                    $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
+                                    \Storage::disk('local')->append('sms_log.txt',$sms_log);
 
-                        if($email_template)
-                        {
-                           //send email 
-                           
-                           $data = ['message' => $email_message];
+                                }
+                                catch(\Exception $e)
+                                {
+                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
-                            \Mail::to($transaction->email)->send(new TicketEmail($data));
+                                }
+                            }                    
 
-                           // $notification_type = 'success';
-                            //$notification_message .= 'An Email has been sent to you with your ticket details!';
+                            if($email_template)
+                            {
+                            //send email 
+                            
+                            $data = ['message' => $email_message];
+
+                                \Mail::to($transaction->email)->send(new TicketEmail($data));
+
+                            // $notification_type = 'success';
+                                //$notification_message .= 'An Email has been sent to you with your ticket details!';
 
 
+                            }
                         }
+
                     }
                     
 

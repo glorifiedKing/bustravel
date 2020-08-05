@@ -272,13 +272,14 @@ class FrontendController extends Controller
 
     public function process_payment(Request $request)
     {
+        $default_country = GeneralSetting::where('setting_prefix','default_country')->first()->setting_value ?? 'RW';
         //validate
         $validated_data = $request->validate([
             'first_name'        => 'required|',
             'email'    => 'required_with:ticketdeliveryemail|nullable|email:filter',
             'ticketdeliveryemail'    => 'required_without:ticketdeliverysms',
             'address_1'    => 'required',
-            'phone_number'  => 'requiredif:payment_method,mobile_money|phone:RW',
+            'phone_number'  => "requiredif:payment_method,mobile_money|phone:$default_country",
             'country' => 'required',
         ]);
 
@@ -326,13 +327,14 @@ class FrontendController extends Controller
 
         //add payee details
         $payee_reference = '';
+        $country_code = GeneralSetting::where('setting_prefix','country_code')->first()->setting_value ?? '250';
         if($request->payment_method =="mobile_money")
         {
             $payee_reference = $request->phone_number ;
             //add 250 if it is not
             if(strlen($payee_reference) < 12)
             {
-                $payee_reference="250".substr($request->phone_number, -9);
+                $payee_reference=$country_code.substr($request->phone_number, -9);
             }
 
         }
@@ -350,8 +352,11 @@ class FrontendController extends Controller
         ])->first();
 
         //abort if operator has no payment method
-        $country_code = GeneralSetting::where('setting_prefix','country_code')->first()->setting_value ?? '250';
+        $payment_gateway = GeneralSetting::where('setting_prefix','payment_gateway')->first()->setting_value ?? "palm_kash";
+        $system_currency = GeneralSetting::where('setting_prefix','default_currency')->first()->setting_value ?? "RWF";
+        
         $phone_number = $no = $country_code.substr($request->phone_number, -9);
+        
 
         // start transaction in trasaction table
         $payment_transaction = new PaymentTransaction;
@@ -366,21 +371,21 @@ class FrontendController extends Controller
         $payment_transaction->email = $request->email;
         $payment_transaction->address_1 = $request->address_1;
         $payment_transaction->address_2 = $request->address_2;
-        $payment_transaction->country =  GeneralSetting::where('setting_prefix','default_country')->first()->setting_value ?? 'RW';
+        $payment_transaction->country =  $default_country;
         $payment_transaction->send_sms = $send_sms;
         $payment_transaction->send_email = $send_email;
         $payment_transaction->date_of_travel = $date_of_travel;
         $payment_transaction->transport_operator_id = $operator_id;
         $payment_transaction->no_of_tickets = $no_of_tickets;
         $payment_transaction->language = $language;
+        $payment_transaction->payment_gateway = $payment_gateway;
         $payment_transaction->save();
 
-        $payment_gateway = GeneralSetting::where('setting_prefix','payment_gateway')->first()->setting_value ?? "default";
-        $system_currency = GeneralSetting::where('setting_prefix','default_currency')->first()->setting_value ?? "RWF";
+       
 
         if($payment_gateway == "flutterwave")
         {
-            $request_uri = env("FLUTTERWAVE_URL","http://localhost");
+            $request_uri = env("FLUTTERWAVE_API_URL","http://localhost")."payments";
             $redirect_url = env("FLUTTERWAVE_REDIRECT_URL","http://localhost");
             $token = env("FLUTTERWAVE_KEY","1234542");
             $flutter_logo = env("FLUTTERWAVE_LOGO","https://transport.palmkash.com/vendor/glorifiedking/docs/images/logo_full.png");
@@ -389,15 +394,24 @@ class FrontendController extends Controller
                 'Authorization' => 'Bearer ' . $token,        
                 'Accept'        => 'application/json',
             ];
-            $client = new \GuzzleHttp\Client(['decode_content' => false]);
+            switch($default_country){
+                case "RW" : $mobile_money_country =  "mobilemoneyrwanda";
+                    break;
+                case "UG": $mobile_money_country = "mobilemoneyuganda";
+                  break;
+                case "TZ" : $mobile_money_country = "mobilemoneytanzania"; 
+                 break; 
+                 default : $mobile_money_country = "mobilemoneyuganda";
+            }
+            $client = new \GuzzleHttp\Client(['headers' => $headers]);
             $debit_request = $client->request('POST', $request_uri, [
-                    'headers' => $headers,
+                    
                     'json'   => [
                         "tx_ref"=>$flutter_transaction_prefix.$payment_transaction->id,
-                        "amount"=>"100",
+                        "amount"=>$amount,
                         "currency"=>$system_currency,
                         "redirect_url"=>$redirect_url,
-                        "payment_options"=>"card",
+                        "payment_options"=>"card $mobile_money_country",
                         "meta"=>[
                            "consumer_id"=>$paying_user,
                            "consumer_mac"=>"92a3-912ba-1192a"
@@ -418,12 +432,13 @@ class FrontendController extends Controller
             if ($request->session()->has('cart')) {
                 $request->session()->forget('cart');
             }
+            
             $response_body = json_decode($debit_request->getBody(),true);
-            Log::info(['flutterwave' => $response_body]);
+            
             $data_link = $response_body['data']['link'];
             return redirect()->to($data_link);
         }
-        else if($payment_gateway == "default")
+        else if($payment_gateway == "palm_kash")
         {
              // send request if payment method is mtn mobile money
             $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
@@ -536,11 +551,15 @@ class FrontendController extends Controller
 
     public function checkout_result(Request $request)
     {
+        $flutter_transaction_prefix = env("FLUTTERWAVE_TRANSACTION_PREFIX","flutter");
+        $chars_flutter = strlen($flutter_transaction_prefix);
+        $transactionId = substr($request->get('tx_ref'),$chars_flutter);
+        ProcessDebitCallback::dispatch($request);
         $notification = array(
             'type' => 'success',
             'message' => "payment processing"
         );
-        $transactionId = $request->id;
+        
 
         return view('bustravel::frontend.notification',compact('notification','transactionId'));
     }

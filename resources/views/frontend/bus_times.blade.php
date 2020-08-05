@@ -37,7 +37,7 @@
                         <div class="row">
                             <div class="col-md-12">
 
-                                <table style="width:100%" id="route_table" class="table table-striped table-hover table-responsive" summary="Routes Details">
+                                <table  id="route_table" class="table table-striped table-hover" summary="Routes Details">
                                     <thead>
                                         <tr>
                                             <tr>
@@ -105,7 +105,8 @@ $(document).ready(function(){
                     $(this).html( '<input size="5" type="text" placeholder="Search.." >' );
                 } );
                 var table =  $("#route_table").DataTable({
-                    "order": [[ 2, "asc" ]]
+                    "order": [[ 2, "asc" ]],
+                    responsive: true
               	});
 
 
