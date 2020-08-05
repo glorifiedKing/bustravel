@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class ApiController extends Controller
 {
+    const DEPARTURE_TIME_STRING = "departure_time";
     public function __construct()
     {
         //$this->middleware('web');
@@ -65,7 +66,7 @@ class ApiController extends Controller
         $travel_day_of_week = date('l');
         $travel_time = date('H:i');
         $route_results = Route::with(['departure_times' => function ($query) use($travel_day_of_week,$travel_time) {
-            $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime('departure_time','>',$travel_time);
+            $query->where('days_of_week', 'like', "%$travel_day_of_week%")->whereTime(self::DEPARTURE_TIME_STRING,'>',$travel_time);
         }])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
@@ -96,7 +97,7 @@ class ApiController extends Controller
             $query->whereHas('main_route_departure_time', function ($query) use($travel_day_of_week) {
                 $query->where('days_of_week', 'like', "%$travel_day_of_week%");
             });
-            $query->whereTime('departure_time','>',$travel_time);
+            $query->whereTime(self::DEPARTURE_TIME_STRING,'>',$travel_time);
         },
         
         ])->where([
@@ -274,10 +275,8 @@ class ApiController extends Controller
             ])->first();
 
             //abort if operator has no payment method 
-            $default_country = GeneralSetting::where('setting_prefix','default_country')->first()->setting_value ?? 'RW';
-            $payment_gateway = GeneralSetting::where('setting_prefix','payment_gateway')->first()->setting_value ?? "palm_kash";
-            $system_currency = GeneralSetting::where('setting_prefix','default_currency')->first()->setting_value ?? "RWF";
-            $country_code = GeneralSetting::where('setting_prefix','country_code')->first()->setting_value ?? '250';
+            $api_default_country = GeneralSetting::where('setting_prefix','default_country')->first()->setting_value ?? 'RW';
+            $api_payment_gateway = GeneralSetting::where('setting_prefix','payment_gateway')->first()->setting_value ?? "palm_kash";
             
 
             // start transaction in trasaction table 
@@ -289,7 +288,7 @@ class ApiController extends Controller
             $payment_transaction->user_id = $paying_user;
             $payment_transaction->first_name = $first_name;           
             $payment_transaction->phone_number = $payee_reference;           
-            $payment_transaction->country = $default_country;
+            $payment_transaction->country = $api_default_country;
             $payment_transaction->send_sms = 1;
             $payment_transaction->send_email = 0;
             $payment_transaction->date_of_travel = $date_of_travel;
@@ -297,29 +296,29 @@ class ApiController extends Controller
             $payment_transaction->no_of_tickets = $no_of_tickets;
             $payment_transaction->payment_source = 'ussd';
             $payment_transaction->language = $language;
-            $payment_transaction->payment_gateway = $payment_gateway;
+            $payment_transaction->payment_gateway = $api_payment_gateway;
             $payment_transaction->save();
 
             // dd($payment_transaction);   
             // send request if payment method is mtn mobile money 
             $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');  
-            $payment_operator = env('default_payment_operator',"1002");
-            $merchant_account = env('default_merchant_account',"RW002");
-            $gateway_token = env("default_gateway_token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3");
-            $gateway_prefix = env("default_gateway_prefix","");  
+            $api_payment_operator = env('default_payment_operator',"1002");
+            $api_merchant_account = env('default_merchant_account',"RW002");
+            $api_gateway_token = env("default_gateway_token","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3");
+            $api_gateway_prefix = env("default_gateway_prefix","");  
             // send json request 
             $request_uri = $base_api_url."/makedebitrequest";
             $client = new \GuzzleHttp\Client(['decode_content' => false]);
             $debit_request = $client->request('POST', $request_uri, [ 
                                 
                         'json'   => [
-                            "token" =>$gateway_token,
+                            "token" =>$api_gateway_token,
                             "transaction_amount" => $amount,
                             "account_number" => "100023",
-                            "payment_operator" => $payment_operator,
+                            "payment_operator" => $api_payment_operator,
                             "transaction_account" => $payee_reference,
-                            "transaction_reference_number" => $gateway_prefix.$payment_transaction->id,
-                            "merchant_account" => $merchant_account,
+                            "transaction_reference_number" => $api_gateway_prefix.$payment_transaction->id,
+                            "merchant_account" => $api_merchant_account,
                             "transaction_source" => "web",
                             "transaction_destination" => "web",
                             "transaction_reason" => "Bus Ticket payment",
