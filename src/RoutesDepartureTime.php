@@ -51,7 +51,7 @@ class RoutesDepartureTime extends Model
             ])->count();
 
         $stops = $this->stopovers_times;
-        //dd($stops);
+        
         foreach($stops as $stop)
         {
             $stop_booking_count = Booking::where([
