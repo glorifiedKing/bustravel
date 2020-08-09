@@ -14,7 +14,8 @@
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
-                            $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
+                            $full_duration = $end_time->diffForHumans($start_time,['parts'=>2]);
+                            $duration = str_replace('after','',$full_duration);
                             $seats_left = $result->number_of_seats_left($date_of_travel);
                         @endphp
                            @if($seats_left > 0)
@@ -55,7 +56,8 @@
                         @php
                             $start_time = Carbon\Carbon::parse($result->departure_time);
                             $end_time = Carbon\Carbon::parse($result->arrival_time);
-                            $duration = $end_time->diffForHumans($start_time,['parts'=>2]);
+                            $full_duration = $end_time->diffForHumans($start_time,['parts'=>2]);
+                            $duration = str_replace('after','',$full_duration);
                             $seats_left = $result->main_route_departure_time->number_of_seats_left($date_of_travel);
                         @endphp
                             @if($seats_left > 0)
@@ -66,6 +68,7 @@
                                             <ul class="list-inline">
                                                 <li class="list-inline-item">From: {{$result->route->start_stopover_station->name}}</li>
                                                 <li class="list-inline-item">To: {{$result->route->end_stopover_station->name}}</li><br>
+                                                <li class="list-inline-item">Via : {{$result->main_route_departure_time->route->start->name}} to {{$result->main_route_departure_time->route->end->name}}</li><br>
                                                 <li class="list-inline-item">Operator: <span class="operator_name">{{$result->route->route->operator->name}}</span> </li>
                                             </ul>
                                             <h3 class="card-title">Departure : {{\Carbon\Carbon::parse($date_of_travel)->format('D M j Y')}} at {{$result->departure_time}} hrs</h3>
