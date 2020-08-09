@@ -47,11 +47,11 @@
                             </div>
                             <div class="col-md-12 scheduling-area border-b-color pad-top-bottom">
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-md-12">
                                         <h4 class="top">Scheduling</h4>
 
                                             <div class="form-row">
-                                                <div class="form-group col-md-6">
+                                                <div class="form-group col-md-4">
                                                     <label for="inputEmail4">Date of travel</label>
                                                     <input required="required" type="date" class="form-control @error('date_of_travel') is-invalid @enderror" name="date_of_travel" >
                                                     @error('date_of_travel')
@@ -60,10 +60,20 @@
                                                     </span>
                                                     @enderror
                                                 </div>
-                                                <div class="form-group col-md-6">
+                                                <div class="form-group col-md-4">
                                                     <label for="inputPassword4">Time</label>
                                                     <input id="time_of_travel" required="required" type="text" class="form-control @error('time_of_travel') is-invalid @enderror" name="time_of_travel" >
                                                     @error('time_of_travel')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="form-group col-md-4">
+                                                    <label for="inputAdults">Travellers</label>
+                                                    <input type="number" name="adults" class="form-control" aria-label="Text input with checkbox" min="1" value="1">
+                                                    @error('adults')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
@@ -73,12 +83,16 @@
 
                                     </div>
                                     <div class="col-md-4 extras">
-                                        <h4>Extras</h4>
+                                     <!--   <h4>Extras</h4><br>
 
-                                            <div class="input-group mb-3">
-                                                <label type="text" class="form-control" aria-label="Text input with checkbox">Adult</label>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                            <label for="inputEmail4">Travellers</label>                                            
+                                                
                                                 <input type="number" name="adults" class="form-control" aria-label="Text input with checkbox" value="1">
-                                            </div>
+                                            
+                                        </div>
+                                        </div>
                                             <div class="input-group mb-3">
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Child</label>
                                                 <input type="number" name="children" class="form-control" aria-label="Text input with checkbox" value=0>
@@ -87,6 +101,7 @@
                                                 <label type="text" class="form-control" aria-label="Text input with checkbox">Luggage</label>
                                                 <input type="number" name="luggage" class="form-control" aria-label="Text input with checkbox" value=0>
                                             </div>
+                                        -->
 
                                     </div>
                                 </div>
