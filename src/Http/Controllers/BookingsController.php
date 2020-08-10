@@ -434,8 +434,8 @@ class BookingsController extends Controller
           ]);
           $driver =Driver::where($this->userId,auth()->user()->id)->first();
           $ticket = request()->input('ticket');
-          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->routeType,$this->main_route)->where($this->Status,2)->get();
-          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->routeType,$this->stop_over_route)->where($this->Status,2)->get();
+          $main_bookings = Booking::where('ticket_number', $ticket)->where($this->routeType,$this->main_route)->where($this->Status,"!=",2)->get();
+          $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->routeType,$this->stop_over_route)->where($this->Status,"!=",2)->get();
           $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
         }
       else

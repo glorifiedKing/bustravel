@@ -156,6 +156,7 @@
                                 <th scope="col">On Board</th>
                                 <th scope="col">Ticket</th>
                                 <th scope="col">Boarding Station</th>
+                                <th scope="col">Coming off Station</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,6 +176,7 @@
                                 </td>
                                <td>{{$booking['ticket_number']??''}}</td>
                                <td>{{$booking['boarding_station']??''}}</td>
+                               <td>{{$booking['comingoff_station']??''}}</td>
                             </tr>
 
                         @endforeach
