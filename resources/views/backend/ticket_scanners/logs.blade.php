@@ -65,7 +65,8 @@
                         <th scope="col">Device id</th>
                         <th scope="col">Request Attributes</th>
                         <th scope="col">Result</th>
-                        <th scope="col">Ticket Number</th>                       
+                        <th scope="col">Ticket Number</th>  
+                        <th scope="col">Time</th>                     
 
                     </tr>
                     </thead>
@@ -76,6 +77,7 @@
                             <td>{{json_encode($log->request_attributes)}}</td>
                             <td>{{$log->result}}</td>
                           <td>{{$log->ticket_number}}</td>
+                          <td>{{\Carbon\Carbon::parse($log->created_at)->diffForHumans()}}</td>
                             
                           </tr>
                       @endforeach
