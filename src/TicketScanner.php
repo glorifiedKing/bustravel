@@ -14,4 +14,9 @@ class TicketScanner extends Model
     {
         return $this->belongsTo(Operator::class,'operator_id');
     }
+
+    public function logs()
+    {
+        return $this->hasMany(DeviceScanLog::class,'device_id');
+    }
 }

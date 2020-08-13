@@ -275,12 +275,12 @@ class ProcessDebitCallback implements ShouldQueue
                                 catch(\Exception $e)
                                 {
                                     $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
-                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
+                                    \Storage::disk('local')->append('sms_error_log.txt',$error_log);
 
                                 }
                             }                    
 
-                            if($email_template)
+                            if($email_template && is_null($transaction->email))
                             {
                             //send email 
                             

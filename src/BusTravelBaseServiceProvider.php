@@ -76,6 +76,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                             'icon' => 'fa fa-map-marker-alt',
                             'can' => 'Manage BT Stations',
                         ],
+                        [
+                            'text' => 'Ticket Scanners',
+                            'url'  => route('bustravel.ticket_scanners'),
+                            'icon' => 'fa fa-money-check',
+                            'can' => 'View BT Customer Transactions'
+    
+                        ],
 
                     ],
 
