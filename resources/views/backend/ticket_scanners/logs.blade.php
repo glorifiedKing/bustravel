@@ -59,7 +59,7 @@
               
             <div class="row">
                <div class="col-md-12">
-                  <table class="table table-striped table-hover" id="log-table" role="grid" aria-describedby="ticket scanner logs" summary="List of all ticket scanner logs">
+                  <table class="table table-striped table-hover" id="log-table" role="grid" aria-describedby="ticket scanner logs" >
                     <thead>
                       <tr>                        
                         <th scope="col">Device id</th>

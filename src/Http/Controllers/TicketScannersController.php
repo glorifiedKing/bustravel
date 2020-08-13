@@ -54,7 +54,7 @@ class TicketScannersController extends Controller
 
     public function save(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'device_id' => 'required|unique:ticket_scanners',
             'operator_id' => 'required|numeric',
             'active' => 'required|numeric',            
@@ -129,7 +129,7 @@ class TicketScannersController extends Controller
 
     public function update(Request $request,$id)
     {
-        $validated = $request->validate([
+        $request->validate([
             'device_id' => 'required|unique:ticket_scanners,device_id,'.$id,
             'operator_id' => 'required|numeric',
             'active' => 'required|numeric',            
