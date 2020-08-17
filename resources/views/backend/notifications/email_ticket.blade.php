@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
+  <title>Transport.PalmKash.com</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style type="text/css" rel="stylesheet" media="all">
@@ -45,18 +46,18 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 ?>
 <?php $fontFamily = 'font-family: Arial, \'Helvetica Neue\', Helvetica, sans-serif;'; ?>
 <body style="{{ $style['body'] }}">
-<table style="width:100%;">
+<table style="width:100%;" aria-describedby="email_info1">
 <tr>
-<td style="{{ $style['email-wrapper'] }}" align="center"><table style="width:100%" >
+<td style="{{ $style['email-wrapper'] }}" align="center"><table style="width:100%" aria-describedby="email_info2">
 <!-- Logo -->
 <tr>
-<td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" height="150px"/>
+<td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" alt="Palm Kash" height="150px"/>
 <!--{{ config('app.name') }}-->
 </a><br/><br/><div align="center">Bus Travel Ticket</div></td>
 </tr>
 <!-- Email Body -->
 <tr>
-<td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;" align="center"  >
+<td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;" align="center"  aria-describedby="email_info3">
 <tr>
 <td align="center"> {!! $email_message !!} </td>
 </tr>
