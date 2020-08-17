@@ -251,7 +251,7 @@ class ProcessDebitCallback implements ShouldQueue
                             }
                             catch(\Exception $e)
                             {
-                                $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
+                                $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." err:".$e->getMessage()."";
                                 \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
                             }
@@ -274,7 +274,7 @@ class ProcessDebitCallback implements ShouldQueue
                                 }
                                 catch(\Exception $e)
                                 {
-                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." Error:".$e->getMessage()."";
                                     \Storage::disk('local')->append('sms_error_log.txt',$error_log);
 
                                 }
@@ -282,7 +282,7 @@ class ProcessDebitCallback implements ShouldQueue
 
                             if($email_template)
                             {
-                                //\Storage::disk('local')->append("email_log.txt","Sending email");
+                                
                             
                                 try {
                                 $data = ['message' => $email_message];

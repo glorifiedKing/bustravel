@@ -50,25 +50,25 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
   
 <tr>
   <th style="display: none;" scope="col"></th>
-<td style="{{ $style['email-wrapper'] }}" align="center"><table style="width:100%" aria-describedby="email_info2">
+<td style="{{ $style['email-wrapper'] }} text-align:center;" ><table style="width:100%" aria-describedby="email_info2">
 <!-- Logo -->
 <tr>
   <th style="display: none;" scope="col"></th>
 <td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" alt="Palm Kash" height="150px"/>
 <!--{{ config('app.name') }}-->
-</a><br/><br/><div align="center">Bus Travel Ticket</div></td>
+</a><br/><br/><div style="text-align:center;">Bus Travel Ticket</div></td>
 </tr>
 <!-- Email Body -->
 <tr>
-<td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;" align="center"  aria-describedby="email_info3">
+<td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;text-align:center"   aria-describedby="email_info3">
 <tr>
-<td align="center"> {!! $email_message !!} </td>
+<td style="text-align:center"> {!! $email_message !!} </td>
 </tr>
 </table></td>
 </tr>
 <!-- Footer -->
 <tr>
-<td><table style="{{ $style['email-footer'] }} width:570;" align="center" aria-describedby="email_info2">
+<td><table style="{{ $style['email-footer'] }} width:570;text-align:center;"  aria-describedby="email_info2">
 <tr>
   <th style="display: none;" scope="col"></th>
 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}"><p style="{{ $style['paragraph-sub'] }}"> &copy; {{ date('Y') }} <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">Palm Kash</a>.
