@@ -45,9 +45,9 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 ?>
 <?php $fontFamily = 'font-family: Arial, \'Helvetica Neue\', Helvetica, sans-serif;'; ?>
 <body style="{{ $style['body'] }}">
-<table width="100%" cellpadding="0" cellspacing="0">
+<table style="width:100%;">
 <tr>
-<td style="{{ $style['email-wrapper'] }}" align="center"><table width="100%" cellpadding="0" cellspacing="0">
+<td style="{{ $style['email-wrapper'] }}" align="center"><table style="width:100%" >
 <!-- Logo -->
 <tr>
 <td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" height="150px"/>
@@ -56,7 +56,7 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 </tr>
 <!-- Email Body -->
 <tr>
-<td style="{{ $style['email-body'] }}" width="100%"><table style="{{ $style['body_action'] }}" align="center" width="100%" cellpadding="0" cellspacing="0">
+<td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;" align="center"  >
 <tr>
 <td align="center"> {!! $email_message !!} </td>
 </tr>
@@ -64,7 +64,7 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 </tr>
 <!-- Footer -->
 <tr>
-<td><table style="{{ $style['email-footer'] }}" align="center" width="570" cellpadding="0" cellspacing="0">
+<td><table style="{{ $style['email-footer'] }} width:570;" align="center" >
 <tr>
 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}"><p style="{{ $style['paragraph-sub'] }}"> &copy; {{ date('Y') }} <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">Palm Kash</a>.
 All rights reserved. </p></td>
