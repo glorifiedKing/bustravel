@@ -49,11 +49,11 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 <table style="width:100%;" aria-describedby="email_info1">
   
 <tr>
-  <th style="display: none;"></th>
+  <th style="display: none;" scope="col"></th>
 <td style="{{ $style['email-wrapper'] }}" align="center"><table style="width:100%" aria-describedby="email_info2">
 <!-- Logo -->
 <tr>
-  <th style="display: none;"></th>
+  <th style="display: none;" scope="col"></th>
 <td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" alt="Palm Kash" height="150px"/>
 <!--{{ config('app.name') }}-->
 </a><br/><br/><div align="center">Bus Travel Ticket</div></td>
@@ -70,7 +70,7 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 <tr>
 <td><table style="{{ $style['email-footer'] }} width:570;" align="center" aria-describedby="email_info2">
 <tr>
-  <th style="display: none;"></th>
+  <th style="display: none;" scope="col"></th>
 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}"><p style="{{ $style['paragraph-sub'] }}"> &copy; {{ date('Y') }} <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">Palm Kash</a>.
 All rights reserved. </p></td>
 </tr>
