@@ -62,6 +62,7 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 <tr>
 <td style="{{ $style['email-body'] }} width:100%;" ><table style="{{ $style['body_action'] }} width:100%;text-align:center"   aria-describedby="email_info3">
 <tr>
+  <th style="display: none;" scope="col"></th>
 <td style="text-align:center"> {!! $email_message !!} </td>
 </tr>
 </table></td>
