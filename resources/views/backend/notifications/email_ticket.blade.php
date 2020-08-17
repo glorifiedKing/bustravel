@@ -65,7 +65,7 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 </tr>
 <!-- Footer -->
 <tr>
-<td><table style="{{ $style['email-footer'] }} width:570;" align="center" >
+<td><table style="{{ $style['email-footer'] }} width:570;" align="center" aria-describedby="email_info2">
 <tr>
 <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}"><p style="{{ $style['paragraph-sub'] }}"> &copy; {{ date('Y') }} <a style="{{ $style['anchor'] }}" href="{{ url('/') }}" target="_blank">Palm Kash</a>.
 All rights reserved. </p></td>
