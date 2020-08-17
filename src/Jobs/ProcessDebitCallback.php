@@ -199,7 +199,7 @@ class ProcessDebitCallback implements ShouldQueue
                             $credit_transaction->amount = $merchant_credit;
                             $credit_transaction->transaction_id = $transaction->id;
                             $credit_transaction->status = 'pending';
-                            $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
+                            $credit_transaction->payee_reference = $default_payment_method->sp_phone_number ?? "RW002";
                             $credit_transaction->save();
                             // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
                             $request_uri = $base_api_url."/makecreditrequest";
@@ -208,7 +208,7 @@ class ProcessDebitCallback implements ShouldQueue
                                 $checkstatus = $client->request('POST', $request_uri, [                    
                                         'json'   => [
                                             "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                            "transaction_account" => $default_payment_method->sp_phone_number,
+                                            "transaction_account" => $default_payment_method->sp_phone_number ?? "RW002",
                                             "transaction_reference_number" => "1$transaction->id", 
                                             "transaction_amount"=>$merchant_credit,
                                             "account_number" => "100023",
@@ -280,16 +280,21 @@ class ProcessDebitCallback implements ShouldQueue
                                 }
                             }                    
 
-                            if($email_template && is_null($transaction->email))
+                            if($email_template)
                             {
-                            //send email 
+                                //\Storage::disk('local')->append("email_log.txt","Sending email");
                             
-                            $data = ['message' => $email_message];
+                                try {
+                                $data = ['message' => $email_message];
 
                                 \Mail::to($transaction->email)->send(new TicketEmail($data));
-
-                            // $notification_type = 'success';
-                                //$notification_message .= 'An Email has been sent to you with your ticket details!';
+                                }
+                                catch(\Exception $e)
+                                {
+                                    $error_log = date('Y-m-d H:i:s')." email_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                    \Storage::disk('local')->append('email_error_log.txt',$error_log); 
+                                }
+                            
 
 
                             }
