@@ -70,7 +70,7 @@ class ApiController extends Controller
         }])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get();
+        ])->get()->sortBy(self::DEPARTURE_TIME_STRING);
        
         foreach($route_results as $key=> $route)
         {
@@ -103,7 +103,7 @@ class ApiController extends Controller
         ])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get();
+        ])->get()->sortBy(self::DEPARTURE_TIME_STRING);
         foreach($stop_over_routes as $key=> $route)
         {
             foreach($route->departure_times as $d_time)
