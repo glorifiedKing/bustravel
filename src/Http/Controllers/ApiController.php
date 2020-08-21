@@ -70,7 +70,7 @@ class ApiController extends Controller
         }])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get()->sortBy(self::DEPARTURE_TIME_STRING);
+        ])->get();
        
         foreach($route_results as $key=> $route)
         {
@@ -103,7 +103,7 @@ class ApiController extends Controller
         ])->where([
             ['start_station', '=', $from],
             ['end_station', '=', $to],            
-        ])->get()->sortBy(self::DEPARTURE_TIME_STRING);
+        ])->get();
         foreach($stop_over_routes as $key=> $route)
         {
             foreach($route->departure_times as $d_time)
@@ -121,9 +121,15 @@ class ApiController extends Controller
                     $results[] = $result_array;
                 }
             }
-        }    
+        }  
+        
+        usort($results, function($a, $b) {
+            return $a['time'] <=> $b['time'];
+        });
         
         return $results;
+
+
     }
 
     public function ussd(Request $request)
