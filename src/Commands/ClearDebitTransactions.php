@@ -2,6 +2,7 @@
 
 namespace glorifiedking\BusTravel\Commands;
 
+use AfricasTalking\SDK\AfricasTalking;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use glorifiedking\BusTravel\Route;
@@ -59,9 +60,9 @@ class ClearDebitTransactions extends Command
         ])->get();
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
         $request_uri = $base_api_url."/checktransactionstatus";   
-        $merchant_account = env('default_merchant_account',"RW002");
-        $africas_talking_username = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
-        $africas_talking_apikey = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
+        $palm_merchant_account = env('default_merchant_account',"RW002");
+        $africas_talking_user = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
+        $africas_talking_key = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
                         
         foreach($over_due_transactions as $transaction)
         {            
@@ -74,7 +75,7 @@ class ClearDebitTransactions extends Command
                             "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                             "transaction_account" => $transaction->payee_reference,
                             "transaction_reference_number" => $transaction->id, 
-                            "merchant_account" => $merchant_account,                      
+                            "merchant_account" => $palm_merchant_account,                      
                         ]
                 ]); 
                 
@@ -160,15 +161,15 @@ class ClearDebitTransactions extends Command
 
                         //send notifications 
                         // 1 Sms 
-                        $sms_template = SmsTemplate::where([
-                            ['operator_id','=',$operator->id],
+                        $palm_sms_template = SmsTemplate::where([
                             ['purpose','=','TICKET'],
+                            ['operator_id','=',$operator->id],                            
                             ['language','=',$transaction->language]
                         ])->first();
                         // 2 email 
-                        $email_template = EmailTemplate::where([
-                            ['operator_id','=',$operator->id],
+                        $palm_email_template = EmailTemplate::where([
                             ['purpose','=','TICKET'],
+                            ['operator_id','=',$operator->id],                            
                             ['language','=',$transaction->language]
                         ])->first();
                         $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
@@ -178,8 +179,8 @@ class ClearDebitTransactions extends Command
                             $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
                             //dd($departure_route);
                             $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,$transaction->date_of_travel,$departure_route->arrival_time,$transaction->date_of_travel,$ticket->amount,$ticket->date_paid,$transaction->payment_method);
-                            $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                            $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
+                            $sms_text = str_replace($search_for, $replace_with, $palm_sms_template->message ?? '');
+                            $email_message = str_replace($search_for, $replace_with, $palm_email_template->message ?? '');
                             
                             //send credit merchant 
                             //get default payment method of operator 
@@ -199,7 +200,7 @@ class ClearDebitTransactions extends Command
                             $credit_transaction->save();
                             // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
                             $make_credit_requests = env('credit_all_transactions',"TRUE");
-                            $payment_operator = env('default_payment_operator',"1002");                            
+                            $palm_payment_operator = env('default_payment_operator',"1002");                            
                             $request_uri = $base_api_url."/makecreditrequest";
                             if($make_credit_requests == "TRUE")
                             {
@@ -212,8 +213,8 @@ class ClearDebitTransactions extends Command
                                                 "transaction_reference_number" => "1$transaction->id", 
                                                 "transaction_amount"=>$merchant_credit,
                                                 "account_number" => "100023",
-                                                "payment_operator" => $payment_operator,                                        
-                                                "merchant_account" => $merchant_account,
+                                                "payment_operator" => $palm_payment_operator,                                        
+                                                "merchant_account" => $palm_merchant_account,
                                                 "transaction_source" => "web",
                                                 "transaction_destination" => "web",
                                                 "transaction_reason" => "Bus Ticket Payment",
@@ -257,12 +258,12 @@ class ClearDebitTransactions extends Command
                                 }
                             }
                             
-                            if($sms_template)
+                            if($palm_sms_template)
                             {
                             // send sms 
                                 try{
                                     $from = "PalmKash";
-                                    $AT       = new AfricasTalking($africas_talking_username, $africas_talking_apikey);                                
+                                    $AT       = new AfricasTalking($africas_talking_user, $africas_talking_key);                                
                                     $sms      = $AT->sms();                                
                                     $result   = $sms->send([
                                         "to"      => $transaction->phone_number,
@@ -281,7 +282,7 @@ class ClearDebitTransactions extends Command
                                 }
                             }                    
 
-                            if($email_template)
+                            if($palm_email_template)
                             {
                             //send email 
                                 try {
