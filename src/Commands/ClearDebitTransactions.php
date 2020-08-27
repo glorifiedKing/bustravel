@@ -58,6 +58,7 @@ class ClearDebitTransactions extends Command
             ['status','=','pending'],
             ['created_at','<',$five_minutes_ago]
         ])->get();
+        $palm_kash_prefix = env("default_gateway_prefix","");
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
         $request_uri = $base_api_url."/checktransactionstatus";   
         $palm_merchant_account = env('default_merchant_account',"RW002");
@@ -74,7 +75,7 @@ class ClearDebitTransactions extends Command
                         'json'   => [
                             "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                             "transaction_account" => $transaction->payee_reference,
-                            "transaction_reference_number" => $transaction->id, 
+                            "transaction_reference_number" => $palm_kash_prefix.$transaction->id, 
                             "merchant_account" => $palm_merchant_account,                      
                         ]
                 ]); 
