@@ -262,13 +262,13 @@ class ClearDebitTransactions extends Command
                             {
                             // send sms 
                                 try{
-                                    $from = "PalmKash";
+                                    $by = "PalmKash";
                                     $AT       = new AfricasTalking($africas_talking_user, $africas_talking_key);                                
                                     $sms      = $AT->sms();                                
                                     $result   = $sms->send([
                                         "to"      => $transaction->phone_number,
                                         "message" => $sms_text,
-                                        "from" => $from,
+                                        "from" => $by,
                                     ]);
                                     $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
                                     \Storage::disk('local')->append('sms_log.txt',$sms_log);
@@ -286,9 +286,9 @@ class ClearDebitTransactions extends Command
                             {
                             //send email 
                                 try {
-                                    $data = ['message' => $email_message];
+                                    $email_data = ['message' => $email_message];
 
-                                    \Mail::to($transaction->email)->send(new TicketEmail($data));
+                                    \Mail::to($transaction->email)->send(new TicketEmail($email_data));
                                     }
                                     catch(\Exception $e)
                                     {
