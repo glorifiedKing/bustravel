@@ -202,15 +202,15 @@ class ProcessDebitCallback implements ShouldQueue
                             $credit_transaction->payee_reference = $default_payment_method->sp_phone_number ?? "RW002";
                             $credit_transaction->save();
                             // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
-                            $make_credit_requests = env('credit_all_transactions',"TRUE");
+                            $make_credit_requests = env('credit_all_transactions',"FALSE");
                             $payment_operator = env('default_payment_operator',"1002");
                             $merchant_account = env('default_merchant_account',"RW002");
-                            $request_uri = $base_api_url."/makecreditrequest";
-                            if($make_credit_requests == "TRUE")
+                            $credit_request_uri = $base_api_url."/makecreditrequest";
+                            if($make_credit_requests == "FALSE")
                             {
                                 try{
                                     $client = new \GuzzleHttp\Client(['decode_content' => false]);
-                                    $checkstatus = $client->request('POST', $request_uri, [                    
+                                    $checkstatus = $client->request('POST', $credit_request_uri, [                    
                                             'json'   => [
                                                 "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                                                 "transaction_account" => $default_payment_method->sp_phone_number ?? "RW002",
