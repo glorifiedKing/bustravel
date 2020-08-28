@@ -47,8 +47,9 @@ class BookingsController extends Controller
         $this->middleware('web');
         $this->middleware('auth');
         $this->middleware('can:View BT Bookings')->only('index');
-        $this->middleware('can:Create BT Bookings')->only('create','store','edit','update','delete');
-        $this->middleware('can:Create BT Drivers')->only('delete');
+        $this->middleware('can:Create BT Bookings')->only('create','store',);
+        $this->middleware('can:Update BT Bookings')->only('edit','update');
+        $this->middleware('can:Delete BT Bookings')->only('delete');
         $this->middleware('can:View BT Driver Manifest')->only('manifest','route_manifest','boarded');
 
     }
