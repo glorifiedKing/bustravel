@@ -24,8 +24,8 @@ class ListBookings
             'amount'=>$booking->amount,
             'time'=>$booking->route_departure_time->departure_time??'',
             'operator'=>$booking->route_departure_time->route->operator->name??'',
-            'start'=>$booking->route_departure_time->route->start->code??'',
-            'end'=>$booking->route_departure_time->route->end->code??'',
+            'start'=>$booking->route_departure_time->route->start->name??'',
+            'end'=>$booking->route_departure_time->route->end->name??'',
         );
         $bookings[] = $result_array;
       }
@@ -44,8 +44,8 @@ class ListBookings
             'amount'=>$booking->amount,
             'time'=>$booking->stop_over_route_departure_time->departure_time??'',
             'operator'=>$booking->stop_over_route_departure_time->route->route->operator->name??'',
-            'start'=>$booking->stop_over_route_departure_time->route->start_stopover_station->code??'',
-            'end'=>$booking->stop_over_route_departure_time->route->end_stopover_station->code??'',
+            'start'=>$booking->stop_over_route_departure_time->route->start_stopover_station->name??'',
+            'end'=>$booking->stop_over_route_departure_time->route->end_stopover_station->name??'',
         );
         $bookings[] = $result_array;
       }

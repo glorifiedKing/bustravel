@@ -127,7 +127,7 @@
                                   @endif
                                </td>
                                 <td>{{$route_departure_time->route->operator->name}}</td>
-                                <td>{{$route_departure_time->route->start->code??'None'}} - {{$route_departure_time->route->end->code??'None'}}</td>
+                                <td>{{$route_departure_time->route->start->name??'None'}} - {{$route_departure_time->route->end->name??'None'}}</td>
                                 <td>{{number_format($route_departure_time->route->price,2)}} </td>
                                 <td>{{$route_departure_time->bus->number_plate??'NONE'}} - {{$route_departure_time->bus->seating_capacity??''}}</td>
                                 <td>{{$route_departure_time->departure_time}}</td>

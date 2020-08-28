@@ -48,7 +48,7 @@
                   </div>
                   <div class="form-group col-md-3">
                     <label>To</label>
-                    <input type="date"  name="fto" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
+                    <input type="date"  name="to" value="{{$to??""}}" class="form-control " id="exampleInputEmail1"  >
                   </div>
                   <div class="form-group col-md-3">
                  @if(auth()->user()->hasAnyRole('BT Super Admin'))
