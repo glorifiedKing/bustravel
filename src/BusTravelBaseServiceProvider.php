@@ -178,6 +178,13 @@ class BusTravelBaseServiceProvider extends ServiceProvider
                         'can' => 'View BT Customer Transactions'
 
                     ],
+                    [
+                        'text' => 'Driver Manifest',
+                        'url'  => route('bustravel.bookings.manifest.report'),
+                        'icon' => 'fa fa-car',
+                        'can' => 'View BT Reports'
+
+                    ],
 
 
                 ],
