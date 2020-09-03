@@ -73,7 +73,8 @@
               </div>
             <div class="row">
                <div class="col-md-12">
-                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="My Routes">
+                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" >
+<caption>Bus service</caption>
                      <thead>
                             <tr>
                                 <th scope="col">Status</th>

@@ -402,7 +402,6 @@ class BookingsController extends Controller
 
       $route_id = request()->input('service');
       $route_type = request()->input('route_type');
-      $payment_method = $booking->payment_method;
 
       $departure_time = ($route_type == $this->main_route) ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
       $date_of_travel=request()->input('date_of_travel')??date('Y-m-d');

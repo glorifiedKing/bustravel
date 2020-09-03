@@ -437,10 +437,8 @@ class ReportsController extends Controller
         return view('bustravel::backend.reports.void_bookings', compact('bookings', 'v_ticket', 'v_from', 'v_to','v_stations','v_start_station','v_operators','v_Selected_OperatorId','v_operator_Name'));
     }
 
-    public function manifest()
+    public function report_manifest()
     {
-      if (request()->isMethod('post')) {
-      }
       $date = request()->input('date') ?? date('Y-m-d');
       $bus_no = request()->input('bus') ??'';
       $travel_day_of_week = \Carbon\Carbon::parse($date)->format('l');

@@ -33,7 +33,8 @@
             <div class="card-body">
             <div class="row">
               <div class="col-md-3">
-                <table summary="Route Details">
+                <table >
+                  <caption>Route Details</caption>
                 <tr>
                   <th scope="row"><strong>Route: </strong> </th><td>{{$times_id->route->start->code??'None'}} - {{$times_id->route->end->code??'None'}}</td>
                 <tr>
@@ -46,7 +47,8 @@
                 </table>
               </div>
               <div class="col-md-3">
-                <table summary="Bus Details">
+                <table >
+                  <caption>Bus Details</caption>
                 <tr>
                   <th scope="row"><strong>Bus : </strong> </th><td>{{$times_id->bus->number_plate??'NONE'}} - Capacity:  {{$times_id->bus->seating_capacity??''}}</td>
                 <tr>
@@ -149,7 +151,8 @@
                  <form action="{{route('bustravel.bookings.boarded.all')}}" method="POST">
                  {{csrf_field() }}
                  <input type="hidden" name="route_id" value="{{$times_id->id}}">
-                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" summary="Bus Tickets">
+                 <table id="example1" class="table table-bordered table-hover table-striped dataTable" role="grid" aria-describedby="example1_info" >
+                    <caption>Bus Tickets</caption>
                         <thead>
                             <tr>
                                 <th  scope="col" class="text-center info"><input type="checkbox" name="checkAll" class="checkAll"></th>

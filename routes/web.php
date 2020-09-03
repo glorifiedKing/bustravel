@@ -111,13 +111,10 @@ Route::get('report_locations', 'ReportsController@locations')->name('bustravel.r
 Route::get('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report');
 Route::post('cashier/report', 'ReportsController@cashier_report')->name('bustravel.bookings.cashier.report.search');
 
-Route::get('manifests/report', 'ReportsController@manifest')->name('bustravel.bookings.manifest.report');
-Route::post('manifests/report', 'ReportsController@manifest')->name('bustravel.bookings.manifest.report.search');
+Route::get('manifests/report', 'ReportsController@report_manifest')->name('bustravel.bookings.manifest.report');
+Route::post('manifests/report', 'ReportsController@report_manifest')->name('bustravel.bookings.manifest.report.search');
 Route::get('manifest/report/{id}/{date}', 'ReportsController@track_manifest')->name('bustravel.bookings.track.manifest.report');
 Route::post('manifest/report/{id}/{date}', 'ReportsController@track_manifest')->name('bustravel.bookings.track.manifest.report.search');
-
-Route::get('manifest/report', 'ReportsController@manifest')->name('bustravel.bookings.manifest.report');
-Route::post('manifest/report', 'ReportsController@manifest')->name('bustravel.bookings.manifest.report.search');
 
 Route::get('faqs', 'FaqsController@faqs')->name('bustravel.faqs');
 Route::post('faqs', 'FaqsController@storefaqs')->name('bustravel.faqs.store');
