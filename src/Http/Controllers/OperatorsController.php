@@ -46,7 +46,18 @@ class OperatorsController extends Controller
             $name = Str::lower(request()->input('name'));
             $resultString = str_replace(' ', '', $name);
             $photoname = $resultString.'_'.time().'.'.request()->logo->getClientOriginalExtension();
-            request()->logo->move(storage_path('app/public/logos'), $photoname);
+            request()->logo->move(public_path('logos'), $photoname);
+        }
+        if ($request->hasFile('logo_printer')) {
+            $path = storage_path('app/public/logos');
+            // creating logos folder if doesnot exit
+            if (!File::isDirectory($path)) {
+                File::makeDirectory($path, 0777, true, true);
+            }
+            $name = Str::lower(request()->input('name'));
+            $resultString = str_replace(' ', '', $name);
+            $printer_logo = $resultString.'_printer_'.time().'.'.request()->logo_printer->getClientOriginalExtension();
+            request()->logo_printer->move(public_path('logos'), $printer_logo);
         }
         //saving to the database
         $operator = new Operator();
@@ -54,6 +65,7 @@ class OperatorsController extends Controller
         $operator->address = request()->input('address');
         $operator->code = request()->input('code');
         $operator->logo = $photoname ?? null;
+        $operator->logo_printer = $printer_logo ?? null;
         $operator->email = request()->input('email');
         $operator->contact_person_name = request()->input('contact_person_name');
         $operator->phone_number = request()->input('phone_number');
@@ -93,10 +105,22 @@ class OperatorsController extends Controller
             if (!File::isDirectory($path)) {
                 File::makeDirectory($path, 0777, true, true);
             }
+            //delete
             $name = Str::lower(request()->input('name'));
             $resultString = str_replace(' ', '', $name);
             $photoname = $resultString.'_'.time().'.'.request()->newlogo->getClientOriginalExtension();
             request()->newlogo->move(public_path('logos'), $photoname);
+        }
+        if ($request->hasFile('new_logo_printer')) {
+            $path = storage_path('app/public/logos');
+            // creating logos folder if doesnot exit
+            if (!File::isDirectory($path)) {
+                File::makeDirectory($path, 0777, true, true);
+            }
+            $logo_name = Str::lower(request()->input('name'));
+            $resultName = str_replace(' ', '', $logo_name);
+            $updated_printer_logo = $resultName.'_printer_'.time().'.'.request()->new_logo_printer->getClientOriginalExtension();
+            request()->new_logo_printer->move(public_path('logos'), $updated_printer_logo);
         }
         //saving to the database
         $operator = Operator::find($id);
@@ -104,6 +128,7 @@ class OperatorsController extends Controller
         $operator->address = request()->input('address');
         $operator->code = request()->input('code');
         $operator->logo = $photoname ?? request()->input('logo');
+        $operator->logo_printer = $updated_printer_logo ?? request()->input('logo_printer');
         $operator->email = request()->input('email');
         $operator->contact_person_name = request()->input('contact_person_name');
         $operator->phone_number = request()->input('phone_number');

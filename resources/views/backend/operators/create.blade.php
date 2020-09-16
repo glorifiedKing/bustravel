@@ -85,6 +85,10 @@
                        <label for="exampleInputFile">Logo</label><br>
                        <input type="file" id="exampleInputFile" name="logo">
                     </div>
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputFile">Logo for Printer</label><br>
+                        <input type="file" name="logo_printer">
+                     </div>
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Status</label>
                         <label class="radio-inline">

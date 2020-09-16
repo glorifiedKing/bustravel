@@ -27,6 +27,7 @@ use Illuminate\Support\Str;
 use PDF;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
+use Mike42\Escpos\PrintConnectors\RawbtPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
 use glorifiedking\BusTravel\Http\Requests\CreateBookingRequest;
@@ -47,7 +48,7 @@ class BookingsController extends Controller
         $this->middleware('web');
         $this->middleware('auth');
         $this->middleware('can:View BT Bookings')->only('index');
-        $this->middleware('can:Create BT Bookings')->only('create','store',);
+        $this->middleware('can:Create BT Bookings')->only('create','store');
         $this->middleware('can:Update BT Bookings')->only('edit','update');
         $this->middleware('can:Delete BT Bookings')->only('delete');
         $this->middleware('can:View BT Driver Manifest')->only('manifest','route_manifest','boarded');
@@ -183,22 +184,31 @@ class BookingsController extends Controller
             $arrival_time = $booking->route_departure_time->arrival_time ?? $booking->stop_over_route_departure_time->arrival_time; //get
             $selected_printer_id = $request->printer;
             $selected_printer = BusTravelPrinter::find($selected_printer_id);
+            $footer_powered_by = env('receipt_footer_powered',"Powered by Palm Kash");
+            $footer_powered_url = env('receipt_footer_powered_url',"https://transport.palmkash.com");
             if($selected_printer->printer_url == 'rawbt:base64')
             {
                 try
                 {
-
-                    $connector = new DummyPrintConnector();
-                    $profile = CapabilityProfile::load("simple");
-                    $printer = new Printer($connector);
-                    $operator_logo = EscposImage::load("ritco_black.jpg",false);
-                    $printer -> setJustification(Printer::JUSTIFY_CENTER);
+                    $logo_file = $operator->logo_printer;
+                    //$connector = new DummyPrintConnector();
+                    $connector = new RawbtPrintConnector;
+                    $profile = CapabilityProfile::load("TSP600");
+                    $printer = new Printer($connector,$profile);
+                    $operator_logo = EscposImage::load(public_path('logos')."/".$logo_file,false);
+                    $printer->setJustification(Printer::JUSTIFY_CENTER);
+                    $printer->qrcode($booking->ticket_number,Printer::QR_ECLEVEL_M,10,Printer::QR_MODEL_2);
+                    //$printer->selectPrintMode(); /// enable this to print two copies 
+                    $printer->setJustification(Printer::JUSTIFY_LEFT);
+                    $printer->text("-------------------------------");
+                    $printer->setJustification(Printer::JUSTIFY_CENTER);
                     $printer->bitImage($operator_logo);
                     $printer->text("\n");
                     //$printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
                     $printer->selectPrintMode(Printer::MODE_EMPHASIZED);
                     $printer->text("Bus Travel Ticket \n");
-                    $printer -> setJustification(Printer::JUSTIFY_LEFT);
+                    $printer->feed();
+                    $printer->setJustification(Printer::JUSTIFY_LEFT);
                     $printer->selectPrintMode();
                     $printer->text("\n");
                     $printer->text("Ticket No: ".$booking->ticket_number."\n");
@@ -226,11 +236,12 @@ class BookingsController extends Controller
                     $printer->text("\n");
                     $printer->text("\n");
                     $printer->text("\n");
-                    $printer->barcode($booking->ticket_number,Printer::BARCODE_CODE39);
-                //$printer->qrcode($booking->ticket_number/*,Printer::QR_ECLEVEL_M,10,Printer::QR_MODEL_2*/);
+                    $printer->setBarcodeWidth(20);                
+                //    $printer->barcode($booking->ticket_number,Printer::BARCODE_CODE39);
+                
                     $printer->text("\n");
-                    $printer->text("Powered by PalmKash \n");
-                    $printer->text("www.transport.palmkash.com \n");
+                    $printer->text("$footer_powered_by \n");
+                    $printer->text("$footer_powered_url \n");
                     $printer->text("\n");
                     $printer->cut();
                     //dd(base64_encode($connector->getData()));

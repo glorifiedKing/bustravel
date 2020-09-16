@@ -89,6 +89,14 @@
                              <img src="{{url('/logos/'.$bus_operator->logo) }}" width="70px" alt="{{$bus_operator->name}}"/>
                        @endif
                     </div>
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputFile">Logo for Printer</label><br>
+                        <input type="file"  name="new_logo_printer">
+                        <input type="hidden" name="logo_printer" value={{$bus_operator->logo_printer}}>
+                        @if($bus_operator->logo_printer)
+                              <img src="{{url('/logos/'.$bus_operator->logo_printer) }}" width="70px" alt="{{$bus_operator->name}}"/>
+                        @endif
+                     </div>
                     <div class=" col-md-3 form-group">
                         <label for="signed" class=" col-md-12 control-label">Status</label>
                         <label class="radio-inline">
