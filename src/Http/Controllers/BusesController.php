@@ -66,6 +66,10 @@ class BusesController extends Controller
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');
         $bus->status = request()->input('status');
+        $bus->driver_side = $request->driver_side;
+        $bus->first_row_count = $request->first_row_count;
+        $bus->seating_format = $request->seating_format;
+        $bus->offset_seats = $request->offset_seats;
         $bus->save();
         return redirect()->route('bustravel.buses')->with(ToastNotification::toast('Bus has successfully been saved','Bus Saving'));
     }
@@ -96,6 +100,10 @@ class BusesController extends Controller
         $bus->seating_capacity = request()->input('seating_capacity');
         $bus->description = request()->input('description');
         $bus->status = request()->input('status');
+        $bus->driver_side = $request->driver_side;
+        $bus->first_row_count = $request->first_row_count;
+        $bus->seating_format = $request->seating_format;
+        $bus->offset_seats = $request->offset_seats;
         $bus->save();
 
         return redirect()->route('bustravel.buses.edit', $id)->with(ToastNotification::toast('Bus has successfully been updated','Bus Updating'));
