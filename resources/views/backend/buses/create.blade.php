@@ -160,7 +160,7 @@
    <script>
        $(function () {
          $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
-         $('.select2').select2();
+        
          $('#seating-format').change(function(){
            var seating_format = $(this).val();
            var driver_side = $('.driver-side').val()
