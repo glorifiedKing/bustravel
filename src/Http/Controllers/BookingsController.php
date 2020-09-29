@@ -228,13 +228,12 @@ class BookingsController extends Controller
                     $printer->text("\n");
                     $printer->text("\n");
                     $printer->barcode($booking->ticket_number,Printer::BARCODE_CODE39);
-                //$printer->qrcode($booking->ticket_number/*,Printer::QR_ECLEVEL_M,10,Printer::QR_MODEL_2*/);
-                    $printer->text("\n");
+
                     $printer->text("Powered by PalmKash \n");
                     $printer->text("www.transport.palmkash.com \n");
                     $printer->text("\n");
                     $printer->cut();
-                    //dd(base64_encode($connector->getData()));
+
                     return redirect()->away('rawbt:base64,'.base64_encode($connector->getData()));
 
                 }
@@ -333,17 +332,17 @@ class BookingsController extends Controller
           $route_services[] = $result_array;
         }
       }else{
-        $route_id =$booking->stop_over_route_departure_time->route->route_id;
+        $route_id_stopover =$booking->stop_over_route_departure_time->route->route_id;
 
-        $route =Route::find($route_id);
+        $route =Route::find($route_id_stopover);
         $route_services_id=$route->departure_times()->pluck('id');
         $stop_route_services= RoutesStopoversDepartureTime::whereIn('routes_times_id',$route_services_id)->get();
-        foreach($stop_route_services as $service) {
+        foreach($stop_route_services as $service_stopover) {
           $result_array = array(
-              'id' => $service->id,
-              'time'=>$service->departure_time??'',
-              'start'=>$service->route->start_stopover_station->name??'',
-              'end'=>$service->route->end_stopover_station->name??'',
+              'id' => $service_stopover->id,
+              'time'=>$service_stopover->departure_time??'',
+              'start'=>$service_stopover->route->start_stopover_station->name??'',
+              'end'=>$service_stopover->route->end_stopover_station->name??'',
               'route_type'=> 'stop_over',
           );
           $route_services[] = $result_array;
@@ -397,7 +396,7 @@ class BookingsController extends Controller
         $route_id = request()->input('service');
         $route_type = request()->input('route_type');
         $date_of_travel=request()->input('date_of_travel')??date('Y-m-d');
-      $new_booking =NewBooking::new($id,$route_id,$route_type,$date_of_travel,$booking);
+      $new_booking =NewBooking::new($route_id,$route_type,$date_of_travel,$booking);
        if($new_booking=="failed"){
         return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('This service is not avialable on this date, '.$date_of_travel,'Change Service','error'));
        }

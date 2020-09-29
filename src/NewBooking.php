@@ -12,14 +12,10 @@ class NewBooking
 {
 
 
-    public static function new($id=0,$route_id=0,$route_type="",$date_of_travel="",$booking=[])
+    public static function new($route_id=0,$route_type="",$date_of_travel="",$booking=[])
     {
 
-      //$route_id = request()->input('service');
-      //$route_type = request()->input('route_type');
-
       $departure_time = ($route_type == 'main_route') ? RoutesDepartureTime::find($route_id) : RoutesStopoversDepartureTime::find($route_id);
-    //  $date_of_travel=request()->input('date_of_travel')??date('Y-m-d');
 
       $operator = $departure_time->route->operator ?? $departure_time->route->route->operator;
       $route_time_id =$departure_time->id??$departure_time->routes_times_id;
@@ -28,10 +24,8 @@ class NewBooking
       $avialable_service= RoutesDepartureTime::where('id',$route_time_id)
       ->where('days_of_week', 'like', "%$day_of_travel%")->first();
       if(!$avialable_service){
-        //dd($day_of_travel);
-        $error ='failed';
-        return $error;
-        //return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('This service is not avialable on this date, '.$date_of_travel,'Change Service','error'));
+    
+        return 'failed';
       }
           $pad_length = 6;
           $pad_char = 0;

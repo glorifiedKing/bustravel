@@ -493,7 +493,7 @@ class ReportsController extends Controller
 
         if(request()->isMethod('post'))
         {
-            $validation = request()->validate([
+           request()->validate([
               'ticket' => 'required',
             ]);
             $driver =Driver::where($this->userId,auth()->user()->id)->first();
