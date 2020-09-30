@@ -18,6 +18,7 @@ use glorifiedking\BusTravel\RouteTracking;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\ToastNotification;
 use glorifiedking\BusTravel\ListBookings;
+use glorifiedking\BusTravel\NewBooking;
 use glorifiedking\BusTravel\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -236,15 +237,17 @@ class BookingsController extends Controller
                     $printer->text("\n");
                     $printer->text("\n");
                     $printer->text("\n");
-                    $printer->setBarcodeWidth(20);                
+
+                 //   $printer->setBarcodeWidth(20);                
                 //    $printer->barcode($booking->ticket_number,Printer::BARCODE_CODE39);
                 
                     $printer->text("\n");
                     $printer->text("$footer_powered_by \n");
                     $printer->text("$footer_powered_url \n");
+
                     $printer->text("\n");
                     $printer->cut();
-                    //dd(base64_encode($connector->getData()));
+
                     return redirect()->away('rawbt:base64,'.base64_encode($connector->getData()));
 
                 }
@@ -326,14 +329,47 @@ class BookingsController extends Controller
         if (is_null($booking)) {
             return Redirect::route('bustravel.bookings');
         }
+        $route_services=[];
+        if($booking->route_type=="main_route")
+        {
+        $route_id =$booking->route_departure_time->route->id;
+        $route =Route::find($route_id);
+        $main_route_services=$route->departure_times()->get();
+        foreach($main_route_services as $service) {
+          $result_array = array(
+              'id' => $service->id,
+              'time'=>$service->departure_time??'',
+              'start'=>$service->route->start->name??'',
+              'end'=>$service->route->end->name??'',
+              'route_type'=> 'main_route',
+          );
+          $route_services[] = $result_array;
+        }
+      }else{
+        $route_id_stopover =$booking->stop_over_route_departure_time->route->route_id;
 
-        return view('bustravel::backend.bookings.edit', compact('booking_fields_ids', 'booking_fields', 'booking', 'users', 'routes_times', 'custom_fields','void_status'));
+        $route =Route::find($route_id_stopover);
+        $route_services_id=$route->departure_times()->pluck('id');
+        $stop_route_services= RoutesStopoversDepartureTime::whereIn('routes_times_id',$route_services_id)->get();
+        foreach($stop_route_services as $service_stopover) {
+          $result_array = array(
+              'id' => $service_stopover->id,
+              'time'=>$service_stopover->departure_time??'',
+              'start'=>$service_stopover->route->start_stopover_station->name??'',
+              'end'=>$service_stopover->route->end_stopover_station->name??'',
+              'route_type'=> 'stop_over',
+          );
+          $route_services[] = $result_array;
+        }
+
+      }
+
+        return view('bustravel::backend.bookings.edit', compact('booking_fields_ids', 'booking_fields', 'booking', 'users', 'routes_times', 'custom_fields','void_status','route_services'));
     }
 
     //Update Operator route('bustravel.operators.upadate')
     public function update($id, Request $request)
     {
-
         //saving to the database
         $booking = Booking::find($id);
         $booking->amount = request()->input('amount');
@@ -370,8 +406,20 @@ class BookingsController extends Controller
       }else{
       $void =VoidTicket::where('booking_id',$booking->id)->delete();
       }
-        return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('Booking has successfully been updated','Booking Updating'));
+      if(request()->input('change_service')==1){
+        $route_id = request()->input('service');
+        $route_type = request()->input('route_type');
+        $date_of_travel=request()->input('date_of_travel')??date('Y-m-d');
+      $new_booking =NewBooking::new($route_id,$route_type,$date_of_travel,$booking);
+       if($new_booking=="failed"){
+        return redirect()->route('bustravel.bookings.edit', $id)->with(ToastNotification::toast('This service is not avialable on this date, '.$date_of_travel,'Change Service','error'));
+       }
+
+      }
+
+        return redirect()->route('bustravel.bookings.edit', $new_booking??$id)->with(ToastNotification::toast('Booking has successfully been updated','Booking Updating'));
     }
+
 
     //Delete Route Departure Times
     public function delete($id)

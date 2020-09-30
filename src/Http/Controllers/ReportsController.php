@@ -5,7 +5,10 @@ use Carbon\CarbonPeriod;
 use glorifiedking\BusTravel\RoutesDepartureTime;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Booking;
+use glorifiedking\BusTravel\Driver;
+use glorifiedking\BusTravel\Bus;
 use glorifiedking\BusTravel\Route;
+use glorifiedking\BusTravel\RouteTracking;
 use glorifiedking\BusTravel\Station;
 use glorifiedking\BusTravel\Operator;
 use glorifiedking\BusTravel\ListBookings;
@@ -15,13 +18,14 @@ use glorifiedking\BusTravel\ReportsRoutesPerfomance;
 use glorifiedking\BusTravel\ReportsSales;
 use glorifiedking\BusTravel\User;
 use Illuminate\Routing\Controller;
+use glorifiedking\BusTravel\ToastNotification;
 class ReportsController extends Controller
 {
     public $role_cashier ='BT Cashier',
      $userId='user_id', $route_type ="route_type", $main_route ="main_route", $stop_over_route="stop_over_route",
      $Status="status",$CreatedAt="created_at",$StartDayTime=' 00:00:00', $EndDayTime=' 23:59:59',$RoutesDepartureTimeId='routes_departure_time_id',
      $RoutesTimesId='routes_times_id',$TicketNumber='ticket_number',$Amount='amount',
-     $OperatorId='operator_id'
+     $OperatorId='operator_id',  $RouteId ='route_id',$travel_date='date_of_travel'
      ;
 
     public function __construct()
@@ -431,6 +435,91 @@ class ReportsController extends Controller
         $v_operators =Operator::where($this->Status,1)->get();
 
         return view('bustravel::backend.reports.void_bookings', compact('bookings', 'v_ticket', 'v_from', 'v_to','v_stations','v_start_station','v_operators','v_Selected_OperatorId','v_operator_Name'));
+    }
+
+    public function report_manifest()
+    {
+      $date = request()->input('date') ?? date('Y-m-d');
+      $bus_no = request()->input('bus') ??'';
+      $travel_day_of_week = \Carbon\Carbon::parse($date)->format('l');
+      $m_Selected_OperatorId=request()->input($this->OperatorId)??auth()->user()->operator_id??0;
+      $m_sales_operator=Operator::find($m_Selected_OperatorId);
+      $m_operator_Name =$m_sales_operator->name??'';
+      $m_routes_ids =Route::where($this->OperatorId,$m_Selected_OperatorId)->pluck('id');
+      if(auth()->user()->hasAnyRole('BT Driver'))
+        {
+         $m_driver =Driver::where($this->userId,auth()->user()->id)->first();
+         if($bus_no==""){
+           $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$m_driver->id)
+           ->where('days_of_week', 'like', "%$travel_day_of_week%")
+           ->get();
+         }else{
+           $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('driver_id',$m_driver->id)
+           ->where('days_of_week', 'like', "%$travel_day_of_week%")
+           ->where('bus_id',$bus_no)
+           ->get();
+         }
+         }else
+          {
+            $m_driver =Driver::where($this->userId,auth()->user()->id)->first();
+            if($bus_no==""){
+              $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('days_of_week', 'like', "%$travel_day_of_week%")
+                ->orderBy('departure_time','ASC')->get();
+            }else{
+              $driver_routes= RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->where('days_of_week', 'like', "%$travel_day_of_week%")
+
+               ->where('bus_id',$bus_no)
+              ->orderBy('departure_time','ASC')->get();
+            }
+          }
+          $m_buses =Bus::where($this->Status,1)->where($this->OperatorId,$m_Selected_OperatorId)->get();
+          $m_drivers =Driver::where($this->Status,1)->where($this->OperatorId,$m_Selected_OperatorId)->count();
+          $m_routes =Route::where($this->Status,1)->where($this->OperatorId,$m_Selected_OperatorId)->count();
+          $m_services =RoutesDepartureTime::whereIn($this->RouteId,$m_routes_ids)->count();
+
+         $m_operators =Operator::where($this->Status,1)->get();
+        return view('bustravel::backend.reports.manifest', compact('driver_routes','m_driver','date','m_buses','bus_no','m_operators','m_Selected_OperatorId','m_operator_Name','m_drivers','m_routes','m_services'));
+    }
+
+    public function track_manifest($id,$date)
+    {
+        $today =$date;
+        $times_id =RoutesDepartureTime::find($id);
+        $route_stop_overs =$times_id->stopovers_times()->pluck('id');
+        $main_bookings = Booking::where($this->RoutesDepartureTimeId,$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+        $stop_over_bookings =Booking::whereIn($this->RoutesDepartureTimeId,$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->orderBy('id', 'DESC')->get();
+        $main_bookings_board = Booking::where($this->RoutesDepartureTimeId,$id)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
+        $stop_over_bookings_board =Booking::whereIn($this->RoutesDepartureTimeId,$route_stop_overs)->where($this->travel_date,$today)->whereNotIn($this->Status,[2])->where('boarded',1)->orderBy('id', 'DESC')->count();
+
+        if(request()->isMethod('post'))
+        {
+           request()->validate([
+              'ticket' => 'required',
+            ]);
+            $driver =Driver::where($this->userId,auth()->user()->id)->first();
+            $ticket = request()->input('ticket');
+            $main_bookings = Booking::where('ticket_number', $ticket)->where($this->route_type,$this->main_route)->where($this->Status,"!=",2)->get();
+            $stop_over_bookings =Booking::where('ticket_number', $ticket)->where($this->route_type,$this->stop_over_route)->where($this->Status,"!=",2)->get();
+            $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+          }
+        else
+        {
+            $driver =Driver::where($this->userId,auth()->user()->id)->first();
+
+            $bookings = ListBookings::list($main_bookings,$stop_over_bookings);
+            $ticket ="";
+        }
+
+        $tracking=RouteTracking::where($this->RoutesTimesId,$id)->where($this->travel_date,$today)->first();
+        if(!$tracking){
+          return redirect()->route('bustravel.bookings.manifest.report')->with(ToastNotification::toast('No Route service records  avialable for this date, '.$today,'Report','error'));
+        }
+        $bookings_no =$main_bookings->count()+$stop_over_bookings->count();
+        $not_booked =($times_id->bus->seating_capacity??0) - $bookings_no;
+        $onboard_tickets = $main_bookings_board+$stop_over_bookings_board;
+        $notonboard_tickets = $bookings_no-$onboard_tickets;
+
+        return view('bustravel::backend.reports.routemanifest', compact('bookings','driver','ticket','onboard_tickets','notonboard_tickets','not_booked','times_id','tracking','bookings_no','today'));
     }
 
 }

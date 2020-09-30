@@ -66,7 +66,25 @@
                     <label>To</label>
                     <input readonly type="text"  name="to" value="{{$end_station}}" class="form-control {{ $errors->has('to') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
                   </div>
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-5 ">
+                        <label for="exampleInputEmail1">Change Service:</label><br>
+                        <label class="radio-inline"><input type="radio" id="No" name="change_service" value="0" checked> No</label>
+                        <label class="radio-inline"><input type="radio" id="Yes" name="change_service" value="1" > Yes</label>
+                    </div>
+                  <div id ="change_service" class="form-group col-md-6">
+                    <input type="hidden" name="route_type" value="{{$booking->route_type}}">
+                    <label>Services</label>
+                    <select class="select2 form-control" name="service">
+                    <option>Select Service</option>
+                      @foreach($route_services as $service)
+                      {{$service['end']}}
+                       @if($service['start']== $start_station && $service['end']== $end_station )
+                       <option value="{{$service['id']}}">{{$service['time']}}</option>
+                       @endif
+                      @endforeach
+                    </select>
+                    </div>
+                    <div class="form-group col-md-12">
                     <table id="table_results" class="table table-striped">
                         <caption> Bus service</caption>
                         <thead>
@@ -203,6 +221,7 @@
           $('div.alert').not('.alert-danger').delay(5000).fadeOut(350);
           $('.select2').select2();
           $('#VoidReason').hide();
+          $("#change_service").hide();
           if($("#Void").is(":checked"))
           {
           $("#VoidReason").show(1000);
@@ -220,6 +239,15 @@
         $('#VoidReason').hide();
         $("#Voidtext").attr("required",false);
     });
+
+    $(":input[name=change_service]:eq(0)").click(function(){
+      $('#change_service').hide();
+      $('#table_results').show();
+  });
+  $(":input[name=change_service]:eq(1)").click(function(){
+    $('#change_service').show();
+    $('#table_results').hide();
+});
 
         })
     </script>
