@@ -121,9 +121,15 @@ class ApiController extends Controller
                     $results[] = $result_array;
                 }
             }
-        }    
+        }  
+        
+        usort($results, function($a, $b) {
+            return $a['time'] <=> $b['time'];
+        });
         
         return $results;
+
+
     }
 
     public function ussd(Request $request)

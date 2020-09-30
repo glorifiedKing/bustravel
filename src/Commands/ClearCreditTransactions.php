@@ -58,6 +58,7 @@ class ClearCreditTransactions extends Command
         ])->get();
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
         $request_uri = $base_api_url."/checktransactionstatus";   
+        $merchant_account = env('default_merchant_account',"RW002");
         foreach($over_due_transactions as $transaction)
         {            
             
@@ -69,7 +70,7 @@ class ClearCreditTransactions extends Command
                             "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
                             "transaction_account" => $transaction->payee_reference,
                             "transaction_reference_number" => "1$transaction->transaction_id",
-                            "merchant_account" => "RWOO2",                       
+                            "merchant_account" => $merchant_account,                       
                         ]
                 ]); 
                 

@@ -26,8 +26,8 @@ class TicketEmail extends Mailable
 
         return $this->view('bustravel::backend.notifications.email_ticket')
                     ->from($address, $name)
-                    ->cc($address, $name)
-                    ->bcc($address, $name)
+                    //->cc($address, $name)
+                    //->bcc($address, $name)
                     ->replyTo($address, $name)
                     ->subject($subject)
                     ->with([ 'email_message' => $this->data['message'] ]);

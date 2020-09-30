@@ -199,61 +199,67 @@ class ProcessDebitCallback implements ShouldQueue
                             $credit_transaction->amount = $merchant_credit;
                             $credit_transaction->transaction_id = $transaction->id;
                             $credit_transaction->status = 'pending';
-                            $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
+                            $credit_transaction->payee_reference = $default_payment_method->sp_phone_number ?? "RW002";
                             $credit_transaction->save();
                             // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
-                            $request_uri = $base_api_url."/makecreditrequest";
-                            try{
-                                $client = new \GuzzleHttp\Client(['decode_content' => false]);
-                                $checkstatus = $client->request('POST', $request_uri, [                    
-                                        'json'   => [
-                                            "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                            "transaction_account" => $default_payment_method->sp_phone_number,
-                                            "transaction_reference_number" => "1$transaction->id", 
-                                            "transaction_amount"=>$merchant_credit,
-                                            "account_number" => "100023",
-                                            "payment_operator" => 1001,                                        
-                                            "merchant_account" => "RW002",
-                                            "transaction_source" => "web",
-                                            "transaction_destination" => "web",
-                                            "transaction_reason" => "Bus Ticket Payment",
-                                            "currency" => "RWF",
-                                            "first_name" => $operator->name,
-                                            "last_name" => $operator->name
-                                        ]
-                                        ]); 
-                            
-                            
-                        
-                            
-                            $code = $checkstatus->getStatusCode(); 
-                            $request_log = date('Y-m-d H:i:s')." code:".$code."";
-                            \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
-                            if($code == 200) 
+                            $make_credit_requests = env('credit_all_transactions',"FALSE");
+                            $payment_operator = env('default_payment_operator',"1002");
+                            $merchant_account = env('default_merchant_account',"RW002");
+                            $credit_request_uri = $base_api_url."/makecreditrequest";
+                            if($make_credit_requests == "FALSE")
                             {
-                                $response_body = json_decode($checkstatus->getBody(),true);
-                                // log request
-                                $status_variables = var_export($response_body,true);
-                                $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
-                                //save the request 
-                                \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
-                                $new_transaction_status = $response_body['transaction_status'];
-                                //for failed 
-                                if($new_transaction_status == 'failed')
+                                try{
+                                    $client = new \GuzzleHttp\Client(['decode_content' => false]);
+                                    $checkstatus = $client->request('POST', $credit_request_uri, [                    
+                                            'json'   => [
+                                                "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
+                                                "transaction_account" => $default_payment_method->sp_phone_number ?? "RW002",
+                                                "transaction_reference_number" => "1$transaction->id", 
+                                                "transaction_amount"=>$merchant_credit,
+                                                "account_number" => "100023",
+                                                "payment_operator" => $payment_operator,                                        
+                                                "merchant_account" => $merchant_account,
+                                                "transaction_source" => "web",
+                                                "transaction_destination" => "web",
+                                                "transaction_reason" => "Bus Ticket Payment",
+                                                "currency" => "RWF",
+                                                "first_name" => $operator->name,
+                                                "last_name" => $operator->name
+                                            ]
+                                            ]); 
+                                
+                                
+                            
+                                
+                                $code = $checkstatus->getStatusCode(); 
+                                $request_log = date('Y-m-d H:i:s')." code:".$code."";
+                                \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
+                                if($code == 200) 
                                 {
-                                // immediate failure 
-                                    $credit_transaction->status = 'failed';
-                                    $credit_transaction->payment_gateway_result = $response_body['status_code'];
-                                    $credit_transaction->save();                                                               
+                                    $response_body = json_decode($checkstatus->getBody(),true);
+                                    // log request
+                                    $status_variables = var_export($response_body,true);
+                                    $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
+                                    //save the request 
+                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
+                                    $new_transaction_status = $response_body['transaction_status'];
+                                    //for failed 
+                                    if($new_transaction_status == 'failed')
+                                    {
+                                    // immediate failure 
+                                        $credit_transaction->status = 'failed';
+                                        $credit_transaction->payment_gateway_result = $response_body['status_code'];
+                                        $credit_transaction->save();                                                               
+
+                                    }
+                                }
+                                }
+                                catch(\Exception $e)
+                                {
+                                    $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." err:".$e->getMessage()."";
+                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
 
                                 }
-                            }
-                            }
-                            catch(\Exception $e)
-                            {
-                                $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
-                                \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
-
                             }
                             
                             if($sms_template && $send_sms == 1)
@@ -274,22 +280,27 @@ class ProcessDebitCallback implements ShouldQueue
                                 }
                                 catch(\Exception $e)
                                 {
-                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
-                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
+                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." Error:".$e->getMessage()."";
+                                    \Storage::disk('local')->append('sms_error_log.txt',$error_log);
 
                                 }
                             }                    
 
                             if($email_template)
                             {
-                            //send email 
+                                
                             
-                            $data = ['message' => $email_message];
+                                try {
+                                $data = ['message' => $email_message];
 
                                 \Mail::to($transaction->email)->send(new TicketEmail($data));
-
-                            // $notification_type = 'success';
-                                //$notification_message .= 'An Email has been sent to you with your ticket details!';
+                                }
+                                catch(\Exception $e)
+                                {
+                                    $error_log = date('Y-m-d H:i:s')." email_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
+                                    \Storage::disk('local')->append('email_error_log.txt',$error_log); 
+                                }
+                            
 
 
                             }

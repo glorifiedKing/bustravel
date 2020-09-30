@@ -166,3 +166,14 @@ Route::get('docs/reports','DocumentationController@reports')->name('bustravel.do
 Route::get('docs/settings','DocumentationController@settings')->name('bustravel.docs.settings');
 
 Route::get('payment_status/{id}','FrontendController@get_payment_status')->name('bustravel.payment.status');
+Route::get('ticket_scanners/{id?}','TicketScannersController@index')->name('bustravel.ticket_scanners');
+Route::get('ticket_scanner/new','TicketScannersController@create')->name('bustravel.ticket_scanners.create');
+Route::post('ticket_scanner/new','TicketScannersController@save')->name('bustravel.ticket_scanners.save');
+Route::get('ticket_scanners/{id}/toggle','TicketScannersController@toggle_status')->name('bustravel.ticket_scanners.toggle_status');
+Route::get('ticket_scanners/{id}/edit','TicketScannersController@edit')->name('bustravel.ticket_scanners.edit');
+Route::post('ticket_scanners/{id}/edit','TicketScannersController@update')->name('bustravel.ticket_scanners.update');
+Route::get('ticket_scanners/{id}/delete','TicketScannersController@delete')->name('bustravel.ticket_scanners.delete');
+Route::get('ticket_scanners/{id}/logs','TicketScannersController@scan_logs')->name('bustravel.ticket_scanners.scan_logs');
+
+
+
