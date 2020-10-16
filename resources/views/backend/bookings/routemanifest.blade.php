@@ -155,6 +155,7 @@
                                 <th  scope="col" class="text-center info"><input type="checkbox" name="checkAll" class="checkAll"></th>
                                 <th scope="col">On Board</th>
                                 <th scope="col">Ticket</th>
+                                <th scope="col">Seat</th>
                                 <th scope="col">Boarding Station</th>
                                 <th scope="col">Coming off Station</th>
                             </tr>
@@ -175,6 +176,7 @@
                                    @endif
                                 </td>
                                <td>{{$booking['ticket_number']??''}}</td>
+                               <td>{{$booking['seat_number']??''}}</td>
                                <td>{{$booking['boarding_station']??''}}</td>
                                <td>{{$booking['comingoff_station']??''}}</td>
                             </tr>

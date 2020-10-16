@@ -124,6 +124,15 @@
                           <input type="radio" id="Deactive" name="status" value="0" @php echo $route->status == 0? 'checked' :  "" @endphp > Deactive</label>
                        </label>
                     </div>
+                    <div class=" col-md-3 form-group">
+                      <label for="signed" class=" col-md-12 control-label">Enable Seat Numbers</label>
+                      <label class="radio-inline">
+                        <input type="radio"  name="enable_seat_number_booking" value="1" @php echo $route->enable_seat_number_booking == 1 ? 'checked' :  "" @endphp> Yes</label>
+                      </label>
+                     <label class="radio-inline">
+                        <input type="radio"  name="enable_seat_number_booking" value="0" @php echo $route->enable_seat_number_booking == 0 ? 'checked' :  "" @endphp> No</label>
+                     </label>
+                  </div>
                   </div>
               </div>
               <!-- /.box-body -->

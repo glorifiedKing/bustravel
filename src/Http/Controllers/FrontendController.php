@@ -448,7 +448,7 @@ class FrontendController extends Controller
             $gateway_prefix = env("default_gateway_prefix","");
             // send json request
             $request_uri = $base_api_url."/makedebitrequest";
-            $client = new \GuzzleHttp\Client(['decode_content' => false]);
+            $client = new \GuzzleHttp\Client(['decode_content' => false,'verify' => false]);
             $debit_request = $client->request('POST', $request_uri, [
 
                         'json'   => [

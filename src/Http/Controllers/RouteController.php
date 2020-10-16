@@ -99,6 +99,7 @@ class RouteController extends Controller
         $route->price = str_replace(',', '', $main_route_price);
         $route->return_price = str_replace(',', '', $main_route_price);
         $route->status = 1;
+        $route->enable_seat_number_booking = $request->enable_seat_number_booking;
         $route->save();
 
         // create main service
@@ -144,6 +145,7 @@ class RouteController extends Controller
           $inverse->price = str_replace(',', '', $main_route_price);
           $inverse->return_price = str_replace(',', '', $main_route_price);
           $inverse->status = 1;
+          $route->enable_seat_number_booking = $request->enable_seat_number_booking;
           $inverse->inverse = $route->id;
           $inverse->save();
 
@@ -234,6 +236,7 @@ class RouteController extends Controller
         $route->price = str_replace(',', '', request()->input($this->route_price));
       //  $route->return_price = str_replace(',', '', request()->input($this->route_return_price))??0;
         $route->status = request()->input('status');
+        $route->enable_seat_number_booking = $request->enable_seat_number_booking;
         $route->save();
 
         //clear stopover routes dba_firstke
