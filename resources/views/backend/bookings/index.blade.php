@@ -91,6 +91,7 @@
                             <tr>
                                 <th scope="col">Status</th>
                                 <th scope="col">Ticket</th>
+                                <th scope="col">Seat</th>
                                 <th scope="col">Operator</th>
                                 <th scope="col">Route</th>
                                 <th scope="col">Amount</th>
@@ -112,6 +113,7 @@
                                   @endif
                                </td>
                                <td>{{$booking['ticket_number']}}</td>
+                                <td>{{$booking['seat_number']}}</td>
                                 <td>{{$booking['operator']}}</td>
                                 <td>{{$booking['start']}} - {{$booking['end']}} / {{$booking['time']}}</td>
                                <td>{{number_format($booking['amount'],2)}} </td>

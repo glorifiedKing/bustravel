@@ -26,6 +26,7 @@ class ListBookings
             'operator'=>$booking->route_departure_time->route->operator->name??'',
             'start'=>$booking->route_departure_time->route->start->name??'',
             'end'=>$booking->route_departure_time->route->end->name??'',
+            'seat_number'=>$booking->seat_number,
         );
         $bookings[] = $result_array;
       }
@@ -46,6 +47,7 @@ class ListBookings
             'operator'=>$booking->stop_over_route_departure_time->route->route->operator->name??'',
             'start'=>$booking->stop_over_route_departure_time->route->start_stopover_station->name??'',
             'end'=>$booking->stop_over_route_departure_time->route->end_stopover_station->name??'',
+            'seat_number'=>$booking->seat_number,
         );
         $bookings[] = $result_array;
       }

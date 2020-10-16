@@ -209,7 +209,7 @@ class ProcessDebitCallback implements ShouldQueue
                             if($make_credit_requests == "FALSE")
                             {
                                 try{
-                                    $client = new \GuzzleHttp\Client(['decode_content' => false]);
+                                    $client = new \GuzzleHttp\Client(['decode_content' => false,'verify' => false]);
                                     $checkstatus = $client->request('POST', $credit_request_uri, [                    
                                             'json'   => [
                                                 "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        

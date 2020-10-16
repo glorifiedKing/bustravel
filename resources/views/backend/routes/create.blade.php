@@ -134,6 +134,15 @@
                                   <input type="radio"  name="has_inverse" value="0" checked> No</label>
                                </label>
                             </div>
+                            <div class=" col-md-3 form-group">
+                                <label for="signed" class=" col-md-12 control-label">Enable Seat Numbers</label>
+                                <label class="radio-inline">
+                                  <input type="radio"  name="enable_seat_number_booking" value="1"> Yes</label>
+                                </label>
+                               <label class="radio-inline">
+                                  <input type="radio"  name="enable_seat_number_booking" value="0" checked> No</label>
+                               </label>
+                            </div>
                     </div>
                         <button class="btn btn-info">Submit</button>
                     </form>
