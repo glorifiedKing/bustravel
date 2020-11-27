@@ -50,6 +50,15 @@
                                 </div>
                             </div>
                             <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="captcha"><img src="{{captcha_src()}}" ></label>
+                                    <input type="text" name="captcha" class="form-control {{ $errors->has('captcha') ? 'is-invalid' : '' }}">
+                                    @error('captcha')
+                                    <small class="form-text invalid-feedback" >
+                                        {{ $message }}
+                                    </small>
+                                    @enderror
+                                </div>
                                 <div class="form-check">
                                     <input name="agree_terms" class="form-check-input {{ $errors->has('agree_terms') ? 'is-invalid' : '' }}" type="checkbox" id="gridCheck">
                                     <label class="form-check-label" for="gridCheck">
