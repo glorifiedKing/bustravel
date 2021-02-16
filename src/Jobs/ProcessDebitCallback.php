@@ -42,9 +42,9 @@ class ProcessDebitCallback implements ShouldQueue
         $flutter_transaction_prefix = env("FLUTTERWAVE_TRANSACTION_PREFIX","flutter");
         $chars_palm = strlen($palm_kash_prefix);
         $chars_flutter = strlen($flutter_transaction_prefix);
-        $this->transaction_id = (isset($request->transaction_reference_number)) ? substr($request->get('transaction_reference_number'),$chars_palm) : substr($request->get('tx_ref'),$chars_flutter);
-        $this->transaction_status = (isset($request->transaction_reference_number)) ? $request->get('transaction_status') : $request->get('status');
-        $this->status_code = $request->get('status_code');
+        $this->transaction_id = (isset($request->transaction_reference_number)) ? substr($request->transaction_reference_number,$chars_palm) : substr($request->tx_ref,$chars_flutter);
+        $this->transaction_status = (isset($request->transaction_reference_number)) ? $request->transaction_status : $request->status;
+        $this->status_code = $request->status_code;
         $this->url = $request->fullUrl();
         $this->client_ip = $request->ip();
         $this->method = $request->method();
