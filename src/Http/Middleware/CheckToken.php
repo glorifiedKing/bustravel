@@ -4,6 +4,7 @@ namespace glorifiedking\BusTravel\Http\Middleware;
 
 use Closure;
 use glorifiedking\BusTravel\ApiKey;
+use Illuminate\Support\Facades\Log;
 
 class CheckToken
 {
@@ -18,7 +19,7 @@ class CheckToken
     {
         if(!$request->has('token'))
         {            
-            
+            Log::info("check_api_token: NONE");
             return response()->json([
                 'status' => 'authentication error',
                 'result' => 'missing token'
@@ -28,7 +29,8 @@ class CheckToken
         
         $token = ApiKey::where('token',$request->token)->first();
         if(!$token)
-        {            
+        {  
+            Log::info("check_api_token: INVALID TOKEN");          
             return response()->json([
                 'status' => 'authentication error',
                 'result' => 'invalid'
@@ -37,7 +39,8 @@ class CheckToken
         // check allowed ip addresses 
         $token_ip_addresses = $token->ip_addresses;
         if(!in_array($request->ip(),$token_ip_addresses))
-        {            
+        {  
+            Log::info("check_api_token: INVALID IP");          
             return response()->json([
                 'status' => 'authentication error',
                 'result' => 'invalid source'
