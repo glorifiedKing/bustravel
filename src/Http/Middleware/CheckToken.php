@@ -19,7 +19,7 @@ class CheckToken
     {
         if(!$request->has('token'))
         {            
-            Log::info("check_api_token: NONE");
+            Log::info(["check_api_token: NONE" => $request->all()]);
             return response()->json([
                 'status' => 'authentication error',
                 'result' => 'missing token'
