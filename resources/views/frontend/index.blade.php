@@ -111,7 +111,7 @@
                     </form>
                     </div>
                     <div class="offset-1 col-md-3 area-extras">
-                        <div>WE ACCEPT MTN MOMO</div>
+                        <div>WE ACCEPT MOBILE MONEY</div>
                     </div>
                 </div>
             @endsection
