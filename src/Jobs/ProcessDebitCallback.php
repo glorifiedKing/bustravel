@@ -320,7 +320,7 @@ class ProcessDebitCallback implements ShouldQueue
                    //wait(10); 
                 }
                 else {
-                    $transaction->status = 'failed';
+                    $transaction->status = $new_transaction_status;
                     $transaction->payment_gateway_result = $new_transaction_status;
                     $transaction->save();
                     //wait(10);

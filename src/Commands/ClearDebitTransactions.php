@@ -313,7 +313,7 @@ class ClearDebitTransactions extends Command
                     }
                     else
                     {
-                        $transaction->status = 'failed';
+                        $transaction->status = $new_transaction_status;
                         $transaction->payment_gateway_result = $new_transaction_status;
                         $transaction->save();
                     }
