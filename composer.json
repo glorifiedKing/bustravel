@@ -10,12 +10,12 @@
     ],
     "require": {
         "jeroennoten/laravel-adminlte": "^3.0",
-        "spatie/laravel-permission": "3.0",
+        "spatie/laravel-permission": "^5.11",
         "doctrine/dbal": "^2.10",
-        "guzzlehttp/guzzle": "^6.5",
+        "guzzlehttp/guzzle": "^7.2",
         "propaganistas/laravel-phone": "^5.0",
         "te7a-houdini/laravel-trix": "^2.0",
-        "africastalking/africastalking": "^2.3"
+        "africastalking/africastalking": "^3.0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.3",
