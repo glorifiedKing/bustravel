@@ -24,8 +24,7 @@ class PermissionSeeder extends Seeder
         $permission5 = Permission::create(['name' => 'View BT Stations']);
         $permission6 = Permission::create(['name' => 'View BT Operators']);
         $permission7 = Permission::create(['name' => 'Create BT Operators']);
-        $permission8 = Permission::create(['name' => 'Update BT Operators']);        
-        $permission10 = Permission::create(['name' => 'Manage BT Permissions']);
+        $permission8 = Permission::create(['name' => 'Update BT Operators']);
         $permission11 = Permission::create(['name' => 'Delete BT Operators']);
         $permission12 = Permission::create(['name' => 'View BT Buses']);
         $permission13 = Permission::create(['name' => 'Create BT Buses']);
