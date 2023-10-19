@@ -59,7 +59,7 @@ class PermissionSeeder extends Seeder
         $role1 = Role::create(['name' => 'BT Super Admin']);
         $role1->givePermissionTo([
           $permission1, $permission2, $permission3, $permission4, $permission5, $permission6,
-          $permission7, $permission8, $permission9, $permission10, $permission11, $permission12,
+          $permission7, $permission8,  $permission11, $permission12,
           $permission13, $permission14, $permission15, $permission16, $permission17, $permission18,
           $permission19, $permission20, $permission21, $permission22, $permission23, $permission24,
           $permission25, $permission26, $permission27, $permission28, $permission29, $permission30,
