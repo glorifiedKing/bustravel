@@ -9,11 +9,11 @@
                     Home <span class="sr-only">(current)</span>
                 </a>
             </li>
-            <li class="nav-item active">
+            {{-- <li class="nav-item active">
                 <a class="nav-link" href="{{route('bustravel.bus.times')}}" style="color:white !important">
                     Today's Travel Tickets <span class="sr-only">(current)</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a class="nav-link" href="{{route('bustravel.bus.stations')}}" style="color:white !important">Stations </a>
             </li>
