@@ -40,7 +40,8 @@ class CheckToken
         $token_ip_addresses = $token->ip_addresses;
         if(!in_array($request->ip(),$token_ip_addresses))
         {  
-            Log::info("check_api_token: INVALID IP");          
+            $sourceIp = $request->ip();
+            Log::info("check_api_token: INVALID IP: $sourceIp");
             return response()->json([
                 'status' => 'authentication error',
                 'result' => 'invalid source'
