@@ -28,7 +28,7 @@ class ApiController extends Controller
     {
         //$this->middleware('web');
         //$this->middleware('auth');
-        $this->middleware('bt_key')->except('index','show_debit_test_form','get_station_by_name','get_route_times','ticket_scan');
+        $this->middleware('bt_key')->except('index','show_debit_test_form','get_station_by_name','get_route_times','ticket_scan','ussd');
     }
 
     public function show_debit_test_form()
