@@ -11,6 +11,7 @@
     "require": {
         "jeroennoten/laravel-adminlte": "^3.0",
         "spatie/laravel-permission": "^5.11",
+        "barryvdh/laravel-dompdf": "^2.0",
         "doctrine/dbal": "^2.10",
         "guzzlehttp/guzzle": "^7.2",
         "propaganistas/laravel-phone": "^5.0",
