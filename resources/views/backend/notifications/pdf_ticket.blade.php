@@ -312,7 +312,7 @@
                                     <td><span class="col-md-12">Departure:</span></td>
                                 </tr>
                                 <tr>
-                                     <td style="text-align:left"><p> </p></td>
+                                     <td style="text-align:left"><p>{{ $departure_station }}</p></td>
                                 </tr>
                             </table>
                         </div>
@@ -332,7 +332,7 @@
                                     <td style="text-align:right"><span>Time:</span></td>
                                 </tr>
                                 <tr>
-                                     <td style="text-align:right"><p>{{ $departure_time  }}</p></td>
+                                     <td style="text-align:right"><p>{{ $departure_time }}</p></td>
                                 </tr>
                             </table>
                         </div>
@@ -345,7 +345,7 @@
                                     <td><span class="col-md-12">Arrival:</span></td>
                                 </tr>
                                 <tr>
-                                     <td style="text-align:left"><p> </p></td>
+                                     <td style="text-align:left"><p>{{ $arrival_station }} </p></td>
                                 </tr>
                             </table>
                         </div>

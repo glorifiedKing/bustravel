@@ -18,6 +18,7 @@ use glorifiedking\BusTravel\CreditTransaction;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use glorifiedking\BusTravel\GeneralSetting;
 use glorifiedking\BusTravel\RoutesDepartureTime;
+use Barryvdh\DomPDF\Facade\Pdf;
 use glorifiedking\BusTravel\Mail\TicketEmail;
 use AfricasTalking\SDK\AfricasTalking;
 use Carbon\Carbon;
@@ -175,14 +176,38 @@ class ProcessDebitCallback implements ShouldQueue
                             ['purpose','=','TICKET'],
                             ['language','=',$transaction->language]
                         ])->first();
-                        $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
+                        $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");
+                        
                         foreach($tickets_bought as $ticket_id)
                         {
                             $ticket = Booking::find($ticket_id);
                             $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
                             //dd($departure_route);
                             $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,Carbon::parse($transaction->date_of_travel)->format("d/m/Y"),$departure_route->arrival_time,Carbon::parse($transaction->date_of_travel)->format('d/m/Y'),$ticket->amount,Carbon::parse($ticket->date_paid)->format("d/m/Y"),$transaction->payment_method);
+
+                            $file_name = public_path('/tickets/'.$ticket->ticket_number.".pdf");
+                            $first_name = $ticket->payment_transaction->first_name ?? '';
+                            $last_name = $ticket->payment_transaction->last_name ?? '';
+                            $name = strtoupper("$first_name "."$last_name");
+    
+                            $ticket_data = [
+                                'ticket_number' => $ticket->ticket_number ? $ticket->ticket_number : null,
+                                'ticket_price' => $ticket->amount ? $ticket->amount : null,
+                                'seat_number' => $ticket->seat_number ? $ticket->seat_number : null,
+                                'departure_station' => $departure_route->route->start->name ? $departure_route->route->start->name : null,
+                                'arrival_station' => $departure_route->route->end->name ? $departure_route->route->end->name : null,
+                                'departure_time' => Carbon::parse($ticket->route_departure_time->departure_time)->format('h:i A'),
+                                'destination_time' => Carbon::parse($ticket->route_departure_time->arrival_time)->format('h:i A'),
+                                'name' =>  $name,
+                                'date_paid' => Carbon::parse($ticket->date_paid)->format('l, jS \of F Y h:i A'),
+                                'time_of_payment' => Carbon::parse($ticket->date_paid)->format('h:i A'),
+                                'date_of_travel' => Carbon::parse($ticket->date_of_travel)->format('l, jS \of F Y h:i A')
+                            ];
+    
+                            $pdf = Pdf::loadView('bustravel::backend.notifications.pdf_ticket', $ticket_data)->setWarnings(false)->save($file_name);
+
                             $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
+                            $sms_text = $sms_text ." ".'<a href="'.url('/tickets/'.$ticket->ticket_number.".pdf").'">'.$ticket->ticket_number.".pdf".'</a>';;
                             $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
                             
                             //send credit merchant 
