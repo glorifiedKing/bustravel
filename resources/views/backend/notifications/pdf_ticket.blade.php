@@ -355,7 +355,7 @@
                                     <td style="text-align:right"><span>Date:</span></td>
                                 </tr>
                                 <tr>
-                                     <td style="text-align:right"><p></p></td>
+                                     <td style="text-align:right"><p>{{ $date_of_travel }}</p></td>
                                 </tr>
                             </table>
                         </div>
