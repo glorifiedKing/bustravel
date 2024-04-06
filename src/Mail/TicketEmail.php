@@ -30,6 +30,6 @@ class TicketEmail extends Mailable
                     //->bcc($address, $name)
                     ->replyTo($address, $name)
                     ->subject($subject)
-                    ->with([ 'email_message' => $this->data['message'] ]);
+                    ->with([ 'email_message' => $this->data['message'], 'ticket_number'=>$this->data['ticket_number'] ]);
     }
 }
