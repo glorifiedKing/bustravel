@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
+        //Permission::truncate();
         $permission1 = Permission::create(['name' => 'Manage BT Stations']);
         $permission2 = Permission::create(['name' => 'Manage BT Permissions']);
         $permission3 = Permission::create(['name' => 'Manage BT Operator Settings']);
