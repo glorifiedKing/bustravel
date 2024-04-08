@@ -139,12 +139,12 @@
         .bottom p {
         display: flex;
         flex-direction: column;
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 17px;
+        font-weight: 600;
         }
         .bottom span {
         font-weight: 400;
-        font-size: 18px;
+        font-size: 15px;
         color: #0872a6;
         }
         .bottom .column {
@@ -155,7 +155,7 @@
         .bottom .row {
         display: flex;
         margin-top: 10px;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         }
         .bottom .row--right {
         text-align: right;
@@ -266,8 +266,8 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="big" style="text-align: center; margin-left: 120px;">
-                                <img src="data:image/png;base64, {!! base64_encode(QrCode::size(220)->generate($ticket_number)) !!} " style="text-align: center; margin-bottom: 20px;  width: 150px; height: 150px;">
+                            <div class="big" style="text-align: center;">
+                                <img src="data:image/png;base64, {!! base64_encode(QrCode::size(220)->generate($ticket_number)) !!} " style="text-align: center; margin-bottom: 20px;  width: 180px; height: 180px;">
                             </div>
                         </div>
                        
@@ -282,161 +282,86 @@
                     <div class="row">
                         
                     </div>
+
                     <div class="row">
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Name:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:left"><p>{{ $name }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Ticket Type:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p> </p></td>
-                                </tr>
-                            </table>
-                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td><span class="col-md-12">Name:</span></td>
+                                <td style="text-align:right"><span>Ticket Type:</span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left"><p>{{ $name }} </p></td>
+                                <td style="text-align:right"><p> </p></td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Departure:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:left"><p>{{ $departure_station }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Date:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p>{{ $date_of_travel }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Time:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p>{{ $departure_time }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td><span class="col-md-12">Departure:</span></td>
+                                <td style="text-align:center"><span>Date:</span></td>
+                                <td style="text-align:right"><span>Time:</span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left"><p>{{ $departure_station }} </p></td>
+                                <td style="text-align:center"><p>{{ $date_of_travel}}</p></td>
+                                <td style="text-align:right"><p>{{ $destination_time}}</p></td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Arrival:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:left"><p>{{ $arrival_station }} </p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Date:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p>{{ $date_of_travel }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Time:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p>{{ $destination_time }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td><span class="col-md-12">Arrival:</span></td>
+                                <td style="text-align:center"><span>Date:</span></td>
+                                <td style="text-align:right"><span>Time:</span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left"><p>{{ $arrival_station }}</p></td>
+                                <td style="text-align:center"><p>{{ $date_of_travel}}</p></td>
+                                <td style="text-align:right"><p>{{ $destination_time}}</p></td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Date Paid:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:left"><p>{{ $date_paid }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td style="text-align:right"><span>Time:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:right"><p>{{ $time_of_payment }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-
-                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td><span class="col-md-12">Date Paid:</span></td>
+                                <td style="text-align:right"><span>Time:</span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left"><p>{{ $date_paid }} </p></td>
+                                <td style="text-align:right"><p>{{ $time_of_payment}}</p></td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Fare:</span></td>
-                                </tr>
-                                <tr>
-                                     <td style="text-align:left"><p>{{ $ticket_price}}</p></td>
-                                </tr>
-                            </table>
-                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                
+                                <td><span class="col-md-12">Vehicle No:</span></td>
+                                <td style="text-align:center"><span>Seat No:</span></td>
+                                <td style="text-align:right"><span>Fare:</span></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left"><p></p></td>
+                                <td style="text-align:center"><p>{{ $seat_number}}</p></td>
+                                <td style="text-align:right"><p>{{ $ticket_price}}</p></td>
+                            </tr>
+                        </table>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">Vehicle No:</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:left"><p></p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td><span class="col-md-12">SEAT NO:</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center"><p>{{ $seat_number }}</p></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <img src="data:image/png;base64, {!! base64_encode(QrCode::size(220)->generate($ticket_number)) !!} " style="text-align: center; margin-bottom: 20px;  width: 100px; height: 100px;">
-                        </div>
-                       
+                
                     </div>
-                    <div class="row"></div>
+
+                    <div class="row" style="text-align:center; margin-top: 30px;">
+                        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(220)->generate($ticket_number)) !!} " style="text-align: center; margin-bottom: 20px;  width: 100px; height: 100px;">
+                    </div>
                 </div>
             </div>
             <div class="row">
