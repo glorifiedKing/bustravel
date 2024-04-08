@@ -199,15 +199,15 @@ class ProcessDebitCallback implements ShouldQueue
                                 'departure_time' => Carbon::parse($ticket->route_departure_time->departure_time)->format('h:i A'),
                                 'destination_time' => Carbon::parse($ticket->route_departure_time->arrival_time)->format('h:i A'),
                                 'name' =>  $name,
-                                'date_paid' => Carbon::parse($ticket->date_paid)->format('l, jS \of F Y h:i A'),
+                                'date_paid' => Carbon::parse($ticket->date_paid)->format('Y-m-d h:i A'),
                                 'time_of_payment' => Carbon::parse($ticket->date_paid)->format('h:i A'),
-                                'date_of_travel' => Carbon::parse($ticket->date_of_travel)->format('l, jS \of F Y h:i A')
+                                'date_of_travel' => Carbon::parse($ticket->date_of_travel)->format('Y-m-d')
                             ];
     
                             $pdf = Pdf::loadView('bustravel::backend.notifications.pdf_ticket', $ticket_data)->setWarnings(false)->save($file_name);
 
                             $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                            $sms_text = $sms_text ." ".'<a href="'.url('/tickets/'.$ticket->ticket_number.".pdf").'">'.$ticket->ticket_number.".pdf".'</a>';;
+                            $sms_text = $sms_text ." ".'<a href="'.url('/tickets/'.$ticket->ticket_number.".pdf").'">'.$ticket->ticket_number.'.pdf'.'</a>';
                             $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
                             
                             //send credit merchant 

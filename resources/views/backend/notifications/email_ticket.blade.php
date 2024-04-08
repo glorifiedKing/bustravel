@@ -54,9 +54,12 @@ text-align: center; text-decoration: none; -webkit-text-size-adjust: none;',
 <!-- Logo -->
 <tr>
   <th style="display: none;" scope="col"></th>
-<td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" alt="Palm Kash" height="150px"/>
+<td style="{{ $style['email-masthead'] }}"><a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}" target="_blank"> 
+<img src="{!!$message->embedData(QrCode::format('png')->generate($ticket_number), $ticket_number.'.png', 'image/png')!!}" alt="{{$ticket_number}}" />
 <!--{{ config('app.name') }}-->
-</a><br/><br/><div style="text-align:center;">Bus Travel Ticket</div></td>
+<!-- <img src="{{asset(env('EMAIL_LOGO','vendor/glorifiedking/docs/images/logo_full.png'))}}" alt="Palm Kash" height="150px"/> -->
+<!--{{ config('app.name') }}-->
+</a><br/><br/><div style="text-align:center;">{{ $ticket_number }}</div></td>
 </tr>
 <!-- Email Body -->
 <tr>
