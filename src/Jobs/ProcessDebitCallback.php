@@ -207,7 +207,7 @@ class ProcessDebitCallback implements ShouldQueue
                             $pdf = Pdf::loadView('bustravel::backend.notifications.pdf_ticket', $ticket_data)->setWarnings(false)->save($file_name);
 
                             $sms_text = str_replace($search_for, $replace_with, $sms_template->message ?? '');
-                            $sms_text = $sms_text ." ".$ticket->ticket_number;
+                            $sms_text = $sms_text ." ".url('/tickets/'.$ticket->ticket_number.".pdf");
                             $email_message = str_replace($search_for, $replace_with, $email_template->message ?? '');
                             
                             //send credit merchant 
