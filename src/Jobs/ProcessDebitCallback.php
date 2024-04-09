@@ -53,6 +53,13 @@ class ProcessDebitCallback implements ShouldQueue
         $this->flutter_reference = $request->transaction_id ?? 0;
     }
 
+    private function generateRandomTicket(string $prefix, int|string $key) : string
+    {
+        $pKey = strval($key);
+        return strtoupper(uniqid($prefix).substr($pKey, strlen($pKey)-1));
+        
+    }
+
     public function handle()
     {
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url'); 
@@ -115,7 +122,7 @@ class ProcessDebitCallback implements ShouldQueue
                             {
                                 $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
@@ -139,7 +146,7 @@ class ProcessDebitCallback implements ShouldQueue
                             {
                                 $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');

@@ -48,6 +48,13 @@ class ClearDebitTransactions extends Command
         parent::__construct();
     }
 
+    private function generateRandomTicket(string $prefix, int|string $key) : string
+    {
+        $pKey = strval($key);
+        return strtoupper(uniqid($prefix).substr($pKey, strlen($pKey)-1));
+        
+    }
+
 
     public function handle()
     {
@@ -116,7 +123,7 @@ class ClearDebitTransactions extends Command
                             {
                                 $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
@@ -138,7 +145,7 @@ class ClearDebitTransactions extends Command
                             {
                                 $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $operator->code.date('y').sprintf($pad_format, $booking->getNextId());
+                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
