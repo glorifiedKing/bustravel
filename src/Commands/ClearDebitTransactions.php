@@ -123,7 +123,7 @@ class ClearDebitTransactions extends Command
                             {
                                 $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
+                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10,100));
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
@@ -145,7 +145,7 @@ class ClearDebitTransactions extends Command
                             {
                                 $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $this->generateRandomTicket($operator->code, $booking->getKey());
+                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10,100));
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
