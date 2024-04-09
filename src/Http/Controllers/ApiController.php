@@ -267,7 +267,7 @@ class ApiController extends Controller
             }
             $main_routes = ($route_type == 'main_route') ? [$route_id] : [];
             $stop_over_routes = ($route_type == 'stop_over_route') ? [$route_id] : [];
-            $amount = $route->route->price;
+            $amount = $route->route->price * $no_of_tickets;
             $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
             $amount += $sms_cost;
             $paying_user = 0;
