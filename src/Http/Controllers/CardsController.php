@@ -64,7 +64,7 @@ class CardsController extends Controller
             return Redirect::route('bustravel.cards');
         }
 
-        return view('bustravel::backend.card.edit', compact('card'));
+        return view('bustravel::backend.cards.edit', compact('card'));
     }
 
     //Update Operator route('bustravel.operators.upadate')
