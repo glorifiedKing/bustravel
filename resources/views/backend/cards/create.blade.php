@@ -56,7 +56,7 @@
                         
                       <div class="form-group col-md-6 ">
                         <label for="exampleInputEmail1">name</label>
-                        <input id="front-seats" type="text" name="name" value="{{old('name') ?? 2 }}"  class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" required>
+                        <input id="front-seats" type="text" name="name" value="{{old('name')}}"  class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" required>
                         @if ($errors->has('name'))
                             <span class="invalid-feedback">
                                 <strong>{{ $errors->first('name') }}</strong>
