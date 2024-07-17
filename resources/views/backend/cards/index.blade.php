@@ -72,8 +72,8 @@
                                 <td>{{$card->identifier}}</td>
                                 <td>{{$card->balance}}</td>
                                 <td>{{$card->name}}</td>
-                                <td>{{$card->phone_number}}</td>
-                                <td>{{$card->natinal_id}}</td>
+                                <td>{{$card->phone}}</td>
+                                <td>{{$card->national_id}}</td>
                                 <td><a title="Edit" href="{{route('bustravel.cards.edit',$card->id)}}"><i class="fas fa-edit" aria-hidden="true"></i></a>
                                     <a title="Delete" onclick="return confirm('Are you sure you want to delete this Bus {{$card->identifier}}')" href="{{route('bustravel.cards.delete',$card->id)}}"><span style="color:tomato"><i class="fas fa-trash-alt" aria-hidden="true"></i></span></a>
                                 </td>

@@ -17,7 +17,7 @@ class CreateCardsTable extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('identifier')->unique();
-            $table->decimal('balance', 12, 8)->default(0.0);
+            $table->decimal('balance', 12, 2)->default(0.0);
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('national_id')->nullable();
