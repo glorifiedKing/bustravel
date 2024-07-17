@@ -122,58 +122,62 @@ Route::any('faqs/{id}/update', 'FaqsController@updatefaqs')->name('bustravel.faq
 Route::any('faqs/{id}/delete', 'FaqsController@deletefaqs')->name('bustravel.faqs.delete');
 
 // email templates
-Route::get('email_template','TicketTemplateController@view_email_templates')->name('bustravel.email.templates');
-Route::get('email_template/new','TicketTemplateController@create_email_template')->name('bustravel.email.templates.create');
-Route::post('email_template/new','TicketTemplateController@save_email_template')->name('bustravel.email.templates.save');
-Route::get('email_template/{id}/edit','TicketTemplateController@edit_email_template')->name('bustravel.email.templates.edit');
-Route::post('email_template/{id}/edit','TicketTemplateController@update_email_template')->name('bustravel.email.templates.update');
-Route::get('email_template/{id}/delete','TicketTemplateController@delete_email_template')->name('bustravel.email.templates.delete');
+Route::get('email_template', 'TicketTemplateController@view_email_templates')->name('bustravel.email.templates');
+Route::get('email_template/new', 'TicketTemplateController@create_email_template')->name('bustravel.email.templates.create');
+Route::post('email_template/new', 'TicketTemplateController@save_email_template')->name('bustravel.email.templates.save');
+Route::get('email_template/{id}/edit', 'TicketTemplateController@edit_email_template')->name('bustravel.email.templates.edit');
+Route::post('email_template/{id}/edit', 'TicketTemplateController@update_email_template')->name('bustravel.email.templates.update');
+Route::get('email_template/{id}/delete', 'TicketTemplateController@delete_email_template')->name('bustravel.email.templates.delete');
 
 
 // sms templates
-Route::get('sms_template','TicketTemplateController@view_sms_templates')->name('bustravel.sms.templates');
-Route::get('sms_template/new','TicketTemplateController@create_sms_template')->name('bustravel.sms.templates.create');
-Route::post('sms_template/new','TicketTemplateController@save_sms_template')->name('bustravel.sms.templates.save');
-Route::get('sms_template/{id}/edit','TicketTemplateController@edit_sms_template')->name('bustravel.sms.templates.edit');
-Route::post('sms_template/{id}/edit','TicketTemplateController@update_sms_template')->name('bustravel.sms.templates.update');
-Route::get('sms_template/{id}/delete','TicketTemplateController@delete_sms_template')->name('bustravel.sms.templates.delete');
+Route::get('sms_template', 'TicketTemplateController@view_sms_templates')->name('bustravel.sms.templates');
+Route::get('sms_template/new', 'TicketTemplateController@create_sms_template')->name('bustravel.sms.templates.create');
+Route::post('sms_template/new', 'TicketTemplateController@save_sms_template')->name('bustravel.sms.templates.save');
+Route::get('sms_template/{id}/edit', 'TicketTemplateController@edit_sms_template')->name('bustravel.sms.templates.edit');
+Route::post('sms_template/{id}/edit', 'TicketTemplateController@update_sms_template')->name('bustravel.sms.templates.update');
+Route::get('sms_template/{id}/delete', 'TicketTemplateController@delete_sms_template')->name('bustravel.sms.templates.delete');
 
 // printers
-Route::get('printers','PrintersController@view_printers')->name('bustravel.printers.list');
-Route::get('printers/new','PrintersController@create_printer')->name('bustravel.printers.create');
-Route::post('printers/new','PrintersController@save_printer')->name('bustravel.printers.save');
-Route::get('printers/{id}/edit','PrintersController@edit_printer')->name('bustravel.printers.edit');
-Route::post('printers/{id}/edit','PrintersController@update_printer')->name('bustravel.printers.update');
-Route::get('printers/{id}/delete','PrintersController@delete_printer')->name('bustravel.printers.delete');
+Route::get('printers', 'PrintersController@view_printers')->name('bustravel.printers.list');
+Route::get('printers/new', 'PrintersController@create_printer')->name('bustravel.printers.create');
+Route::post('printers/new', 'PrintersController@save_printer')->name('bustravel.printers.save');
+Route::get('printers/{id}/edit', 'PrintersController@edit_printer')->name('bustravel.printers.edit');
+Route::post('printers/{id}/edit', 'PrintersController@update_printer')->name('bustravel.printers.update');
+Route::get('printers/{id}/delete', 'PrintersController@delete_printer')->name('bustravel.printers.delete');
 
 
-Route::post('api/getBusServices/{operatorId}','BookingsController@get_route_times')->name('bustravel.api.get.route.times');
+Route::post('api/getBusServices/{operatorId}', 'BookingsController@get_route_times')->name('bustravel.api.get.route.times');
 
 // payment reports
-Route::get('report_payments/{start_date?}','PaymentReportsController@list')->name('bustravel.reports.payments');
-Route::any('transactions','SupportController@show_transactions')->name('bustravel.reports.transactions');
-Route::get('transactions/resend_ticket/{id}','SupportController@resend_ticket')->name('bustravel.transaction.resend_ticket');
+Route::get('report_payments/{start_date?}', 'PaymentReportsController@list')->name('bustravel.reports.payments');
+Route::any('transactions', 'SupportController@show_transactions')->name('bustravel.reports.transactions');
+Route::get('transactions/resend_ticket/{id}', 'SupportController@resend_ticket')->name('bustravel.transaction.resend_ticket');
 //dashboard
-Route::get('dashboard','DashboardController@index')->name('bustravel.dashboard');
+Route::get('dashboard', 'DashboardController@index')->name('bustravel.dashboard');
 
 //documentation
-Route::get('docs','DocumentationController@index')->name('bustravel.docs');
-Route::get('docs/buses','DocumentationController@buses')->name('bustravel.docs.buses');
-Route::get('docs/drivers','DocumentationController@drivers')->name('bustravel.docs.drivers');
-Route::get('docs/routes','DocumentationController@routes')->name('bustravel.docs.routes');
-Route::get('docs/bookings','DocumentationController@bookings')->name('bustravel.docs.bookings');
-Route::get('docs/reports','DocumentationController@reports')->name('bustravel.docs.reports');
-Route::get('docs/settings','DocumentationController@settings')->name('bustravel.docs.settings');
+Route::get('docs', 'DocumentationController@index')->name('bustravel.docs');
+Route::get('docs/buses', 'DocumentationController@buses')->name('bustravel.docs.buses');
+Route::get('docs/drivers', 'DocumentationController@drivers')->name('bustravel.docs.drivers');
+Route::get('docs/routes', 'DocumentationController@routes')->name('bustravel.docs.routes');
+Route::get('docs/bookings', 'DocumentationController@bookings')->name('bustravel.docs.bookings');
+Route::get('docs/reports', 'DocumentationController@reports')->name('bustravel.docs.reports');
+Route::get('docs/settings', 'DocumentationController@settings')->name('bustravel.docs.settings');
 
-Route::get('payment_status/{id}','FrontendController@get_payment_status')->name('bustravel.payment.status');
-Route::get('ticket_scanners/{id?}','TicketScannersController@index')->name('bustravel.ticket_scanners');
-Route::get('ticket_scanner/new','TicketScannersController@create')->name('bustravel.ticket_scanners.create');
-Route::post('ticket_scanner/new','TicketScannersController@save')->name('bustravel.ticket_scanners.save');
-Route::get('ticket_scanners/{id}/toggle','TicketScannersController@toggle_status')->name('bustravel.ticket_scanners.toggle_status');
-Route::get('ticket_scanners/{id}/edit','TicketScannersController@edit')->name('bustravel.ticket_scanners.edit');
-Route::post('ticket_scanners/{id}/edit','TicketScannersController@update')->name('bustravel.ticket_scanners.update');
-Route::get('ticket_scanners/{id}/delete','TicketScannersController@delete')->name('bustravel.ticket_scanners.delete');
-Route::get('ticket_scanners/{id}/logs','TicketScannersController@scan_logs')->name('bustravel.ticket_scanners.scan_logs');
+Route::get('payment_status/{id}', 'FrontendController@get_payment_status')->name('bustravel.payment.status');
+Route::get('ticket_scanners/{id?}', 'TicketScannersController@index')->name('bustravel.ticket_scanners');
+Route::get('ticket_scanner/new', 'TicketScannersController@create')->name('bustravel.ticket_scanners.create');
+Route::post('ticket_scanner/new', 'TicketScannersController@save')->name('bustravel.ticket_scanners.save');
+Route::get('ticket_scanners/{id}/toggle', 'TicketScannersController@toggle_status')->name('bustravel.ticket_scanners.toggle_status');
+Route::get('ticket_scanners/{id}/edit', 'TicketScannersController@edit')->name('bustravel.ticket_scanners.edit');
+Route::post('ticket_scanners/{id}/edit', 'TicketScannersController@update')->name('bustravel.ticket_scanners.update');
+Route::get('ticket_scanners/{id}/delete', 'TicketScannersController@delete')->name('bustravel.ticket_scanners.delete');
+Route::get('ticket_scanners/{id}/logs', 'TicketScannersController@scan_logs')->name('bustravel.ticket_scanners.scan_logs');
 
-
-
+Route::get('cards', 'CardsController@index')->name('bustravel.cards');
+Route::get('cards/create', 'CardsController@create')->name('bustravel.cards.create');
+Route::post('cards', 'CardsController@store')->name('bustravel.cards.store');
+Route::get('cards/{id}/edit', 'CardsController@edit')->name('bustravel.cards.edit');
+Route::any('cards/{id}/update', 'CardsController@update')->name('bustravel.cards.update');
+Route::any('cards/{id}/delete', 'CardsController@delete')->name('bustravel.cards.delete');
