@@ -66,10 +66,10 @@
                     
                   <div class="form-group col-md-6 ">
                     <label for="exampleInputEmail1">Phone Number</label>
-                    <input type="text" name="phone_number" value="{{old('phone_number')}}"  class="form-control {{ $errors->has('phone_number') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
-                    @if ($errors->has('phone_number'))
+                    <input type="text" name="phone" value="{{old('phone')}}"  class="form-control {{ $errors->has('phone') ? ' is-invalid' : '' }}" id="exampleInputEmail1" >
+                    @if ($errors->has('phone'))
                         <span class="invalid-feedback">
-                            <strong>{{ $errors->first('phone_number') }}</strong>
+                            <strong>{{ $errors->first('phone') }}</strong>
                         </span>
                     @endif
                 </div>

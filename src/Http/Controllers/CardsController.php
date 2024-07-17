@@ -49,7 +49,7 @@ class CardsController extends Controller
         $card->identifier = request()->input('identifier');
         $card->balance = request()->input('balance');
         $card->name = request()->input('name');
-        $card->phone_number = request()->input('phone_number');
+        $card->phone = request()->input('phone');
         $card->national_id = $request->national_id;
         $card->save();
         return redirect()->route('bustravel.cards')->with(ToastNotification::toast('Card has successfully been saved', 'Card Saving'));
@@ -80,7 +80,7 @@ class CardsController extends Controller
         $card->identifier = request()->input('identifier');
         $card->balance = request()->input('balance');
         $card->name = request()->input('name');
-        $card->phone_number = request()->input('phone_number');
+        $card->phone = request()->input('phone');
         $card->national_id = $request->national_id;
         $card->save();
 
