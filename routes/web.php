@@ -181,3 +181,4 @@ Route::post('cards', 'CardsController@store')->name('bustravel.cards.store');
 Route::get('cards/{id}/edit', 'CardsController@edit')->name('bustravel.cards.edit');
 Route::any('cards/{id}/update', 'CardsController@update')->name('bustravel.cards.update');
 Route::any('cards/{id}/delete', 'CardsController@delete')->name('bustravel.cards.delete');
+Route::any('card-board', 'CardsController@book')->name('bustravel.cards.book');
