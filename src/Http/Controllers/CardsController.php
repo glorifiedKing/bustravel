@@ -203,6 +203,7 @@ class CardsController extends Controller
             $transaction->no_of_tickets = 1;
             $transaction->language = 'english';
             $transaction->payment_gateway = 'tap_and_go';
+            $transaction->payment_source = 'tap_and_go';
             $transaction->status = 'completed';
             $transaction->save();
 
@@ -219,6 +220,8 @@ class CardsController extends Controller
             $booking->payment_source = 'tap_and_go';
             $booking->payment_transaction_id = $transaction->id;
             $booking->save();
+            $card->balance = $card->balance - $departure_time->route->price;
+            $card->save();
             DB::commit();
             return response()->json([
                 'status' => 'sucess',
