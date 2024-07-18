@@ -170,7 +170,7 @@ class CardsController extends Controller
             'route_type' => 'required',
             'route_id'            => 'required',
         ]);
-        $card = Card::where('identifier')->first();
+        $card = Card::where('identifier', $request->card_id)->first();
 
         if (!$card) {
             return response('invalid card', 400);
