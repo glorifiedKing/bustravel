@@ -24,9 +24,9 @@ class CardsController extends Controller
     const DEPARTURE_TIME_STRING = "departure_time";
     public function __construct()
     {
-        $this->middleware('web');
-        $this->middleware('auth');
-        $this->middleware('can:View BT Buses');
+        $this->middleware('web')->except('book', 'search_routes', 'stations');
+        $this->middleware('auth')->except('book', 'search_routes', 'stations');
+        $this->middleware('can:View BT Buses')->except('book', 'search_routes', 'stations');
     }
 
     //fetching buses route('bustravel.buses')
