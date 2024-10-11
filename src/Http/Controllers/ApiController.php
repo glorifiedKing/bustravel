@@ -53,14 +53,16 @@ class ApiController extends Controller
         $last_date = Carbon::now()->addWeeks(2)->toDateString();
         $now = Carbon::now()->addMinutes(5);
         $now_string = $now->toDateTimeString();
-        $validated_data = $request->validate([
-            'to_station'        => 'required|numeric|different:departure_station',
-            'departure_station' => 'required|numeric',
-            'date_of_travel'    => "required|date|after:yesterday|before:$last_date",
 
-        ]);
-
-
+        if (!$request->filled('to_station')) {
+            return response('To Station required', 400);
+        }
+        if (!$request->filled('departure_station')) {
+            return response('Departure Station required', 400);
+        }
+        if (!$request->filled('date_of_travel')) {
+            return response('Date of travel required', 400);
+        }
         // get which day of the week it is for date
         $travel_day_of_week = Carbon::parse($request->date_of_travel)->format('l');
 
