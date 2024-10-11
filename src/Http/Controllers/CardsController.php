@@ -165,11 +165,16 @@ class CardsController extends Controller
 
     public function book(Request $request)
     {
-        $validated_data = $request->validate([
-            'card_id'        => 'required',
-            'route_type' => 'required',
-            'route_id'            => 'required',
-        ]);
+
+        if (!$request->filled('card_id')) {
+            return response('Card ID required', 400);
+        }
+        if (!$request->filled('route_type')) {
+            return response('Route Type required', 400);
+        }
+        if (!$request->filled('route_id')) {
+            return response('Route ID required', 400);
+        }
         $card = Card::where('identifier', $request->card_id)->first();
 
         if (!$card) {
