@@ -45,7 +45,7 @@ class ApiController extends Controller
 
     public function get_all_stations(Request $request)
     {
-        return Stations::select('id', 'name')->get();
+        return Station::select('id', 'name')->get();
     }
 
     public function search_routes(Request $request)
