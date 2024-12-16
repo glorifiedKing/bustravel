@@ -38,7 +38,7 @@ class FrontendController extends Controller
     {
         $this->middleware('web')->only('checkout', 'get_payment_status');
         $this->middleware('auth')->only('checkout', 'process_payment', 'get_payment_status');
-        $this->middleware('bt_key')->only('process_payment_callback', 'credit_request_callback');
+        //$this->middleware('bt_key')->only('process_payment_callback', 'credit_request_callback');
     }
 
     public function homepage()
