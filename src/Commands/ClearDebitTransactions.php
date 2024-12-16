@@ -21,6 +21,7 @@ use glorifiedking\BusTravel\CreditTransaction;
 use glorifiedking\BusTravel\Mail\TicketEmail;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use glorifiedking\BusTravel\GeneralSetting;
+use glorifiedking\BusTravel\Support\Helper;
 
 class ClearDebitTransactions extends Command
 {
@@ -48,11 +49,10 @@ class ClearDebitTransactions extends Command
         parent::__construct();
     }
 
-    private function generateRandomTicket(string $prefix, int|string $key) : string
+    private function generateRandomTicket(string $prefix, int|string $key): string
     {
         $pKey = strval($key);
-        return strtoupper(uniqid($prefix).substr($pKey, strlen($pKey)-1));
-        
+        return strtoupper(uniqid($prefix) . substr($pKey, strlen($pKey) - 1));
     }
 
 
@@ -62,50 +62,56 @@ class ClearDebitTransactions extends Command
         //$this->info("time: ".$five_minutes_ago);
         //get payment transactions that are over five minutes ago and still pending
         $over_due_transactions = PaymentTransaction::where([
-            ['status','=','pending'],
-            ['created_at','<',$five_minutes_ago]
+            ['status', '=', 'pending'],
+            ['created_at', '<', $five_minutes_ago]
         ])->get();
-        $palm_kash_prefix = env("default_gateway_prefix","");
+        $palm_kash_prefix = env("default_gateway_prefix", "");
         $base_api_url = config('bustravel.payment_gateways.mtn_rw.url');
-        $request_uri = $base_api_url."/checktransactionstatus";   
-        $palm_merchant_account = env('default_merchant_account',"RW002");
-        $africas_talking_user = GeneralSetting::where('setting_prefix','africas_talking_username')->first()->setting_value ?? 'username';
-        $africas_talking_key = GeneralSetting::where('setting_prefix','africas_talking_apikey')->first()->setting_value ?? 'apikey';
-                        
-        foreach($over_due_transactions as $transaction)
-        {            
-            
-            try
-            {
-                $client = new \GuzzleHttp\Client(['verify' => false]);
-                $checkstatus = $client->request('POST', $request_uri, [                    
-                        'json'   => [
-                            "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                            "transaction_account" => $transaction->payee_reference,
-                            "transaction_reference_number" => $palm_kash_prefix.$transaction->id, 
-                            "merchant_account" => $palm_merchant_account,                      
-                        ]
-                ]); 
-                
-                $code = $checkstatus->getStatusCode(); 
-                
+        $request_uri = $base_api_url . "/checktransactionstatus";
+        $palm_merchant_account = env('default_merchant_account', "RW002");
+        $africas_talking_user = GeneralSetting::where('setting_prefix', 'africas_talking_username')->first()->setting_value ?? 'username';
+        $africas_talking_key = GeneralSetting::where('setting_prefix', 'africas_talking_apikey')->first()->setting_value ?? 'apikey';
+
+
+
+        foreach ($over_due_transactions as $transaction) {
+
+            try {
+                $payload = [
+                    "token" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
+                    "transaction_account" => $transaction->payee_reference,
+                    "transaction_reference_number" => $palm_kash_prefix . $transaction->id,
+                    "merchant_account" => $palm_merchant_account,
+                    'exp' => (time() + 60)
+                ];
+                $jwtHeaders = array('alg' => 'sha512', 'typ' => 'JWT');
+                $jwt = Helper::generateJWT($jwtHeaders, $payload, base64_decode(config('bustravel.gateway_jwt_token')));
+                $headers = [
+                    'Authorization' => 'Bearer ' . $jwt,
+                    'Accept'        => 'application/json',
+                ];
+                $client = new \GuzzleHttp\Client(['verify' => false, 'headers' => $headers]);
+                $checkstatus = $client->request('POST', $request_uri, [
+                    'json'   => $payload
+                ]);
+
+                $code = $checkstatus->getStatusCode();
+
                 // ignore this if callback has already updated transaction 
-                $transaction = $transaction->refresh();                    
+                $transaction = $transaction->refresh();
                 //check status again  
-                if($transaction->status == 'pending')
-                {
+                if ($transaction->status == 'pending') {
                     //get new status                   
-                    $response_body = json_decode($checkstatus->getBody(),true);
+                    $response_body = json_decode($checkstatus->getBody(), true);
                     // log request
-                    $status_variables = var_export($response_body,true);
-                    $status_log = date('Y-m-d H:i:s')." transaction_id: ".$transaction->id." WITH:".$status_variables."";
+                    $status_variables = var_export($response_body, true);
+                    $status_log = date('Y-m-d H:i:s') . " transaction_id: " . $transaction->id . " WITH:" . $status_variables . "";
                     //log the request 
-                    \Storage::disk('local')->append('payment_checkstatus_log.txt',$status_log);
+                    \Storage::disk('local')->append('payment_checkstatus_log.txt', $status_log);
                     $new_transaction_status = $response_body['transaction_status'];
-                                
+
                     //for success create ticket add to email and sms queue
-                    if($new_transaction_status == 'completed')
-                    {
+                    if ($new_transaction_status == 'completed') {
                         // create tickets
                         $no_of_tickets = $transaction->no_of_tickets;
                         $tickets_bought = array();
@@ -117,13 +123,11 @@ class ClearDebitTransactions extends Command
                         $str_type = 'd'; // treats input as integer, and outputs as a (signed) decimal number
 
                         $pad_format = "%{$pad_char}{$pad_length}{$str_type}"; // or "%04d"
-                        foreach($paid_main_routes as $departure_id)
-                        {
-                            for($i=0;$i<$no_of_tickets;$i++)
-                            {
+                        foreach ($paid_main_routes as $departure_id) {
+                            for ($i = 0; $i < $no_of_tickets; $i++) {
                                 $departure_time = RoutesDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10,100));
+                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10, 100));
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
@@ -136,16 +140,12 @@ class ClearDebitTransactions extends Command
 
                                 $tickets_bought[] = $booking->id;
                             }
-                            
-
-                        } 
-                        foreach($paid_stop_over_routes as $departure_id)
-                        {
-                            for($i=0;$i<$no_of_tickets;$i++)
-                            {
+                        }
+                        foreach ($paid_stop_over_routes as $departure_id) {
+                            for ($i = 0; $i < $no_of_tickets; $i++) {
                                 $departure_time = RoutesStopOversDepartureTime::findOrFail($departure_id); // change to find after tests
                                 $booking = new Booking;
-                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10,100));
+                                $ticket_number = $this->generateRandomTicket($operator->code, rand(10, 100));
                                 $booking->routes_departure_time_id = $departure_id;
                                 $booking->amount = $departure_time->route->price;
                                 $booking->date_paid = date('Y-m-d');
@@ -158,9 +158,6 @@ class ClearDebitTransactions extends Command
 
                                 $tickets_bought[] = $booking->id;
                             }
-
-                            
-
                         }
 
                         // update transaction status
@@ -170,33 +167,32 @@ class ClearDebitTransactions extends Command
                         //send notifications 
                         // 1 Sms 
                         $palm_sms_template = SmsTemplate::where([
-                            ['purpose','=','TICKET'],
-                            ['operator_id','=',$operator->id],                            
-                            ['language','=',$transaction->language]
+                            ['purpose', '=', 'TICKET'],
+                            ['operator_id', '=', $operator->id],
+                            ['language', '=', $transaction->language]
                         ])->first();
                         // 2 email 
                         $palm_email_template = EmailTemplate::where([
-                            ['purpose','=','TICKET'],
-                            ['operator_id','=',$operator->id],                            
-                            ['language','=',$transaction->language]
+                            ['purpose', '=', 'TICKET'],
+                            ['operator_id', '=', $operator->id],
+                            ['language', '=', $transaction->language]
                         ])->first();
-                        $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}","{ARRIVAL_STATION}","{DEPARTURE_TIME}","{DEPARTURE_DATE}","{ARRIVAL_TIME}","{ARRIVAL_DATE}","{AMOUNT}","{DATE_PAID}","{PAYMENT_METHOD}");    
-                        foreach($tickets_bought as $ticket_id)
-                        {
+                        $search_for = array("{FIRST_NAME}", "{TICKET_NO}", "{DEPARTURE_STATION}", "{ARRIVAL_STATION}", "{DEPARTURE_TIME}", "{DEPARTURE_DATE}", "{ARRIVAL_TIME}", "{ARRIVAL_DATE}", "{AMOUNT}", "{DATE_PAID}", "{PAYMENT_METHOD}");
+                        foreach ($tickets_bought as $ticket_id) {
                             $ticket = Booking::find($ticket_id);
-                            $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start','route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start','route.end']);
+                            $departure_route = ($ticket->route_type == 'main_route') ? $ticket->route_departure_time->load(['route', 'route.start', 'route.end']) : $ticket->stop_over_route_departure_time->load(['route', 'route.start', 'route.end']);
                             //dd($departure_route);
-                            $replace_with = array($transaction->first_name,$ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name,$departure_route->departure_time,$transaction->date_of_travel,$departure_route->arrival_time,$transaction->date_of_travel,$ticket->amount,$ticket->date_paid,$transaction->payment_method);
+                            $replace_with = array($transaction->first_name, $ticket->ticket_number, $departure_route->route->start->name, $departure_route->route->end->name, $departure_route->departure_time, $transaction->date_of_travel, $departure_route->arrival_time, $transaction->date_of_travel, $ticket->amount, $ticket->date_paid, $transaction->payment_method);
                             $sms_text = str_replace($search_for, $replace_with, $palm_sms_template->message ?? '');
                             $email_message = str_replace($search_for, $replace_with, $palm_email_template->message ?? '');
-                            
+
                             //send credit merchant 
                             //get default payment method of operator 
                             $default_payment_method = OperatorPaymentMethod::where([
-                                ['operator_id','=', $operator->id],
-                                ['is_default','=', '1'],
+                                ['operator_id', '=', $operator->id],
+                                ['is_default', '=', '1'],
                             ])->first();
-                            $sms_cost = GeneralSetting::where('setting_prefix','sms_cost_rw')->first()->setting_value ?? 10;
+                            $sms_cost = GeneralSetting::where('setting_prefix', 'sms_cost_rw')->first()->setting_value ?? 10;
 
                             // remove sms_cost from amount 
                             $merchant_credit = ($transaction->send_sms == 1) ? $transaction->amount - $sms_cost : $transaction->amount;
@@ -207,139 +203,109 @@ class ClearDebitTransactions extends Command
                             $credit_transaction->payee_reference = $default_payment_method->sp_phone_number;
                             $credit_transaction->save();
                             // we are concaneting 1 to the transaction id to create unique number 1 is for credit requests
-                            $make_credit_requests = env('credit_all_transactions',"FALSE");
-                            $palm_payment_operator = env('default_payment_operator',"1002");                            
-                            $credit_request_uri = $base_api_url."/makecreditrequest";
-                            if($make_credit_requests == "TRUE")
-                            {
-                                try{
+                            $make_credit_requests = env('credit_all_transactions', "FALSE");
+                            $palm_payment_operator = env('default_payment_operator', "1002");
+                            $credit_request_uri = $base_api_url . "/makecreditrequest";
+                            if ($make_credit_requests == "TRUE") {
+                                try {
                                     $client = new \GuzzleHttp\Client(['verify' => false]);
-                                    $checkstatus = $client->request('POST', $credit_request_uri, [                    
-                                            'json'   => [
-                                                "token" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",                        
-                                                "transaction_account" => $default_payment_method->sp_phone_number,
-                                                "transaction_reference_number" => "1$transaction->id", 
-                                                "transaction_amount"=>$merchant_credit,
-                                                "account_number" => "100023",
-                                                "payment_operator" => $palm_payment_operator,                                        
-                                                "merchant_account" => $palm_merchant_account,
-                                                "transaction_source" => "web",
-                                                "transaction_destination" => "web",
-                                                "transaction_reason" => "Bus Ticket Payment",
-                                                "currency" => "RWF",
-                                                "first_name" => $operator->name,
-                                                "last_name" => $operator->name,
-                                            ]
-                                            ]); 
-                                
-                                
-                            
-                                
-                                $code = $checkstatus->getStatusCode(); 
-                                $request_log = date('Y-m-d H:i:s')." code:".$code."";
-                                \Storage::disk('local')->append('payment_credit_request_log.txt',$request_log);    
-                                if($code == 200) 
-                                {
-                                    $response_body = json_decode($checkstatus->getBody(),true);
-                                    // log request
-                                    $status_variables = var_export($response_body,true);
-                                    $status_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." WITH:".$status_variables."";
-                                    //save the request 
-                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$status_log);
-                                    $new_transaction_status = $response_body['transaction_status'];
-                                    //for failed 
-                                    if($new_transaction_status == 'failed')
-                                    {
-                                    // immediate failure 
-                                        $credit_transaction->status = 'failed';
-                                        $credit_transaction->payment_gateway_result = $response_body['status_code'];
-                                        $credit_transaction->save();                                                               
+                                    $checkstatus = $client->request('POST', $credit_request_uri, [
+                                        'json'   => [
+                                            "token" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3",
+                                            "transaction_account" => $default_payment_method->sp_phone_number,
+                                            "transaction_reference_number" => "1$transaction->id",
+                                            "transaction_amount" => $merchant_credit,
+                                            "account_number" => "100023",
+                                            "payment_operator" => $palm_payment_operator,
+                                            "merchant_account" => $palm_merchant_account,
+                                            "transaction_source" => "web",
+                                            "transaction_destination" => "web",
+                                            "transaction_reason" => "Bus Ticket Payment",
+                                            "currency" => "RWF",
+                                            "first_name" => $operator->name,
+                                            "last_name" => $operator->name,
+                                        ]
+                                    ]);
 
+
+
+
+                                    $code = $checkstatus->getStatusCode();
+                                    $request_log = date('Y-m-d H:i:s') . " code:" . $code . "";
+                                    \Storage::disk('local')->append('payment_credit_request_log.txt', $request_log);
+                                    if ($code == 200) {
+                                        $response_body = json_decode($checkstatus->getBody(), true);
+                                        // log request
+                                        $status_variables = var_export($response_body, true);
+                                        $status_log = date('Y-m-d H:i:s') . " transaction_id: 1" . $transaction->id . " WITH:" . $status_variables . "";
+                                        //save the request 
+                                        \Storage::disk('local')->append('payment_credit_request_log.txt', $status_log);
+                                        $new_transaction_status = $response_body['transaction_status'];
+                                        //for failed 
+                                        if ($new_transaction_status == 'failed') {
+                                            // immediate failure 
+                                            $credit_transaction->status = 'failed';
+                                            $credit_transaction->payment_gateway_result = $response_body['status_code'];
+                                            $credit_transaction->save();
+                                        }
                                     }
-                                }
-                                }
-                                catch(\Exception $e)
-                                {
-                                    $error_log = date('Y-m-d H:i:s')." transaction_id: 1".$transaction->id." error:".$e->getMessage()."";
-                                    \Storage::disk('local')->append('payment_credit_request_log.txt',$error_log);
-
+                                } catch (\Exception $e) {
+                                    $error_log = date('Y-m-d H:i:s') . " transaction_id: 1" . $transaction->id . " error:" . $e->getMessage() . "";
+                                    \Storage::disk('local')->append('payment_credit_request_log.txt', $error_log);
                                 }
                             }
-                            
-                            if($palm_sms_template)
-                            {
-                            // send sms 
-                                try{
+
+                            if ($palm_sms_template) {
+                                // send sms 
+                                try {
                                     $by = "PalmKash";
-                                    $AT       = new AfricasTalking($africas_talking_user, $africas_talking_key);                                
-                                    $sms      = $AT->sms();                                
+                                    $AT       = new AfricasTalking($africas_talking_user, $africas_talking_key);
+                                    $sms      = $AT->sms();
                                     $result   = $sms->send([
                                         "to"      => $transaction->phone_number,
                                         "message" => $sms_text,
                                         "from" => $by,
                                     ]);
-                                    $sms_log = date('Y-m-d H:i:s')." transaction_id: 1: ".$transaction->id." sms status:".$result['status']."";
-                                    \Storage::disk('local')->append('sms_log.txt',$sms_log);
-
+                                    $sms_log = date('Y-m-d H:i:s') . " transaction_id: 1: " . $transaction->id . " sms status:" . $result['status'] . "";
+                                    \Storage::disk('local')->append('sms_log.txt', $sms_log);
+                                } catch (\Exception $e) {
+                                    $error_log = date('Y-m-d H:i:s') . " sms_error transaction_id: 1: " . $transaction->id . " Error:" . $e->getMessage() . "";
+                                    \Storage::disk('local')->append('sms_error_log.txt', $error_log);
                                 }
-                                catch(\Exception $e)
-                                {
-                                    $error_log = date('Y-m-d H:i:s')." sms_error transaction_id: 1: ".$transaction->id." Error:".$e->getMessage()."";
-                                    \Storage::disk('local')->append('sms_error_log.txt',$error_log);
+                            }
 
-                                }
-                            }                    
-
-                            if($palm_email_template)
-                            {
-                            //send email 
+                            if ($palm_email_template) {
+                                //send email 
                                 try {
                                     $email_data = ['message' => $email_message];
 
                                     \Mail::to($transaction->email)->send(new TicketEmail($email_data));
-                                    }
-                                    catch(\Exception $e)
-                                    {
-                                        $error_log = date('Y-m-d H:i:s')." email_error transaction_id: 1: ".$transaction->id." error:".$e->getMessage()."";
-                                        \Storage::disk('local')->append('email_error_log.txt',$error_log); 
-                                    }
-                                
-
+                                } catch (\Exception $e) {
+                                    $error_log = date('Y-m-d H:i:s') . " email_error transaction_id: 1: " . $transaction->id . " error:" . $e->getMessage() . "";
+                                    \Storage::disk('local')->append('email_error_log.txt', $error_log);
                                 }
+                            }
                         }
-                        
-
-                        
-
-                    }
-                    else if($new_transaction_status == 'failed')
-                    {
-                    $transaction->status = 'failed';
-                    $transaction->payment_gateway_result = $response_body['status_code']; 
-                    $transaction->save(); 
-                    }
-                    else
-                    {
+                    } else if ($new_transaction_status == 'failed') {
+                        $transaction->status = 'failed';
+                        $transaction->payment_gateway_result = $response_body['status_code'];
+                        $transaction->save();
+                    } else {
                         $transaction->status = $new_transaction_status;
                         $transaction->payment_gateway_result = $new_transaction_status;
                         $transaction->save();
                     }
                 }
-            }
-            catch(\Exception $e)
-            {
-                $error_log = date('Y-m-d H:i:s')." error:".$e->getMessage()."";
-                \Storage::disk('local')->append('payment_errors_log.txt',$error_log);
+            } catch (\Exception $e) {
+                $error_log = date('Y-m-d H:i:s') . " error:" . $e->getMessage() . "";
+                \Storage::disk('local')->append('payment_errors_log.txt', $error_log);
             }
             // fail transaction if it is still pending at this moment 
-            if($transaction->status == 'pending')
-            {
+            if ($transaction->status == 'pending') {
                 $transaction->status = 'failed';
                 $transaction->save();
             }
             event(new TransactionStatusUpdated($transaction));
         }
-    
-        
     }
 }

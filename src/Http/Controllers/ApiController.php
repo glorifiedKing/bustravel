@@ -15,11 +15,13 @@ use glorifiedking\BusTravel\OperatorPaymentMethod;
 use glorifiedking\BusTravel\RoutesStopoversDepartureTime;
 use glorifiedking\BusTravel\Events\TransactionStatusUpdated;
 use glorifiedking\BusTravel\GeneralSetting;
+use glorifiedking\BusTravel\Support\Helper;
 use glorifiedking\BusTravel\TicketScanner;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -347,48 +349,66 @@ class ApiController extends Controller
             $api_gateway_prefix = env("default_gateway_prefix", "");
             // send json request 
             $request_uri = $base_api_url . "/makedebitrequest";
-            $client = new \GuzzleHttp\Client(['decode_content' => false, 'verify' => false]);
-            $debit_request = $client->request('POST', $request_uri, [
+            $jwtHeaders = array('alg' => 'sha512', 'typ' => 'JWT');
+            $payload = [
+                "token" => $api_gateway_token,
+                "transaction_amount" => $amount,
+                "account_number" => "100023",
+                "payment_operator" => $api_payment_operator,
+                "transaction_account" => $payee_reference,
+                "transaction_reference_number" => $api_gateway_prefix . $payment_transaction->id,
+                "merchant_account" => $api_merchant_account,
+                "transaction_source" => "web",
+                "transaction_destination" => "web",
+                "transaction_reason" => "Bus Ticket payment",
+                "currency" => "RWF",
+                'exp' => (time() + 60)
+            ];
 
-                'json'   => [
-                    "token" => $api_gateway_token,
-                    "transaction_amount" => $amount,
-                    "account_number" => "100023",
-                    "payment_operator" => $api_payment_operator,
-                    "transaction_account" => $payee_reference,
-                    "transaction_reference_number" => $api_gateway_prefix . $payment_transaction->id,
-                    "merchant_account" => $api_merchant_account,
-                    "transaction_source" => "web",
-                    "transaction_destination" => "web",
-                    "transaction_reason" => "Bus Ticket payment",
-                    "currency" => "RWF",
-                ]
-            ]);
-            $code = $debit_request->getStatusCode();
-            if ($code == 200) {
-                $response_body = json_decode($debit_request->getBody(), true);
-                // log request
-                $status_variables = var_export($response_body, true);
-                $status_log = date('Y-m-d H:i:s') . " transaction_id: " . $payment_transaction->id . " WITH:" . $status_variables . "";
-                //log the request 
-                \Storage::disk('local')->append('payment_debit_request_log.txt', $status_log);
-                $new_transaction_status = $response_body['transaction_status'];
-                //for success create ticket add to email and sms queue
-                if ($new_transaction_status == 'failed') {
-                    // immediate failure 
-                    $payment_transaction->status = 'failed';
-                    $payment_transaction->payment_gateway_result = $response_body['status_code'];
-                    $payment_transaction->save();
-                    //$payment_transaction = $payment_transaction->refresh();
-                    event(new TransactionStatusUpdated($payment_transaction));
+
+            $jwt = Helper::generateJWT($jwtHeaders, $payload, base64_decode(config('bustravel.gateway_jwt_token')));
+            $headers = [
+                'Authorization' => 'Bearer ' . $jwt,
+                'Accept'        => 'application/json',
+            ];
+            $client = new \GuzzleHttp\Client(['decode_content' => false, 'verify' => false, 'headers' => $headers]);
+            try {
+
+
+                $debit_request = $client->request('POST', $request_uri, [
+
+                    'json'   => $payload
+                ]);
+                $code = $debit_request->getStatusCode();
+                if ($code == 200) {
+                    $response_body = json_decode($debit_request->getBody(), true);
+                    // log request
+                    $status_variables = var_export($response_body, true);
+                    $status_log = date('Y-m-d H:i:s') . " transaction_id: " . $payment_transaction->id . " WITH:" . $status_variables . "";
+                    //log the request 
+                    \Storage::disk('local')->append('payment_debit_request_log.txt', $status_log);
+                    $new_transaction_status = $response_body['transaction_status'];
+                    //for success create ticket add to email and sms queue
+                    if ($new_transaction_status == 'failed') {
+                        // immediate failure 
+                        $payment_transaction->status = 'failed';
+                        $payment_transaction->payment_gateway_result = $response_body['status_code'];
+                        $payment_transaction->save();
+                        //$payment_transaction = $payment_transaction->refresh();
+                        event(new TransactionStatusUpdated($payment_transaction));
+                    }
                 }
-            }
 
-            // make booking 
-            return response()->json([
-                'status' => 'success',
-                'result' => 'Waiting for Payment'
-            ]);
+                // make booking 
+                return response()->json([
+                    'status' => 'success',
+                    'result' => 'Waiting for Payment'
+                ]);
+            } catch (\Exception $e) {
+                $message = "Payment failed " . $e->getMessage();
+                Log::info(['PAYMENT_ERROR' => $message]);
+                return response()->json(['status' => 'error', 'message' => "system error try again later"], 500);
+            }
         }
 
         return response()->json([
