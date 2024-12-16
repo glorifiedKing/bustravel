@@ -14,6 +14,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redirect;
 use glorifiedking\BusTravel\ToastNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CardsController extends Controller
 {
@@ -228,12 +229,14 @@ class CardsController extends Controller
             $card->balance = $card->balance - $departure_time->route->price;
             $card->save();
             DB::commit();
+            Log::info("successfull saved tap and go route");
             return response()->json([
                 'status' => 'sucess',
                 'result' => 'successfull'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::info("error saving tap and go");
             return response($e->getMessage(), 500);
         }
     }
